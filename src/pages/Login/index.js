@@ -34,8 +34,8 @@ function Login() {
   }
 
   function logIn() {
+    navigation.navigate('Home');
     if(user.username == username && user.senha == senha) {
-      alert("Logou")
     } else {
       setErroLogin(true)
     }
