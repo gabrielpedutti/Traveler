@@ -48,11 +48,13 @@ function Cadastro() {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      setErroSenha(false);
-      setErroEmail(false);
-      setErroVazio(false);
-    }, 2000);
+    if(erroVazio || erroSenha || erroEmail) {
+      setTimeout(() => {
+        setErroSenha(false);
+        setErroEmail(false);
+        setErroVazio(false);
+      }, 2000);
+    }
   },[erroVazio, erroSenha, erroEmail])
 
   return(
