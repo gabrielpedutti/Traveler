@@ -7,7 +7,7 @@ import {styles} from './styles'
 import Titulo from "../../components/Titulo";
 import Botao from "../../components/Botao";
 import { CadastroContext } from "../../contexts/cadastro";
-import ErroCadastro from "../../components/ErroCadastro";
+import ModalErro from "../../components/ModalErro";
 
 function Cadastro() {
 
@@ -93,9 +93,9 @@ function Cadastro() {
           />
         </ScrollView>
       </KeyboardAvoidingView>
-      {erroVazio && <ErroCadastro erro="Insira todos os Dados"/>}
-      {erroEmail && <ErroCadastro erro="O E-mail e a confirmação do E-mail devem ser iguais!"/>}
-      {erroSenha && <ErroCadastro erro="A senha e a confirmação de Senha devem ser iguais!"/>}
+      {erroVazio && <ModalErro titulo="Erro ao Cadastrar" erro="Insira todos os Dados"/>}
+      {erroEmail && <ModalErro titulo="Erro ao Cadastrar" erro="O E-mail e a confirmação do E-mail devem ser iguais!"/>}
+      {erroSenha && <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!"/>}
     </View>
   )
 }

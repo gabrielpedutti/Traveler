@@ -1,5 +1,5 @@
 import { View, Switch, Text, Pressable, Image } from 'react-native';
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 
 import Input from '../../components/InputLogin';
 
@@ -9,12 +9,15 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import BotaoLoginExterno from '../../components/BotaoLoginExterno';
 import { useNavigation } from '@react-navigation/native';
+import ModalErro from '../../components/ModalErro';
+import { CadastroContext } from '../../contexts/cadastro';
 
 function Login() {
 
   const [username, setUsername] = useState();
   const [senha, setSenha] = useState();
-  const [lembrar, setLembrar] = useState(false)
+  const [lembrar, setLembrar] = useState(false);
+  const [erroLogin, setErroLogin] = useState(false);
 
   const loginIcon = <FontAwesome name={'user'} size={25} color='#2c88d9'/>
   const senhaIcon = <FontAwesome name={'lock'} size={25} color='#2c88d9'/>
@@ -24,12 +27,27 @@ function Login() {
   const linkedinIcon = <AntDesign name={'linkedin-square'} size={35} color='#fff'/>
 
   const navigation = useNavigation();
-
+  const { user } = useContext(CadastroContext);
 
   function irCadastro(){
       navigation.navigate('Cadastro');
   }
 
+  function logIn() {
+    if(user.username == username && user.senha == senha) {
+      alert("Logou")
+    } else {
+      setErroLogin(true)
+    }
+  }
+
+  useEffect(() => {
+    if(erroLogin) {
+      setTimeout(() => {
+        setErroLogin(false);
+      }, 2000);
+    }
+  },[erroLogin])
 
   return(
     <View style={styles.container}>
@@ -62,7 +80,7 @@ function Login() {
       </View>
       <Pressable 
         style={styles.botao}
-        onPress={() => ''}
+        onPress={() => logIn()}
       >
         <Text style={styles.botaoText}>Entrar</Text>
       </Pressable>          
@@ -83,6 +101,7 @@ function Login() {
           <Text style={styles.textoCadastre}>Cadastre sua conta!</Text>
         </Pressable>
       </View>
+      {erroLogin && <ModalErro titulo="Erro ao efetuar login" erro="Login ou Senha incorretos"/>}
     </View>
   )
 }
