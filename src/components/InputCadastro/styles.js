@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginStart: 20,
-    width: '80%',
+    width: '100%',
     padding: 10,
 
   },

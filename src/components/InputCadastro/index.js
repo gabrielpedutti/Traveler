@@ -13,7 +13,6 @@ function Input(props) {
           onChangeText={props.onChangeText}
           secureTextEntry={props.secureTextEntry ? props.secureTextEntry : false}
         />
-        <View style={styles.icon}>{props.icon}</View>
       </View>
     </View>
   )
