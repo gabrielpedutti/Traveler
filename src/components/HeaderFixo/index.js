@@ -12,7 +12,7 @@ function HeaderFixo() {
   
   return(
     <View style={styles.container}>
-      <Pressable style={styles.voltar}  onPress={() => navigation.goBack()}>
+      <Pressable style={styles.voltar} onPress={() => navigation.navigate('MenuPrincipal')}>
         <Ionicons name={'menu'} size={40} color='#fff'/>
       </Pressable>
       <Pressable>
@@ -21,7 +21,7 @@ function HeaderFixo() {
           source={require('../../assets/logo.png')}
         />
       </Pressable>
-      <Pressable>
+      <Pressable onPress={() => navigation.navigate('MenuPerfil')}>
         <FontAwesome style={styles.fotoPerfil} name={'user-circle-o'} size={40} color='#fff'/>
       </Pressable>
     </View>

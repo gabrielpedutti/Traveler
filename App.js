@@ -4,6 +4,8 @@ import CadastroProvider from './src/contexts/cadastro';
 import Login from './src/pages/Login';
 import Cadastro from './src/pages/Cadastro';
 import Home from './src/pages/Home';
+import MenuPerfil from './src/pages/MenuPerfil';
+import MenuPrincipal from './src/pages/MenuPrincipal';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +31,20 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={Home}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="MenuPerfil"
+            component={MenuPerfil}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="MenuPrincipal"
+            component={MenuPrincipal}
             options={{
               headerShown: false,
             }}
