@@ -43,12 +43,12 @@ function Login() {
         <Input 
           label="Login"
           icon={loginIcon}
-          onChangeText={() => setUsername()}
+          onChangeText={setUsername}
         />
         <Input 
           label="Senha"
           icon={senhaIcon}
-          onChangeText={() => setSenha()}
+          onChangeText={setSenha}
           secureTextEntry={true}
         />
       </View>
