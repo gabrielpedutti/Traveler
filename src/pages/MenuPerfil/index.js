@@ -41,7 +41,7 @@ function MenuPerfil(){
         </View>
 
         <View style={styles.footer}>
-        <ItemMenu label="Sair" name='log-out-outline' pagina = "" />
+        <ItemMenu label="Sair" name='log-out-outline' pagina = "Login" />
         </View>
     </View>
   )
