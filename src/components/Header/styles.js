@@ -15,12 +15,12 @@ const styles = StyleSheet.create({
   voltar: {
     marginStart: 15,
     marginBottom: 15,
-    width: '12%',
+    width: '10%',
   },
   fechar: {
     marginEnd: 15,
     marginBottom: 15,
-    width: '12%',
+    width: '10%',
   },
 })
 
