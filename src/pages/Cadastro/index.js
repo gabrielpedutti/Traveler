@@ -40,7 +40,7 @@ function Cadastro() {
           setErroSenha(true);
         }
       } else {
-        setErroEmail(true);
+        setErroEmail(true); 
       }
     } else {
       setErroVazio(true);
