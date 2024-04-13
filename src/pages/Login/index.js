@@ -60,11 +60,13 @@ function Login() {
       <View>
         <Input 
           label="Login"
+          placeholder="Digite seu usuário"
           icon={loginIcon}
           onChangeText={setUsername}
         />
         <Input 
           label="Senha"
+          placeholder="Digite sua senha"
           icon={senhaIcon}
           onChangeText={setSenha}
           secureTextEntry={true}

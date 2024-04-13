@@ -67,23 +67,28 @@ function Cadastro() {
           />
           <Input
             label="Username"
+            placeholder="Digite o nome de usuário"
             onChangeText={(text) => handleInputChange("username", text)} 
           />
           <Input
             label="E-mail"
+            placeholder="Digite seu E-mail"
             onChangeText={(text) => handleInputChange("email", text)}
           />
           <Input
             label="Confirme o E-mail"
+            placeholder="Confirme seu E-mail"
             onChangeText={setConfirmaEmail}
           />
           <Input
             label="Senha"
+            placeholder="Digite sua senha"
             onChangeText={(text) => handleInputChange("senha", text)}
             secureTextEntry={true}
           />
           <Input
             label="Confirme a Senha"
+            placeholder="Confirme sua senha"
             onChangeText={setConfirmaSenha}
             secureTextEntry={true}
           />
