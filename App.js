@@ -6,6 +6,7 @@ import Cadastro from './src/pages/Cadastro';
 import Home from './src/pages/Home';
 import MenuPerfil from './src/pages/MenuPerfil';
 import MenuPrincipal from './src/pages/MenuPrincipal';
+import ResumoViagem from './src/pages/ResumoViagem';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,13 @@ export default function App() {
           <Stack.Screen
             name="MenuPrincipal"
             component={MenuPrincipal}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="ResumoViagem"
+            component={ResumoViagem}
             options={{
               headerShown: false,
             }}
