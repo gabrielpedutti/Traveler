@@ -1,4 +1,4 @@
-import { View, Pressable } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -9,11 +9,9 @@ function BotaoAdicionar() {
     const navigation = useNavigation();
 
   return(
-    <View style={styles.container}>
-        <Pressable onPress={() => navigation.navigate('NovaViagem')}>
-            <Ionicons name={'add-circle-outline'} size={40} color='#2b88d9'/>
-        </Pressable>
-    </View>
+    <TouchableOpacity style={styles.botaoMais} onPress={() => navigation.navigate('NovaViagem')}>
+        <Ionicons name={'add-circle-outline'} size={50} color='#2b88d9'/>
+    </TouchableOpacity>
   )
 }
 

@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CadastroProvider from './src/contexts/cadastro';
 import Login from './src/pages/Login';
 import Cadastro from './src/pages/Cadastro';
+import CadastroEndereco from './src/pages/CadastroEndereco';
 import Home from './src/pages/Home';
 import MenuPerfil from './src/pages/MenuPerfil';
 import MenuPrincipal from './src/pages/MenuPrincipal';
@@ -25,6 +26,13 @@ export default function App() {
           <Stack.Screen
             name="Cadastro"
             component={Cadastro}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CadastroEndereco"
+            component={CadastroEndereco}
             options={{
               headerShown: false,
             }}

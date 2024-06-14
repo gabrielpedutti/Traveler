@@ -1,6 +1,9 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+    container: {
+      height: '100%'
+    },
     text: {
       fontSize: 18,
       color: '#2b88d9',
@@ -16,12 +19,6 @@ const styles = StyleSheet.create({
     linha: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-    },
-    footer: {
-      positivo: 'absolute',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      width: "100%",
     }
 })
 

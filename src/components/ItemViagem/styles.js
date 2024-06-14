@@ -33,6 +33,13 @@ primeiraLinha: {
 linha: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+
+},
+img: {
+  margin: 15,
+  marginRight: 0,
+  width: 70,
+  height: 70,
 }
 })
 

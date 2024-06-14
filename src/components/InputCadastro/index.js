@@ -12,6 +12,8 @@ function Input(props) {
           placeholder={props.placeholder}
           onChangeText={props.onChangeText}
           secureTextEntry={props.secureTextEntry ? props.secureTextEntry : false}
+          keyboardType={props.keyboardType ? props.keyboardType : "default"}
+          value={props.value}
         />
       </View>
     </View>

@@ -12,7 +12,14 @@ const styles = StyleSheet.create({
     padding: 20,
     bottom: -5,
     width: "100%",
-  }
+  },
+  botaoMais: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    borderRadius: 50,
+    backgroundColor: '#fff',
+  },
 })
 
 export { styles };

@@ -8,6 +8,8 @@ import Titulo from "../../components/Titulo";
 import Botao from "../../components/Botao";
 import { CadastroContext } from "../../contexts/cadastro";
 import ModalErro from "../../components/ModalErro";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
 function Cadastro() {
 
@@ -23,6 +25,7 @@ function Cadastro() {
   const [erroEmail, setErroEmail] = useState(false);
 
   const { salvarDados } = useContext(CadastroContext);
+  const navigation = useNavigation();
 
   const handleInputChange = (fieldName, value) => {
     setUser(prevState => ({
@@ -30,6 +33,10 @@ function Cadastro() {
       [fieldName]: value
     }));
   };
+
+  function irCadastroEndereco(){
+    navigation.navigate('CadastroEndereco');
+}
 
   function cadastrar() {
     if(user.username !== "" && user.email !== "" && user.senha !== "") {
@@ -44,6 +51,7 @@ function Cadastro() {
       }
     } else {
       setErroVazio(true);
+      irCadastroEndereco()
     }
   }
 
@@ -57,18 +65,16 @@ function Cadastro() {
     }
   },[erroVazio, erroSenha, erroEmail])
 
-  return(
-    <View>
+  return (
+    <SafeAreaView style={styles.container}>
       <Header />
-      <KeyboardAvoidingView behavior="padding">
-        <ScrollView>
-          <Titulo
-            texto="Cadastro"
-          />
+      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <Titulo texto="Cadastro" />
           <Input
             label="Username"
             placeholder="Digite o nome de usuário"
-            onChangeText={(text) => handleInputChange("username", text)} 
+            onChangeText={(text) => handleInputChange("username", text)}
           />
           <Input
             label="E-mail"
@@ -92,17 +98,20 @@ function Cadastro() {
             onChangeText={setConfirmaSenha}
             secureTextEntry={true}
           />
-          <Botao
-            label="Cadastrar"
-            onPress={cadastrar}
-          />
+          <Botao label="Próximo" onPress={cadastrar} />
         </ScrollView>
       </KeyboardAvoidingView>
-      {erroVazio && <ModalErro titulo="Erro ao Cadastrar" erro="Insira todos os Dados"/>}
-      {erroEmail && <ModalErro titulo="Erro ao Cadastrar" erro="O E-mail e a confirmação do E-mail devem ser iguais!"/>}
-      {erroSenha && <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!"/>}
-    </View>
-  )
+      {erroVazio && (
+        <ModalErro titulo="Erro ao Cadastrar" erro="Insira todos os Dados" />
+      )}
+      {erroEmail && (
+        <ModalErro titulo="Erro ao Cadastrar" erro="O E-mail e a confirmação do E-mail devem ser iguais!" />
+      )}
+      {erroSenha && (
+        <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!" />
+      )}
+    </SafeAreaView>
+  );
 }
 
 export default Cadastro;
