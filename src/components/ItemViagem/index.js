@@ -8,7 +8,7 @@ function ItemViagem(props) {
   const navigation = useNavigation();
 
   return(
-    <TouchableOpacity style={styles.linha} onPress={() => navigation.navigate(props.pagina)}>
+    <TouchableOpacity style={styles.linha} onPress={() => navigation.navigate(props.pagina, {...props})}>
       <Image
         style={styles.img}
         source={props.imagem}

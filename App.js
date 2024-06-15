@@ -8,6 +8,7 @@ import Home from './src/pages/Home';
 import MenuPerfil from './src/pages/MenuPerfil';
 import MenuPrincipal from './src/pages/MenuPrincipal';
 import ResumoViagem from './src/pages/ResumoViagem';
+import CadastroViagem from './src/pages/CadastroViagem';
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +62,13 @@ export default function App() {
           <Stack.Screen
             name="ResumoViagem"
             component={ResumoViagem}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CadastroViagem"
+            component={CadastroViagem}
             options={{
               headerShown: false,
             }}

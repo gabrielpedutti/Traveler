@@ -6,16 +6,17 @@ import BotaoAdicionar from "../../components/BotaoAdicionar";
 
 
 import { styles } from "./styles";
+import Titulo from "../../components/Titulo";
 
-function ResumoViagem(props){
+function ResumoViagem( {route} ){
   return(
     <View>
         <HeaderFixo />
         <Image
             style={styles.img}
-            source={require('../../assets/RioDeJaneiro.jpeg')}
+            source={route.params?.imagem}
             />
-        <Text style={styles.text}>Rio de Janeiro</Text>
+        <Titulo texto={route.params?.destino} />
 
         <View style={styles.linha}>
             <Ionicons style={styles.icone} name='airplane-outline' size={50} color='#2c88d9'/>          

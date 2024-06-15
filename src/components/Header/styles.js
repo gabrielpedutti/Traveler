@@ -10,7 +10,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
-    height: 100,
   },
   voltar: {
     marginStart: 15,

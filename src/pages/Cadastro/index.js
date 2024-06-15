@@ -66,50 +66,52 @@ function Cadastro() {
   },[erroVazio, erroSenha, erroEmail])
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
-      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <Titulo texto="Cadastro" />
-          <Input
-            label="Username"
-            placeholder="Digite o nome de usuário"
-            onChangeText={(text) => handleInputChange("username", text)}
-          />
-          <Input
-            label="E-mail"
-            placeholder="Digite seu E-mail"
-            onChangeText={(text) => handleInputChange("email", text)}
-          />
-          <Input
-            label="Confirme o E-mail"
-            placeholder="Confirme seu E-mail"
-            onChangeText={setConfirmaEmail}
-          />
-          <Input
-            label="Senha"
-            placeholder="Digite sua senha"
-            onChangeText={(text) => handleInputChange("senha", text)}
-            secureTextEntry={true}
-          />
-          <Input
-            label="Confirme a Senha"
-            placeholder="Confirme sua senha"
-            onChangeText={setConfirmaSenha}
-            secureTextEntry={true}
-          />
-          <Botao label="Próximo" onPress={cadastrar} />
-        </ScrollView>
-      </KeyboardAvoidingView>
-      {erroVazio && (
-        <ModalErro titulo="Erro ao Cadastrar" erro="Insira todos os Dados" />
-      )}
-      {erroEmail && (
-        <ModalErro titulo="Erro ao Cadastrar" erro="O E-mail e a confirmação do E-mail devem ser iguais!" />
-      )}
-      {erroSenha && (
-        <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!" />
-      )}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Header />
+        <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <Titulo texto="Cadastro" />
+            <Input
+              label="Username"
+              placeholder="Digite o nome de usuário"
+              onChangeText={(text) => handleInputChange("username", text)}
+            />
+            <Input
+              label="E-mail"
+              placeholder="Digite seu E-mail"
+              onChangeText={(text) => handleInputChange("email", text)}
+            />
+            <Input
+              label="Confirme o E-mail"
+              placeholder="Confirme seu E-mail"
+              onChangeText={setConfirmaEmail}
+            />
+            <Input
+              label="Senha"
+              placeholder="Digite sua senha"
+              onChangeText={(text) => handleInputChange("senha", text)}
+              secureTextEntry={true}
+            />
+            <Input
+              label="Confirme a Senha"
+              placeholder="Confirme sua senha"
+              onChangeText={setConfirmaSenha}
+              secureTextEntry={true}
+            />
+            <Botao label="Próximo" onPress={cadastrar} />
+          </ScrollView>
+        </KeyboardAvoidingView>
+        {erroVazio && (
+          <ModalErro titulo="Erro ao Cadastrar" erro="Insira todos os Dados" />
+        )}
+        {erroEmail && (
+          <ModalErro titulo="Erro ao Cadastrar" erro="O E-mail e a confirmação do E-mail devem ser iguais!" />
+        )}
+        {erroSenha && (
+          <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!" />
+        )}
+      </View>
     </SafeAreaView>
   );
 }

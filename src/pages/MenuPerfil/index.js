@@ -6,44 +6,44 @@ import Divisoria from "../../components/Divisoria";
 import ItemMenu from "../../components/ItemMenu";
 
 import { styles } from "./styles";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function MenuPerfil(){
 
   const { user } = useContext(CadastroContext);
   
   return(
-    <View style={styles.container}>
-      <Header />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Header />
       
-        <View style={styles.card}>
+          <View style={styles.card}>
+            <View>
+              <Image
+              style={styles.imagem}
+              source={require('../../assets/FotoPerfil.jpg')}
+              />
+            </View>
+            <View style={styles.name}>
+              <Text style={styles.text}>Olá</Text>
+              <Text style={styles.text}>{user.username}!</Text>
+            </View>
+          </View>
+          <Divisoria />
           <View>
-            <Image
-            style={styles.imagem}
-            source={require('../../assets/FotoPerfil.jpg')}
-            />
+            <ItemMenu label="Notificações" name='notifications-circle-outline' pagina = "" />
+            <Divisoria />
+            <ItemMenu label="Opções" name='settings-outline' pagina = "" />
+            <Divisoria />
+            <ItemMenu label="Sobre" name='information-circle-outline' pagina = "" />
+            <Divisoria />
+            <ItemMenu label="Contato" name='mail-outline' pagina = "" />
           </View>
-          <View style={styles.name}>
-            <Text style={styles.text}>Olá</Text>
-            <Text style={styles.text}>{user.username}!</Text> 
+          <View style={styles.footer}>
+          <ItemMenu label="Sair" name='log-out-outline' pagina = "Login" />
           </View>
-        </View>
-
-        <Divisoria />
-
-        <View>
-          <ItemMenu label="Notificações" name='notifications-circle-outline' pagina = "" />
-          <Divisoria />
-          <ItemMenu label="Opções" name='settings-outline' pagina = "" />
-          <Divisoria />
-          <ItemMenu label="Sobre" name='information-circle-outline' pagina = "" />
-          <Divisoria />
-          <ItemMenu label="Contato" name='mail-outline' pagina = "" />
-        </View>
-
-        <View style={styles.footer}>
-        <ItemMenu label="Sair" name='log-out-outline' pagina = "Login" />
-        </View>
-    </View>
+      </View>
+    </SafeAreaView>
   )
 }
 

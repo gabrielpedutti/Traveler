@@ -137,109 +137,111 @@ function CadastroEndereco() {
   }, [enderecoApi])
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
-      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <Titulo texto="Cadastro" />
-          <View style={styles.inputDuplo}>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Header />
+        <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <Titulo texto="Cadastro" />
+            <View style={styles.inputDuplo}>
+              <Input
+                label="CEP"
+                placeholder="Digite seu CEP"
+                onChangeText={setCep}
+                keyboardType="numeric"
+              />
+              <TouchableOpacity style={styles.botaoCEP} onPress={buscarCep}>
+                <Ionicons name={'search'} size={25} color='#fff'/>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.wrapper}>
+              <Text style={styles.label}>Selecione o país</Text>
+              <View style={styles.containerInput}>
+                <Picker
+                  selectedValue={paisEscolhido}
+                  onValueChange={ (itemValue, itemIndex) => {
+                    setPaisEscolhido(itemValue)
+                    limparEstados()
+                    limparCidades()
+                  }}
+                >
+                  <Picker.Item label="Selecione o país" value="" />
+                  {paises.map((item) => (
+                    <Picker.Item key={item.id.M49} value={item.nome} label={item.nome} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            <View style={styles.wrapper}>
+              <Text style={styles.label}>Selecione o estado</Text>
+              <View style={styles.containerInput}>
+                <Picker
+                  selectedValue={estadoEscolhido}
+                  onValueChange={ (itemValue, itemIndex) => {
+                    setEstadoEscolhido(itemValue)
+                    limparCidades()
+                  }}
+                >
+                  <Picker.Item label="Selecione o estado" value="" />
+                  {estados.map((item) => (
+                    <Picker.Item key={item.id} value={item.sigla} label={item.nome} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            <View style={styles.wrapper}>
+              <Text style={styles.label}>Selecione a cidade</Text>
+              <View style={styles.containerInput}>
+                <Picker
+                  selectedValue={cidadeEscolhida}
+                  onValueChange={ (itemValue, itemIndex) => setCidadeEscolhida(itemValue) }
+                >
+                  <Picker.Item label="Selecione a cidade" value="" />
+                  {cidades.map((item) => (
+                    <Picker.Item key={item.id} value={item.nome} label={item.nome} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
             <Input
-              label="CEP"
-              placeholder="Digite seu CEP"
-              onChangeText={setCep}
-              keyboardType="numeric"
-            />
-            <TouchableOpacity style={styles.botaoCEP} onPress={buscarCep}>
-              <Ionicons name={'search'} size={25} color='#fff'/>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.wrapper}>
-            <Text style={styles.label}>Selecione o país</Text>
-            <View style={styles.containerInput}>
-              <Picker
-                selectedValue={paisEscolhido}
-                onValueChange={ (itemValue, itemIndex) => {
-                  setPaisEscolhido(itemValue) 
-                  limparEstados()
-                  limparCidades()
-                }}
-              >
-                <Picker.Item label="Selecione o país" value="" />
-                {paises.map((item) => (
-                  <Picker.Item key={item.id.M49} value={item.nome} label={item.nome} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <View style={styles.wrapper}>
-            <Text style={styles.label}>Selecione o estado</Text>
-            <View style={styles.containerInput}>
-              <Picker
-                selectedValue={estadoEscolhido}
-                onValueChange={ (itemValue, itemIndex) => {
-                  setEstadoEscolhido(itemValue) 
-                  limparCidades()
-                }}
-              >
-                <Picker.Item label="Selecione o estado" value="" />
-                {estados.map((item) => (
-                  <Picker.Item key={item.id} value={item.sigla} label={item.nome} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <View style={styles.wrapper}>
-            <Text style={styles.label}>Selecione a cidade</Text>
-            <View style={styles.containerInput}>
-              <Picker
-                selectedValue={cidadeEscolhida}
-                onValueChange={ (itemValue, itemIndex) => setCidadeEscolhida(itemValue) }
-              >
-                <Picker.Item label="Selecione a cidade" value="" />
-                {cidades.map((item) => (
-                  <Picker.Item key={item.id} value={item.nome} label={item.nome} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <Input
-            label="Bairro"
-            placeholder="Digite seu bairro"
-            onChangeText={setBairro}
-            value={bairro}
-          />
-          <Input
-            label="Rua"
-            placeholder="Digite a sua rua"
-            onChangeText={setRua}
-            value={rua}
-          />
-          <View style={styles.inputDuplo}>
-            <Input
-              label="Número"
-              placeholder="Digite o Número"
-              onChangeText={setNumero}
-              value={numero}
+              label="Bairro"
+              placeholder="Digite seu bairro"
+              onChangeText={setBairro}
+              value={bairro}
             />
             <Input
-              label="Complemento"
-              placeholder="Complemento"
-              onChangeText={setComlpemento}
-              value={complemento}
+              label="Rua"
+              placeholder="Digite a sua rua"
+              onChangeText={setRua}
+              value={rua}
             />
-          </View>
-          <Botao label="Cadastrar" onPress={cadastrar} />
-        </ScrollView>
-      </KeyboardAvoidingView>
-      {erroVazio && (
-        <ModalErro titulo="Erro ao Cadastrar" erro="Insira todos os Dados" />
-      )}
-      {erroEmail && (
-        <ModalErro titulo="Erro ao Cadastrar" erro="O E-mail e a confirmação do E-mail devem ser iguais!" />
-      )}
-      {erroSenha && (
-        <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!" />
-      )}
+            <View style={styles.inputDuplo}>
+              <Input
+                label="Número"
+                placeholder="Digite o Número"
+                onChangeText={setNumero}
+                value={numero}
+              />
+              <Input
+                label="Complemento"
+                placeholder="Complemento"
+                onChangeText={setComlpemento}
+                value={complemento}
+              />
+            </View>
+            <Botao label="Cadastrar" onPress={cadastrar} />
+          </ScrollView>
+        </KeyboardAvoidingView>
+        {erroVazio && (
+          <ModalErro titulo="Erro ao Cadastrar" erro="Insira todos os Dados" />
+        )}
+        {erroEmail && (
+          <ModalErro titulo="Erro ao Cadastrar" erro="O E-mail e a confirmação do E-mail devem ser iguais!" />
+        )}
+        {erroSenha && (
+          <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!" />
+        )}
+      </View>
     </SafeAreaView>
   );
 }
