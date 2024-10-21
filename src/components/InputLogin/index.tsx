@@ -2,7 +2,15 @@ import { View, Text, TextInput } from "react-native";
 
 import { styles } from "./styles";
 
-function Input(props) {
+interface InputProps {
+  label: string;
+  placeholder: string;
+  onChangeText: (text: string) => void;
+  secureTextEntry?: boolean;
+  icon: any;
+}
+
+function Input(props: InputProps): JSX.Element {
   return(
     <View style={styles.wrapper}>
       <Text style={styles.label}>{props.label}</Text>

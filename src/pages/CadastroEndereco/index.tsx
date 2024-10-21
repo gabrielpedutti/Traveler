@@ -13,6 +13,9 @@ import {Picker} from '@react-native-picker/picker';
 import ibgeApi from "../../services/api/ibge";
 import viaCepApi from "../../services/api/viaCep";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../types/RootStackParamList";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 function CadastroEndereco() {
 
@@ -39,6 +42,7 @@ function CadastroEndereco() {
   const [cidades, setCidades] = useState([]);
 
   const { salvarDados } = useContext(CadastroContext);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleInputChange = (fieldName, value) => {
     setUser(prevState => ({
@@ -52,6 +56,7 @@ function CadastroEndereco() {
       if(user.email == confirmaEmail) {
         if(user.senha == confirmaSenha) {
           salvarDados(user);
+          navigation.navigate('Login');
         } else {
           setErroSenha(true);
         }

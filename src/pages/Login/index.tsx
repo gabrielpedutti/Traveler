@@ -1,4 +1,4 @@
-import { View, Switch, Text, Pressable, Image } from 'react-native';
+import { View, Switch, Text, Image, Touchable, TouchableOpacity } from 'react-native';
 import { useState, useContext, useEffect } from 'react';
 
 import Input from '../../components/InputLogin';
@@ -11,13 +11,15 @@ import BotaoLoginExterno from '../../components/BotaoLoginExterno';
 import { useNavigation } from '@react-navigation/native';
 import ModalErro from '../../components/ModalErro';
 import { CadastroContext } from '../../contexts/cadastro';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/RootStackParamList';
 
-function Login() {
+function Login(): JSX.Element {
 
-  const [username, setUsername] = useState();
-  const [senha, setSenha] = useState();
-  const [lembrar, setLembrar] = useState(false);
-  const [erroLogin, setErroLogin] = useState(false);
+  const [username, setUsername] = useState<string>('');
+  const [senha, setSenha] = useState<string>('');
+  const [lembrar, setLembrar] = useState<boolean>(false);
+  const [erroLogin, setErroLogin] = useState<boolean>(false);
 
   const loginIcon = <FontAwesome name={'user'} size={25} color='#2c88d9'/>
   const senhaIcon = <FontAwesome name={'lock'} size={25} color='#2c88d9'/>
@@ -26,14 +28,14 @@ function Login() {
   const appleIcon = <AntDesign name={'apple1'} size={35} color='#fff'/>
   const linkedinIcon = <AntDesign name={'linkedin-square'} size={35} color='#fff'/>
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { user } = useContext(CadastroContext);
 
-  function irCadastro(){
+  function irCadastro(): void {
       navigation.navigate('Cadastro');
   }
 
-  function logIn() {
+  function logIn(): void {
     if(user.username == username && user.senha == senha) {
       navigation.navigate('Home');
     } else {
@@ -80,28 +82,28 @@ function Login() {
         />
         <Text style={styles.textoBranco}>Lembrar</Text>
       </View>
-      <Pressable 
+      <TouchableOpacity 
         style={styles.botao}
         onPress={() => logIn()}
       >
         <Text style={styles.botaoText}>Entrar</Text>
-      </Pressable>          
+      </TouchableOpacity>          
       <View style={styles.containerContinue}>
         <View style={styles.divisao}></View>
         <Text style={styles.textoBranco}>Continue com</Text>
         <View style={styles.divisao}></View>
       </View>
       <View style={styles.containerIcons}>
-        <BotaoLoginExterno icone={facebookIcon}/>
-        <BotaoLoginExterno icone={googleIcon}/>
-        <BotaoLoginExterno icone={appleIcon}/>
-        <BotaoLoginExterno icone={linkedinIcon}/>
+        <BotaoLoginExterno icone={facebookIcon} onPress={() => {}}/>
+        <BotaoLoginExterno icone={googleIcon} onPress={() => {}}/>
+        <BotaoLoginExterno icone={appleIcon} onPress={() => {}}/>
+        <BotaoLoginExterno icone={linkedinIcon} onPress={() => {}}/>
       </View>
       <View style={styles.containerCadastre}>
         <Text style={styles.textoBranco}>Novo por aqui?</Text>
-        <Pressable onPress={() => irCadastro()}>
+        <TouchableOpacity onPress={() => irCadastro()}>
           <Text style={styles.textoCadastre}>Cadastre sua conta!</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
       {erroLogin && <ModalErro titulo="Erro ao efetuar login" erro="Login ou Senha incorretos"/>}
     </View>

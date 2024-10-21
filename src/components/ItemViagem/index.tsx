@@ -2,10 +2,12 @@ import { View, Text, Pressable, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 
 import { styles } from "./styles";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../types/RootStackParamList";
 
 function ItemViagem(props) {
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return(
     <TouchableOpacity style={styles.linha} onPress={() => navigation.navigate(props.pagina, {...props})}>

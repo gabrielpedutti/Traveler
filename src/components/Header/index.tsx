@@ -5,10 +5,16 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { styles } from './styles';
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../types/RootStackParamList";
 
-function Header(props) {
+interface HeaderProps {
+  botaoFechar?: boolean;
+}
 
-  const navigation = useNavigation();
+function Header(props: HeaderProps) {
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [botaoFechar, setBotaoFechar] = useState(false);
   const [botaoVoltar, setBotaoVoltar] = useState(false);
 
@@ -27,7 +33,7 @@ function Header(props) {
           <Ionicons name={'chevron-back'} size={40} color='#fff'/>
         </Pressable>}
       </View>
-      <Pressable style={styles.logo}>
+      <Pressable>
         <Image
           style={styles.imagem}
           source={require('../../assets/logo.png')}

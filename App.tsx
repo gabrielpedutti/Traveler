@@ -9,8 +9,10 @@ import MenuPerfil from './src/pages/MenuPerfil';
 import MenuPrincipal from './src/pages/MenuPrincipal';
 import ResumoViagem from './src/pages/ResumoViagem';
 import CadastroViagem from './src/pages/CadastroViagem';
+import { RootStackParamList } from './src/types/RootStackParamList';
 
-const Stack = createNativeStackNavigator();
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
