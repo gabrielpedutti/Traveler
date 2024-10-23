@@ -17,6 +17,8 @@ import { CadastroContext } from '../../contexts/cadastro';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/RootStackParamList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import travelerApi from '../../services/api/travelerApi';
+import axios from 'axios';
 
 async function salvarLogin(email: string, senha: string) {
   try {
@@ -61,7 +63,8 @@ interface LoginFormInputs {
 function Login(): JSX.Element {
 
   const [lembrar, setLembrar] = useState<boolean>(false);
-  const [erroLogin, setErroLogin] = useState<boolean>(false);
+  const [hasErroLogin, setHasErroLogin] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   const loginIcon = <FontAwesome name={'user'} size={25} color='#2c88d9'/>
   const senhaIcon = <FontAwesome name={'lock'} size={25} color='#2c88d9'/>
@@ -71,7 +74,7 @@ function Login(): JSX.Element {
   const linkedinIcon = <AntDesign name={'linkedin-square'} size={35} color='#fff'/>
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { user } = useContext(CadastroContext);
+  const { salvarDados } = useContext(CadastroContext);
 
   const { control, handleSubmit, formState: { errors }, setValue } = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
@@ -86,23 +89,43 @@ function Login(): JSX.Element {
   }
 
   const onSubmit = async (data: LoginFormInputs) => {
-    //if (user.email === data.email && user.senha === data.senha) {
-    if (data.email === "testeee@teste.com" && data.senha === "senha123") {
-      if (lembrar)
-        await salvarLogin(data.email, data.senha);
-      navigation.navigate('Home');
-    } else {
-      setErroLogin(true);
+    try {
+      const response = await travelerApi.post('/usuarios/login', data);
+  
+      if (response.data.success) {
+        if (lembrar) {
+          await salvarLogin(data.email, data.senha);
+        }
+        salvarDados(data)
+        navigation.navigate('Home');
+      } else {
+        console.log(response.data.message);
+        setHasErroLogin(true);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error('Erro ao fazer login:', error.response.data.message || 'Erro desconhecido');
+          setError(error.response.data.message || 'Erro desconhecido');
+        } else {
+          console.error('Erro de rede ou no servidor:', error.message);
+          setError('Erro de rede ou no servidor');
+        }
+      } else {
+        console.error('Erro inesperado:', error);
+        setError('Erro inesperado');
+      }
+      setHasErroLogin(true);
     }
   };
-
+  
   useEffect(() => {
-    if(erroLogin) {
+    if(hasErroLogin) {
       setTimeout(() => {
-        setErroLogin(false);
+        setHasErroLogin(false);
       }, 2000);
     }
-  },[erroLogin])
+  },[hasErroLogin])
 
   useEffect(() => {
     const preencherLoginAutomatico = async () => {
@@ -187,7 +210,7 @@ function Login(): JSX.Element {
           <Text style={styles.textoCadastre}>Cadastre sua conta!</Text>
         </TouchableOpacity>
       </View>
-      {erroLogin && <ModalErro titulo="Erro ao efetuar login" erro="Login ou Senha incorretos"/>}
+      {hasErroLogin && <ModalErro titulo="Erro ao efetuar login" erro={error}/>}
     </View>
   )
 }
