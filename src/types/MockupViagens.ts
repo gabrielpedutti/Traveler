@@ -6,5 +6,5 @@ export type MockupViagens = {
   tipoHospedagem: string;
   nomeHospedagem: string;
   pagina: string;
-  imagem: string;
+  imagem: any;
 }

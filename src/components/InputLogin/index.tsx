@@ -1,5 +1,4 @@
 import { View, Text, TextInput } from "react-native";
-
 import { styles } from "./styles";
 
 interface InputProps {
@@ -8,6 +7,8 @@ interface InputProps {
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   icon: any;
+  value: string;
+  onBlur: () => void;
 }
 
 function Input(props: InputProps): JSX.Element {
@@ -20,6 +21,8 @@ function Input(props: InputProps): JSX.Element {
           placeholder={props.placeholder}
           onChangeText={props.onChangeText}
           secureTextEntry={props.secureTextEntry ? props.secureTextEntry : false}
+          value={props.value}
+          onBlur={props.onBlur}
         />
         <View style={styles.icon}>{props.icon}</View>
       </View>

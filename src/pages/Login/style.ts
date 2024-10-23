@@ -71,6 +71,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     textDecorationLine: 'underline',
     color: '#f7c325'
+  },
+  errorText: {
+    color: '#f00',
+    fontWeight: 'bold',
+    marginStart: 15,
+    marginEnd: 15,
+    marginTop: 5,
   }
 })
 

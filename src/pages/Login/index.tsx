@@ -1,5 +1,8 @@
 import { View, Switch, Text, Image, Touchable, TouchableOpacity } from 'react-native';
 import { useState, useContext, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import z from 'zod';
 
 import Input from '../../components/InputLogin';
 
@@ -13,11 +16,50 @@ import ModalErro from '../../components/ModalErro';
 import { CadastroContext } from '../../contexts/cadastro';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/RootStackParamList';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+async function salvarLogin(email: string, senha: string) {
+  try {
+    await AsyncStorage.setItem('@email', email); 
+    await AsyncStorage.setItem('@senha', senha);
+  } catch (e) {
+    console.error("Erro ao salvar os dados de login", e);
+  }
+}
+
+async function carregarLoginSalvo() {
+  try {
+    const emailSalvo = await AsyncStorage.getItem('@email');
+    const senhaSalva = await AsyncStorage.getItem('@senha');
+
+    if (emailSalvo !== null && senhaSalva !== null) {
+      // Retorna os valores armazenados, ou usa um state para preencher automaticamente
+      return { email: emailSalvo, senha: senhaSalva };
+    } else {
+      return { email: '', senha: '' };  // Retorna valores vazios caso não haja dados
+    }
+  } catch (e) {
+    console.error("Erro ao carregar os dados de login", e);
+    return { email: '', senha: '' };
+  }
+}
+
+const loginSchema = z.object({
+  email: z.string()
+    .min(1, "Email é obrigatório")
+    .refine((value) => value === '' || z.string().email().safeParse(value).success, {
+      message: "Email inválido",
+    }),
+  senha: z.string().min(1, "Senha é obrigatória"),
+});
+
+interface LoginFormInputs {
+  email: string;
+  senha: string;
+}
 
 function Login(): JSX.Element {
 
-  const [username, setUsername] = useState<string>('');
-  const [senha, setSenha] = useState<string>('');
   const [lembrar, setLembrar] = useState<boolean>(false);
   const [erroLogin, setErroLogin] = useState<boolean>(false);
 
@@ -31,17 +73,28 @@ function Login(): JSX.Element {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { user } = useContext(CadastroContext);
 
+  const { control, handleSubmit, formState: { errors }, setValue } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      senha: '',
+    },
+  });
+
   function irCadastro(): void {
       navigation.navigate('Cadastro');
   }
 
-  function logIn(): void {
-    if(user.username == username && user.senha == senha) {
+  const onSubmit = async (data: LoginFormInputs) => {
+    //if (user.email === data.email && user.senha === data.senha) {
+    if (data.email === "testeee@teste.com" && data.senha === "senha123") {
+      if (lembrar)
+        await salvarLogin(data.email, data.senha);
       navigation.navigate('Home');
     } else {
-      setErroLogin(true)
+      setErroLogin(true);
     }
-  }
+  };
 
   useEffect(() => {
     if(erroLogin) {
@@ -50,6 +103,17 @@ function Login(): JSX.Element {
       }, 2000);
     }
   },[erroLogin])
+
+  useEffect(() => {
+    const preencherLoginAutomatico = async () => {
+      const loginSalvo = await carregarLoginSalvo();
+      setValue('email', loginSalvo.email);
+      setValue('senha', loginSalvo.senha);
+      setLembrar(loginSalvo.email !== '' && loginSalvo.senha !== '');
+    };
+
+    preencherLoginAutomatico();
+  }, [setValue]);
 
   return(
     <View style={styles.container}>
@@ -60,19 +124,37 @@ function Login(): JSX.Element {
         />
       </View>
       <View>
-        <Input 
-          label="Login"
-          placeholder="Digite seu usuário"
-          icon={loginIcon}
-          onChangeText={setUsername}
+         <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Login"
+              placeholder="Digite seu usuário"
+              icon={loginIcon}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+            />
+          )}
+          name="email"
         />
-        <Input 
-          label="Senha"
-          placeholder="Digite sua senha"
-          icon={senhaIcon}
-          onChangeText={setSenha}
-          secureTextEntry={true}
+        {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Senha"
+              placeholder="Digite sua senha"
+              icon={senhaIcon}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              secureTextEntry={true}
+            />
+          )}
+          name="senha"
         />
+        {errors.senha && <Text style={styles.errorText}>{errors.senha.message}</Text>}
       </View>
       <View style={styles.containerLembrar}>
         <Switch
@@ -84,7 +166,7 @@ function Login(): JSX.Element {
       </View>
       <TouchableOpacity 
         style={styles.botao}
-        onPress={() => logIn()}
+        onPress={handleSubmit(onSubmit)}
       >
         <Text style={styles.botaoText}>Entrar</Text>
       </TouchableOpacity>          

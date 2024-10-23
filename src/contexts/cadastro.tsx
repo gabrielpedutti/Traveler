@@ -2,7 +2,7 @@ import React, { createContext, useState, ReactNode } from "react";
 import { useNavigation } from '@react-navigation/native';
 
 interface User {
-  username?: string;
+  email?: string;
   senha?: string;
 }
 
