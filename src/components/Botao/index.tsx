@@ -1,14 +1,22 @@
-import { Pressable, Text } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 
 import { styles } from "./styles";
 
-function Botao(props) {
+interface BotaoProps {
+  label: string;
+  onPress: () => void;
+}
+
+function Botao(props: BotaoProps) {
   return(
-    <Pressable 
+    <TouchableOpacity 
       style={styles.botao}
-      onPress={props.onPress}>
+      onPress={() => {
+        console.log("Botão pressionado");
+        props.onPress();
+      }}>
       <Text style={styles.textoBotao}>{props.label}</Text>
-    </Pressable>
+    </TouchableOpacity>
   )
 }
 

@@ -91,14 +91,17 @@ function Login(): JSX.Element {
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       const response = await travelerApi.post('/usuarios/login', data);
+
+      console.log(data)
   
-      if (response.data.success) {
+      if (response.status === 200) {
         if (lembrar) {
           await salvarLogin(data.email, data.senha);
         }
-        salvarDados(data)
+        salvarDados({ email: response.data.email, senha: response.data.senha, nome: response.data.nome });
         navigation.navigate('Home');
       } else {
+        console.log("Não deu sucesso?")
         console.log(response.data.message);
         setHasErroLogin(true);
       }

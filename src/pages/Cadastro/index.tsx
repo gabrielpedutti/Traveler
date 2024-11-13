@@ -1,8 +1,11 @@
 import { Text, View, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useState, useContext, useEffect } from "react";
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import z from 'zod';
+
 import Header from "../../components/Header";
 import Input from "../../components/InputCadastro";
-
 import {styles} from './styles'
 import Titulo from "../../components/Titulo";
 import Botao from "../../components/Botao";
@@ -10,9 +13,24 @@ import { CadastroContext } from "../../contexts/cadastro";
 import ModalErro from "../../components/ModalErro";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
+import { CadastroRequestDto } from "../../types/dto/CadastroRequestDto";
+import { DateInput } from "../../components/DateInput";
+import { Picker } from "@react-native-picker/picker";
+import travelerApi from "../../services/api/travelerApi";
+import { PaisResponseDto } from "../../types/dto/PaisResponseDto";
+import { EstadoResponseDto } from "../../types/dto/EstadoResponseDto";
+import { MunicipioResponseDto } from "../../types/dto/MunicipioResponseDto";
+import { cadastrarUsuario } from "../../services/httpService";
+
+const CadastroSchema = z.object({
+  nome: z.string().min(1, "Nome é obrigatório"),
+  data_nascimento: z.string().min(1, "Data de Nascimento é obrigatória"),
+  email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
+  senha: z.string().min(1, "Senha é obrigatória"),
+  municipio_id: z.number().min(1, "Município é obrigatório"),
+});
 
 function Cadastro(): JSX.Element {
 
@@ -26,9 +44,27 @@ function Cadastro(): JSX.Element {
   const [erroVazio, setErroVazio] = useState<boolean>(false);
   const [erroSenha, setErroSenha] = useState<boolean>(false);
   const [erroEmail, setErroEmail] = useState<boolean>(false);
+  const [paisEscolhido, setPaisEscolhido] = useState<string>('');
+  const [paises, setPaises] = useState<PaisResponseDto[]>([]);
+  const [estadoEscolhido, setEstadoEscolhido] = useState<string>('');
+  const [estados, setEstados] = useState<EstadoResponseDto[]>([]);
+  const [cidades, setCidades] = useState<MunicipioResponseDto[]>([]);
 
   const { salvarDados } = useContext(CadastroContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const { control, handleSubmit, formState: { errors } } = useForm<CadastroRequestDto>({
+    resolver: zodResolver(CadastroSchema),
+    defaultValues: {
+      nome: '',
+      data_nascimento: '',
+      email: '',
+      senha: '',
+      municipio_id: 0,
+      tipo_usuario_id: 1,
+      tipo_cadastro_id: 1
+    }
+  });
 
   const handleInputChange = (fieldName: string, value: string) => {
     setUser(prevState => ({
@@ -39,33 +75,68 @@ function Cadastro(): JSX.Element {
 
   function irCadastroEndereco(){
     navigation.navigate('CadastroEndereco');
-}
-
-  function cadastrar() {
-    if(user.username !== "" && user.email !== "" && user.senha !== "") {
-      if(user.email == confirmaEmail) {
-        if(user.senha == confirmaSenha) {
-          salvarDados(user);
-        } else {
-          setErroSenha(true);
-        }
-      } else {
-        setErroEmail(true); 
-      }
-    } else {
-      setErroVazio(true);
-      // irCadastroEndereco()
-      // enviarCadastro()
-
-    }
   }
-  
-  // function enviarCadastro () {
-  //   axios.post('API_URL', user)
-  //   .then()
-  // }
 
-  // useEffect(() => enviarCadastro, [])
+  function limparEstados() {
+    setEstados([])
+    setEstadoEscolhido('')
+  }
+
+  function limparCidades() {
+    setCidades([])
+  }
+
+  function cadastrar(data: CadastroRequestDto) {
+    const payload = {
+      ...data,
+      municipio_id: Number(data.municipio_id),
+      tipo_usuario_id: 3,
+      tipo_cadastro_id: 1
+    }
+
+    const response = cadastrarUsuario(payload);
+    console.log("Daqui?");
+    console.log(response);
+    console.log("sera?")
+    
+    // if(user.username !== "" && user.email !== "" && user.senha !== "") {
+    //   if(user.email == confirmaEmail) {
+    //     if(user.senha == confirmaSenha) {
+    //       salvarDados(user);
+    //     } else {
+    //       setErroSenha(true);
+    //     }
+    //   } else {
+    //     setErroEmail(true); 
+    //   }
+    // } else {
+    //   setErroVazio(true);
+    // }
+  }
+
+  useEffect(() => {
+    const consultaPaises = async () => {
+      const response = await travelerApi.get('/locations/paises');
+      setPaises(response.data)
+    }
+    consultaPaises();
+  }, [])
+
+  useEffect(() => {
+    const consultaEstados = async () => {
+      const response = await travelerApi.get(`/locations/estados?idPais=${paisEscolhido}`);
+      setEstados(response.data)
+    }
+    consultaEstados();
+  }, [paisEscolhido])
+
+  useEffect(() => {
+    const consultaCidades = async () => {
+      const response = await travelerApi.get(`/locations/municipios?idEstado=${estadoEscolhido}`);
+      setCidades(response.data)
+    }
+    consultaCidades();
+  }, [estadoEscolhido])
 
   useEffect(() => {
     if(erroVazio || erroSenha || erroEmail) {
@@ -84,34 +155,148 @@ function Cadastro(): JSX.Element {
         <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
           <ScrollView contentContainerStyle={styles.scrollView}>
             <Titulo texto="Cadastro" />
-            <Input
-              label="Username"
-              placeholder="Digite o nome de usuário"
-              onChangeText={(text: string) => handleInputChange("username", text)}
+
+            <Controller
+              control={control}
+              name="nome"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Nome"
+                  placeholder="Digite o nome de usuário"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                />
+              )}
             />
-            <Input
-              label="E-mail"
-              placeholder="Digite seu E-mail"
-              onChangeText={(text: string) => handleInputChange("email", text)}
+            {errors.nome && <Text style={styles.error} >{errors.nome.message}</Text>}
+
+            <Controller
+              control={control}
+              name="data_nascimento"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DateInput
+                  label="Data de Nascimento"
+                  placeholder="Data de Nascimento"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              )}
             />
+            {errors.data_nascimento && <Text style={styles.error} >{errors.data_nascimento.message}</Text>}
+
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="E-mail"
+                  placeholder="Digite seu E-mail"
+                  keyboardType="email-address"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                />
+              )}
+            />
+            {errors.email && <Text style={styles.error} >{errors.email.message}</Text>}
+
             <Input
               label="Confirme o E-mail"
               placeholder="Confirme seu E-mail"
+              keyboardType="email-address"
               onChangeText={setConfirmaEmail}
+              value={confirmaEmail}
             />
-            <Input
-              label="Senha"
-              placeholder="Digite sua senha"
-              onChangeText={(text: string) => handleInputChange("senha", text)}
-              secureTextEntry={true}
+
+            <Controller
+              control={control}
+              name="senha"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Senha"
+                  placeholder="Digite sua senha"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  secureTextEntry={true}
+                />
+              )}
             />
+            {errors.senha && <Text style={styles.error} >{errors.senha.message}</Text>}
+
             <Input
               label="Confirme a Senha"
               placeholder="Confirme sua senha"
               onChangeText={setConfirmaSenha}
               secureTextEntry={true}
+              value={confirmaSenha}
             />
-            <Botao label="Cadastrar" onPress={cadastrar} />
+
+            <View style={styles.wrapper}>
+              <Text style={styles.label}>Selecione o país</Text>
+              <View style={styles.containerInput}>
+                <Picker
+                  selectedValue={paisEscolhido}
+                  onValueChange={ (itemValue, itemIndex) => {
+                    setPaisEscolhido(itemValue)
+                    limparEstados()
+                    limparCidades()
+                  }}
+                >
+                  <Picker.Item label="Selecione o país" value="" />
+                  {paises.map((item) => (
+                    <Picker.Item key={item.id} value={item.id} label={item.nm_pais} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+
+            <View style={styles.wrapper}>
+              <Text style={styles.label}>Selecione o estado</Text>
+              <View style={styles.containerInput}>
+                <Picker
+                  selectedValue={estadoEscolhido}
+                  onValueChange={ (itemValue, itemIndex) => {
+                    setEstadoEscolhido(itemValue)
+                    limparCidades()
+                  }}
+                >
+                  <Picker.Item label="Selecione o estado" value="" />
+                  {estados.map((item) => (
+                    <Picker.Item key={item.id} value={item.id} label={item.nm_estado} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+
+            <View style={styles.wrapper}>
+              <Text style={styles.label}>Selecione a cidade</Text>
+              <View style={styles.containerInput}>
+                <Controller
+                  name="municipio_id"
+                  control={control}
+                  defaultValue={0}
+                  render={({ field: { onChange, value } }) => (
+                    <Picker
+                      selectedValue={value}
+                      onValueChange={(itemValue) => onChange(itemValue)}
+                    >
+                      <Picker.Item label="Selecione a cidade" value="" />
+                      {cidades.map((item) => (
+                        <Picker.Item key={item.id} value={item.id} label={item.nm_municipio} />
+                      ))}
+                    </Picker>
+                  )}
+                />
+              </View>
+              {errors.municipio_id && <Text style={styles.error} >{errors.municipio_id.message}</Text>}
+            </View>
+            {errors.tipo_cadastro_id && <Text style={styles.error} >{errors.tipo_cadastro_id.message}</Text>}
+            {errors.tipo_usuario_id && <Text style={styles.error} >{errors.tipo_usuario_id.message}</Text>}
+
+            <Botao label="Cadastrar" onPress={handleSubmit(cadastrar)} />
           </ScrollView>
         </KeyboardAvoidingView>
         {erroVazio && (

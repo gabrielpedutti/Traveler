@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 interface User {
   email?: string;
   senha?: string;
+  nome?: string;
 }
 
 interface CadastroContextType { //Aqui ficará tudo que o Context irá compartilhar

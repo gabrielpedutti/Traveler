@@ -26,7 +26,7 @@ function MenuPerfil(){
             </View>
             <View style={styles.name}>
               <Text style={styles.text}>Olá</Text>
-              <Text style={styles.text}>{user.username}!</Text>
+              <Text style={styles.text}>{user.nome}!</Text>
             </View>
           </View>
           <Divisoria />
