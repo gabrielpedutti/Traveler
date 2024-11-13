@@ -12,7 +12,6 @@ function Botao(props: BotaoProps) {
     <TouchableOpacity 
       style={styles.botao}
       onPress={() => {
-        console.log("Botão pressionado");
         props.onPress();
       }}>
       <Text style={styles.textoBotao}>{props.label}</Text>

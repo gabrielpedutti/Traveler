@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
+import Toast from 'react-native-toast-message';
 
 import Header from "../../components/Header";
 import Input from "../../components/InputCadastro";
@@ -23,13 +24,15 @@ import { PaisResponseDto } from "../../types/dto/PaisResponseDto";
 import { EstadoResponseDto } from "../../types/dto/EstadoResponseDto";
 import { MunicipioResponseDto } from "../../types/dto/MunicipioResponseDto";
 import { cadastrarUsuario } from "../../services/httpService";
+import { formatToISO } from "../../utils/DataFormat";
+import { ErroResponseDto } from "../../types/dto/ErroResponseDto";
 
 const CadastroSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
   data_nascimento: z.string().min(1, "Data de Nascimento é obrigatória"),
   email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
   senha: z.string().min(1, "Senha é obrigatória"),
-  municipio_id: z.number().min(1, "Município é obrigatório"),
+  municipio_id: z.number().min(1, "Cidade é obrigatório"),
 });
 
 function Cadastro(): JSX.Element {
@@ -86,18 +89,53 @@ function Cadastro(): JSX.Element {
     setCidades([])
   }
 
-  function cadastrar(data: CadastroRequestDto) {
+  async function cadastrar(data: CadastroRequestDto) {
+    
+    const dataFormatada = formatToISO(data.data_nascimento);
     const payload = {
       ...data,
+      data_nascimento: dataFormatada,
       municipio_id: Number(data.municipio_id),
       tipo_usuario_id: 3,
       tipo_cadastro_id: 1
     }
+  
+    try {
+      const response = await cadastrarUsuario(payload);
+      console.log("Response recebida:");
+      console.log(response);
 
-    const response = cadastrarUsuario(payload);
-    console.log("Daqui?");
-    console.log(response);
-    console.log("sera?")
+    // Verifique se a resposta é do tipo erro
+    if ((response as ErroResponseDto).status) {
+      // Aqui sabemos que o response é do tipo ErroResponseDto
+      throw response;
+    }
+  
+    } catch (error) {
+      // Verifique se o erro é uma instância de ErroResponseDto
+      const err = error as ErroResponseDto;
+  
+      // Mensagem de erro com Toast
+      Toast.show({
+        type: "error",
+        text1: 'Ocorreu um erro ao cadastrar',
+        text2: err.message || 'Erro desconhecido', // Acesse a mensagem diretamente
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 130,
+        position: 'top',
+        text1Style: {
+          fontSize: 16, // Aumenta o tamanho da fonte para o texto principal
+          fontWeight: 'bold', // Torna o texto principal em negrito
+        },
+        text2Style: {
+          fontSize: 16, // Aumenta o tamanho da fonte para o texto secundário
+        },
+        onPress: () => {
+          Toast.hide();
+        }
+      });
+    }
     
     // if(user.username !== "" && user.email !== "" && user.senha !== "") {
     //   if(user.email == confirmaEmail) {
@@ -309,6 +347,7 @@ function Cadastro(): JSX.Element {
           <ModalErro titulo="Erro ao Cadastrar" erro="A senha e a confirmação de Senha devem ser iguais!" />
         )}
       </View>
+      <Toast />
     </SafeAreaView>
   );
 }
