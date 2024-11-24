@@ -2,7 +2,11 @@ import { View, Text } from 'react-native';
 
 import { styles } from './styles';
 
-function Titulo(props) {
+interface TituloProps {
+  texto: string;
+}
+
+function Titulo(props: TituloProps) {
   return(
     <View>
       <Text style={styles.titulo}>{props.texto}</Text>

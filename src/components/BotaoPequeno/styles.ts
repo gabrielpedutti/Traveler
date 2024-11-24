@@ -2,12 +2,10 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   botao: {
-    marginTop: 25,
-    marginStart: 15,
-    marginEnd: 15,
+    alignSelf: 'flex-start',
     backgroundColor: '#2c88d9',
-    alignItems: 'center',
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     borderRadius: 5,
     elevation: 5,
   },
@@ -17,6 +15,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
   },
-})
+});
 
 export { styles };

@@ -96,7 +96,7 @@ function Cadastro(): JSX.Element {
       ...data,
       data_nascimento: dataFormatada,
       municipio_id: Number(data.municipio_id),
-      tipo_usuario_id: 3,
+      tipo_usuario_id: 4,
       tipo_cadastro_id: 1
     }
   
@@ -104,6 +104,30 @@ function Cadastro(): JSX.Element {
       const response = await cadastrarUsuario(payload);
       console.log("Response recebida:");
       console.log(response);
+
+      Toast.show({
+        type: "success",
+        text1: 'Cadastro realizado com sucesso',
+        text2: 'Seja bem-vindo ao Traveler!',
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 130,
+        position: 'top',
+        text1Style: {
+          fontSize: 16, // Aumenta o tamanho da fonte para o texto principal
+          fontWeight: 'bold', // Torna o texto principal em negrito
+        },
+        text2Style: {
+          fontSize: 16, // Aumenta o tamanho da fonte para o texto secundário
+        },
+        onPress: () => {
+          Toast.hide();
+        }
+      });
+
+      setTimeout(() => {
+        navigation.navigate('Login');
+      }, 1000);
 
     // Verifique se a resposta é do tipo erro
     if ((response as ErroResponseDto).status) {

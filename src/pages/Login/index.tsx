@@ -29,6 +29,15 @@ async function salvarLogin(email: string, senha: string) {
   }
 }
 
+async function deletarLoginSalvo() {
+  try {
+    await AsyncStorage.removeItem('@email');
+    await AsyncStorage.removeItem('@senha');
+  } catch (e) {
+    console.error("Erro ao deletar os dados de login", e);
+  }
+}
+
 async function carregarLoginSalvo() {
   try {
     const emailSalvo = await AsyncStorage.getItem('@email');
@@ -97,6 +106,10 @@ function Login(): JSX.Element {
       if (response.status === 200) {
         if (lembrar) {
           await salvarLogin(data.email, data.senha);
+        } else {
+          await deletarLoginSalvo();
+          setValue('email', '');
+          setValue('senha', '');
         }
         salvarDados({ email: response.data.email, senha: response.data.senha, nome: response.data.nome });
         navigation.navigate('Home');

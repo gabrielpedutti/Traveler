@@ -17,7 +17,7 @@ function HeaderFixo() {
       <Pressable style={styles.voltar} onPress={() => navigation.navigate('MenuPrincipal')}>
         <Ionicons name={'menu'} size={40} color='#fff'/>
       </Pressable>
-      <Pressable>
+      <Pressable onPress={() => navigation.navigate('Home')}>
         <Image
           style={styles.imagem}
           source={require('../../assets/logo.png')}
