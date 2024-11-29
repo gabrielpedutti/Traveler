@@ -9,5 +9,6 @@ export type RootStackParamList = {
   CadastroTransporte: undefined;
   CadastroTurismo: undefined;
   CadastroViagem: undefined;
+  BaseCadastroViagem: undefined;
   ResumoViagem: undefined;
 }

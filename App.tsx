@@ -8,7 +8,7 @@ import Home from './src/pages/Home';
 import MenuPerfil from './src/pages/MenuPerfil';
 import MenuPrincipal from './src/pages/MenuPrincipal';
 import ResumoViagem from './src/pages/ResumoViagem';
-import CadastroViagem from './src/pages/CadastroViagem';
+import BaseCadastroViagem from './src/pages/BaseCadastroViagem';
 import { RootStackParamList } from './src/types/RootStackParamList';
 
 
@@ -69,8 +69,8 @@ export default function App() {
             }}
           />
           <Stack.Screen
-            name="CadastroViagem"
-            component={CadastroViagem}
+            name="BaseCadastroViagem"
+            component={BaseCadastroViagem}
             options={{
               headerShown: false,
             }}

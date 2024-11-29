@@ -20,32 +20,34 @@ function Home(){
   return(
     <View style={styles.container}>
       <HeaderFixo />
-      <Text style={styles.titulo}>Viaje sem preocupações, deixe-nos ser sua assistente de viagens!</Text>
-      <Botao label={'Cadastre uma nova viagem'} onPress={() => navigation.navigate('CadastroViagem')}/>
-      <Image
-        style={styles.imagem}
-        source={require('../../assets/WorldMap.png')}
-      />
-      <Text style={styles.subtitulo}>Sua próxima viagem</Text>
-      {false ? (
-        <Text style={styles.local}>Você ainda não possui viagens cadastradas...</Text>
-      ) :
-      (
-        <View>
-          <Text style={styles.local}>Rio de Janeiro</Text>
-          <Text style={styles.texto}><Text style={styles.label}>Data:</Text> 05/12/2022</Text>
-          <Text style={styles.texto}><Text style={styles.label}>Vôo:</Text> AA0274</Text>
-          <View style={styles.textContainer}>
-            <Text style={styles.texto}><Text style={styles.label}>Terminal:</Text> 2 </Text>
-            <Text style={styles.texto}><Text style={styles.label}>Portão:</Text> 115</Text>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Text style={styles.titulo}>Viaje sem preocupações, deixe-nos ser sua assistente de viagens!</Text>
+        <Botao label={'Cadastre uma nova viagem'} onPress={() => navigation.navigate('BaseCadastroViagem')}/>
+        <Image
+          style={styles.imagem}
+          source={require('../../assets/WorldMap.png')}
+        />
+        <Text style={styles.subtitulo}>Sua próxima viagem</Text>
+        {false ? (
+          <Text style={styles.local}>Você ainda não possui viagens cadastradas...</Text>
+        ) :
+        (
+          <View>
+            <Text style={styles.local}>Rio de Janeiro</Text>
+            <Text style={styles.texto}><Text style={styles.label}>Data:</Text> 05/12/2022</Text>
+            <Text style={styles.texto}><Text style={styles.label}>Vôo:</Text> AA0274</Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.texto}><Text style={styles.label}>Terminal:</Text> 2 </Text>
+              <Text style={styles.texto}><Text style={styles.label}>Portão:</Text> 115</Text>
+            </View>
+            <Text style={styles.texto}><Text style={styles.label}>Status:</Text> em embarque</Text>
+            <Text style={styles.texto}><Text style={styles.label}>Hotel:</Text> Copacana Palace</Text>
+            <View style={styles.wrapperBotao}>
+              <BotaoPequeno label="Mais informações" onPress={() => {}}/>
+            </View>
           </View>
-          <Text style={styles.texto}><Text style={styles.label}>Status:</Text> em embarque</Text>
-          <Text style={styles.texto}><Text style={styles.label}>Hotel:</Text> Copacana Palace</Text>
-          <View style={styles.wrapperBotao}>
-            <BotaoPequeno label="Mais informações" onPress={() => {}}/>
-          </View>
-        </View>
-      )}
+        )}
+      </ScrollView>
       
     </View>
   )

@@ -51,7 +51,11 @@ const styles = StyleSheet.create({
     },
     wrapperBotao: {
       margin: 15,
-    }
+    },
+    scrollView: {
+      paddingHorizontal: 16,
+      paddingBottom: 20,
+    },
 })
 
 export { styles };

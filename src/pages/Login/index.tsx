@@ -97,11 +97,12 @@ function Login(): JSX.Element {
       navigation.navigate('Cadastro');
   }
 
-  const onSubmit = async (data: LoginFormInputs) => {
+  const onSubmit = async (payload: LoginFormInputs) => {
     try {
-      const response = await travelerApi.post('/usuarios/login', data);
+      const response = await travelerApi.post('/usuarios/login', payload);
 
-      console.log(data)
+      console.log(payload)
+      const data: LoginResponseDto = response.data;
   
       if (response.status === 200) {
         if (lembrar) {
@@ -111,7 +112,7 @@ function Login(): JSX.Element {
           setValue('email', '');
           setValue('senha', '');
         }
-        salvarDados({ email: response.data.email, senha: response.data.senha, nome: response.data.nome });
+        salvarDados(data);
         navigation.navigate('Home');
       } else {
         console.log("Não deu sucesso?")

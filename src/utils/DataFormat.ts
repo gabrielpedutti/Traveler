@@ -1,4 +1,4 @@
-export function formatToISO(dateString: string): string {
+export function formatToISOString(dateString: string): string {
   // Divide a string da data no formato dd/mm/aaaa
   const [day, month, year] = dateString.split("/").map(Number);
 
@@ -7,4 +7,9 @@ export function formatToISO(dateString: string): string {
 
   // Converte a data para o formato ISO
   return date.toISOString();
+}
+
+export function formatToISO(dateString: string): Date {
+  const [day, month, year] = dateString.split('/').map(Number);
+  return new Date(year, month - 1, day);
 }

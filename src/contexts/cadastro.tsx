@@ -2,9 +2,13 @@ import React, { createContext, useState, ReactNode } from "react";
 import { useNavigation } from '@react-navigation/native';
 
 interface User {
-  email?: string;
-  senha?: string;
-  nome?: string;
+  id?: string,
+  nome?: string,
+  data_nascimento?: string,
+  email?: string,
+  municipio_id?: number,
+  tipo_usuario_id?: number,
+  tipo_cadastro_id?: number,
 }
 
 interface CadastroContextType { //Aqui ficará tudo que o Context irá compartilhar

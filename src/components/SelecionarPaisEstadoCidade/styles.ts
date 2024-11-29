@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+
   wrapper: {
     marginTop: 20
   },
@@ -15,21 +16,21 @@ const styles = StyleSheet.create({
     marginStart: 20,
     width: '100%',
     padding: 10,
+
   },
   containerInput: {
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 5,
     marginStart: 15,
     marginEnd: 15,
     borderWidth: 1,
-    borderColor: '#2c88d9',
+    borderColor: '#2c88d9'
   },
-  icon: {
-    position: 'absolute',
-    left: 20,
-  }
+  error: {
+    color: '#f56362',
+    marginStart: 20,
+    marginTop: 5
+  },
 })
 
 export { styles };
