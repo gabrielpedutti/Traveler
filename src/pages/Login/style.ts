@@ -23,6 +23,11 @@ const styles = StyleSheet.create({
     marginStart: 18,
     marginRight: 5,
   },
+  switchIOS: {
+    width: 40,
+    marginStart: 18,
+    marginRight: 20,
+  },
   textoBranco: {
     color: '#fff',
     fontWeight: 'bold'

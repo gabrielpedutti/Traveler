@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button, Modal, Pressable, Platform, TouchableOpacity } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import Input from '../InputCadastro';
+import { styles } from './styles';
 
 interface DateInputProps {
   label: string;
@@ -59,17 +60,16 @@ export function DateInput(props: DateInputProps): JSX.Element {
           display='spinner'
           value={date}
           onChange={onChange}
-          maximumDate={new Date()}
           minimumDate={new Date(1900, 0, 1)}
         />
       )}
       {showPicker && Platform.OS === 'ios' && (
-      <View>
-        <TouchableOpacity onPress={toggleDatePicker}>
-          <Text>Cancelar</Text>
+      <View style={styles.containerButtonsIOS}>
+        <TouchableOpacity onPress={toggleDatePicker} style={styles.cancelar}>
+          <Text style={styles.textCancelar}>Cancelar</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={confirmIOSDate}>
-          <Text>Confirmar</Text>
+        <TouchableOpacity onPress={confirmIOSDate} style={styles.confirmar}>
+          <Text style={styles.textConfirmar}>Confirmar</Text>
         </TouchableOpacity>
       </View>
       )}

@@ -1,4 +1,4 @@
-import { View, Switch, Text, Image, Touchable, TouchableOpacity } from 'react-native';
+import { View, Switch, Text, Image, Touchable, TouchableOpacity, Platform } from 'react-native';
 import { useState, useContext, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -198,7 +198,7 @@ function Login(): JSX.Element {
       </View>
       <View style={styles.containerLembrar}>
         <Switch
-        style={styles.switch}
+        style={Platform.OS === 'android' ? styles.switch : styles.switchIOS}
         value={lembrar}
         onValueChange={ (valorSwitch) => setLembrar(valorSwitch) }
         />
