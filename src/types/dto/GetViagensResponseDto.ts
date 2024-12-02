@@ -10,4 +10,17 @@ export type GetViagensResponseDto = {
   status_viagem_id: number;
   created_at: string;
   updated_at: string;
+  viagem_origem: {
+    nm_municipio: string;
+    nm_estado: string;
+    nm_pais: string;
+  };
+  viagem_destino: {
+    nm_municipio: string;
+    nm_estado: string;
+    nm_pais: string;
+  };
+  status_viagem: {
+    descricao: string;
+  };
 }

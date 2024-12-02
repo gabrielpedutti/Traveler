@@ -1,6 +1,14 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingStart: 15,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#cacaca",
+  },
   container: {
     flexDirection: 'column',
     flexWrap: 'wrap',
@@ -9,6 +17,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingTop: 5,
     paddingBottom: 5,
+    width: '100%',
   },
   titulo: {
     color: "#2b88d9",
@@ -22,25 +31,25 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     marginLeft: 15,
-},
-primeiraLinha: {
+  },
+  primeiraLinha: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: 280,
     margin: 0,
     padding: 0,
-},
-linha: {
+  },
+  linha: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-
-},
-img: {
-  margin: 15,
-  marginRight: 0,
-  width: 70,
-  height: 70,
-}
+    justifyContent: 'space-between',
+    marginEnd: 85,
+  },
+  img: {
+    margin: 15,
+    marginRight: 0,
+    width: 70,
+    height: 70,
+  }
 })
 
 export { styles };

@@ -5,33 +5,36 @@ import BotaoAdicionar from "../../components/BotaoAdicionar";
 
 import { styles } from "./styles";
 import Titulo from "../../components/Titulo";
-import { mockupViagens } from "../../data/MockupViagens";
-import { MockupViagens } from "../../types/MockupViagens";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import travelerApi from "../../services/api/travelerApi";
 import { GetViagensResponseDto } from "../../types/dto/GetViagensResponseDto";
 import { formatDate } from "../../utils/DataFormat";
+import { CadastroContext } from "../../contexts/cadastro";
+import Loading from "../../components/Loading";
 
 function Viagens(){
 
+  const { user } = useContext(CadastroContext);
+
   const [viagens, setViagens] = useState<GetViagensResponseDto[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   
   const renderItem = ({ item }: { item: GetViagensResponseDto }) => (
-    <ItemViagem
-      nome={item.nome}
-      descricao={item.descricao}
-      destino={(item.viagem_destino_id).toString()}
-      dataInicio={formatDate(item.data_inicio)}
-      dataFim={formatDate(item.data_fim)}
-      statusViagem={(item.status_viagem_id).toString()}
-    />
+    <ItemViagem item={item} />
   );
 
   useEffect(() => {
     const listarViagens = async () => {
-      const response = await travelerApi.get('/viagem');
-      setViagens(response.data)
-    }
+      try {
+        setIsLoading(true);
+        const response = await travelerApi.get(`/viagem/usuario/${user.id}`);
+        setViagens(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar viagens:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     listarViagens();
   }, []);
 
@@ -39,14 +42,22 @@ function Viagens(){
     <View style={styles.container}>
       <HeaderFixo />
       <Titulo texto="Viagens" />
+      {isLoading &&
+      <View style={styles.wrapper}>
+        <Loading />
+      </View>
+      }
+      {viagens.length == 0 && !isLoading &&
       <View style={styles.wrapper}>
         <Text style={styles.text}>Você ainda não possui nenhuma viagem cadastrada.</Text>
-      </View>
+      </View> }
+      
+      {viagens.length > 0 && !isLoading &&
       <FlatList
         data={viagens}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
-      />
+      />}
       <BotaoAdicionar />
     </View>
   )
