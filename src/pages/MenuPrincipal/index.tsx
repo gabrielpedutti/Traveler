@@ -12,7 +12,7 @@ function MenuPrincipal(){
       <View style={styles.container}>
         <Header botaoFechar={true}/>
         <View style={styles.wrapper}>
-          <ItemMenu label="Viagens" name='airplane-outline' pagina = "" />
+          <ItemMenu label="Viagens" name='airplane-outline' pagina = "Viagens" />
           <Divisoria />
           <ItemMenu label="Transportes" name='bus-outline' pagina = "" />
           <Divisoria />

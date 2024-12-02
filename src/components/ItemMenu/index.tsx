@@ -6,7 +6,13 @@ import { styles } from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
 
-function ItemMenu(props) {
+interface ItemMenuProps {
+  label: string;
+  name: string;
+  pagina: keyof RootStackParamList;
+}
+
+function ItemMenu(props: ItemMenuProps) {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 

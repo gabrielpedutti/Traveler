@@ -11,4 +11,5 @@ export type RootStackParamList = {
   CadastroViagem: undefined;
   BaseCadastroViagem: undefined;
   ResumoViagem: undefined;
+  Viagens: undefined;
 }

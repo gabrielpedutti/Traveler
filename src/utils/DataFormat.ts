@@ -13,3 +13,14 @@ export function formatToISO(dateString: string): Date {
   const [day, month, year] = dateString.split('/').map(Number);
   return new Date(year, month - 1, day);
 }
+
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+
+  // Obtem os componentes da data
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0"); // UTCMonth retorna meses de 0 a 11
+  const year = date.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
+}

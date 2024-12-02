@@ -10,6 +10,7 @@ import MenuPrincipal from './src/pages/MenuPrincipal';
 import ResumoViagem from './src/pages/ResumoViagem';
 import BaseCadastroViagem from './src/pages/BaseCadastroViagem';
 import { RootStackParamList } from './src/types/RootStackParamList';
+import Viagens from './src/pages/Viagens';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -71,6 +72,13 @@ export default function App() {
           <Stack.Screen
             name="BaseCadastroViagem"
             component={BaseCadastroViagem}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Viagens"
+            component={Viagens}
             options={{
               headerShown: false,
             }}

@@ -24,7 +24,7 @@ import { PaisResponseDto } from "../../types/dto/PaisResponseDto";
 import { EstadoResponseDto } from "../../types/dto/EstadoResponseDto";
 import { MunicipioResponseDto } from "../../types/dto/MunicipioResponseDto";
 import { cadastrarUsuario } from "../../services/httpService";
-import { formatToISO } from "../../utils/DataFormat";
+import { formatToISOString } from "../../utils/DataFormat";
 import { ErroResponseDto } from "../../types/dto/ErroResponseDto";
 
 const CadastroSchema = z.object({
@@ -91,7 +91,7 @@ function Cadastro(): JSX.Element {
 
   async function cadastrar(data: CadastroRequestDto) {
     
-    const dataFormatada = formatToISO(data.data_nascimento);
+    const dataFormatada = formatToISOString(data.data_nascimento);
     const payload = {
       ...data,
       data_nascimento: dataFormatada,

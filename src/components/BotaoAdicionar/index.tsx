@@ -11,7 +11,7 @@ function BotaoAdicionar() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return(
-    <TouchableOpacity style={styles.botaoMais} onPress={() => navigation.navigate('CadastroViagem')}>
+    <TouchableOpacity style={styles.botaoMais} onPress={() => navigation.navigate('BaseCadastroViagem')}>
         <Ionicons name={'add-circle-outline'} size={50} color='#2b88d9'/>
     </TouchableOpacity>
   )
