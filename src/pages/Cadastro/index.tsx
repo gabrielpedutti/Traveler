@@ -1,4 +1,4 @@
-import { Text, View, ScrollView, KeyboardAvoidingView } from "react-native";
+import { Text, View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useState, useContext, useEffect } from "react";
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,7 +32,14 @@ const CadastroSchema = z.object({
   data_nascimento: z.string().min(1, "Data de Nascimento é obrigatória"),
   email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
   senha: z.string().min(1, "Senha é obrigatória"),
-  municipio_id: z.number().min(1, "Cidade é obrigatório"),
+  municipio_id: z
+  .union([z.string(), z.number()]) // Aceita tanto string quanto número
+  .refine((val) => !isNaN(Number(val)), { message: "Origem é obrigatório" }) // Verifica se é um número válido
+  .transform((val) => {
+    // Se for string (iOS), converte para número, se já for número (Android), deixa como está
+    return Platform.OS === 'ios' ? Number(val) : val;
+  })
+  .refine((val) => Number(val) > 0, { message: "Origem é obrigatório" }),
 });
 
 function Cadastro(): JSX.Element {

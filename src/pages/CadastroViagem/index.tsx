@@ -1,10 +1,9 @@
-import { View, Text, TextInput, Touchable, TouchableOpacity, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { styles } from "./styles";
 import Input from "../../components/InputCadastro";
-import Titulo from "../../components/Titulo";
 import { DateInput } from "../../components/DateInput";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
@@ -24,11 +23,21 @@ const cadastroViagemSchema = z.object({
   data_inicio: z.string().min(1, "Data Inicial é obrigatório"),
   data_fim: z.string().min(1, "Data Final é obrigatório"),
   viagem_origem: z
-    .number()
-    .refine((val) => val > 0, { message: "Origem é obrigatório" }),
+    .union([z.string(), z.number()]) // Aceita tanto string quanto número
+    .refine((val) => !isNaN(Number(val)), { message: "Origem é obrigatório" }) // Verifica se é um número válido
+    .transform((val) => {
+      // Se for string (iOS), converte para número, se já for número (Android), deixa como está
+      return Platform.OS === 'ios' ? Number(val) : val;
+    })
+    .refine((val) => Number(val) > 0, { message: "Origem é obrigatório" }),
   viagem_destino: z
-    .number()
-    .refine((val) => val > 0, { message: "Destino é obrigatório" }),
+    .union([z.string(), z.number()]) // Aceita tanto string quanto número
+    .refine((val) => !isNaN(Number(val)), { message: "Destino é obrigatório" }) // Verifica se é um número válido
+    .transform((val) => {
+      // Se for string (iOS), converte para número, se já for número (Android), deixa como está
+      return Platform.OS === 'ios' ? Number(val) : val;
+    })
+    .refine((val) => Number(val) > 0, { message: "Destino é obrigatório" }),
 })
 .refine((data) => {
   const inicio = formatToISO(data.data_inicio);
@@ -62,6 +71,10 @@ function CadastroViagem() {
   });
 
   async function cadastrarViagem(data: CadastroViagemSchema) {
+
+    console.log("AAAAAAAAAAAAAAAAAAAAAAA")
+    console.log(data.data_inicio)
+    console.log(data.viagem_destino)
 
     const dataInicioFormatada = formatToISOString(data.data_inicio);
     const dataFimFormatada = formatToISOString(data.data_fim);

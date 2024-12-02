@@ -11,6 +11,7 @@ import ResumoViagem from './src/pages/ResumoViagem';
 import BaseCadastroViagem from './src/pages/BaseCadastroViagem';
 import { RootStackParamList } from './src/types/RootStackParamList';
 import Viagens from './src/pages/Viagens';
+import ViagemSelecionada from './src/pages/ViagemSelecionada';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -79,6 +80,13 @@ export default function App() {
           <Stack.Screen
             name="Viagens"
             component={Viagens}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="ViagemSelecionada"
+            component={ViagemSelecionada}
             options={{
               headerShown: false,
             }}

@@ -1,3 +1,5 @@
+import { GetViagensResponseDto } from "./dto/GetViagensResponseDto";
+
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
@@ -12,4 +14,5 @@ export type RootStackParamList = {
   BaseCadastroViagem: undefined;
   ResumoViagem: undefined;
   Viagens: undefined;
+  ViagemSelecionada: { item: GetViagensResponseDto };
 }

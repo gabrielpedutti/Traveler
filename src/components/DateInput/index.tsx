@@ -36,8 +36,9 @@ export function DateInput(props: DateInputProps): JSX.Element {
   }
 
   function confirmIOSDate() {
-    toggleDatePicker();
     setDataNascimento(formatDate(date));
+    props.onChangeText(formatDate(date));
+    toggleDatePicker();
   }
 
   function formatDate(date: Date) {
@@ -61,6 +62,7 @@ export function DateInput(props: DateInputProps): JSX.Element {
           value={date}
           onChange={onChange}
           minimumDate={new Date(1900, 0, 1)}
+          style={styles.datePicker}
         />
       )}
       {showPicker && Platform.OS === 'ios' && (

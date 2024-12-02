@@ -29,7 +29,11 @@ const styles = StyleSheet.create({
   textConfirmar: {
     color: "#fff",
     textAlign: 'center',
-  }
+  },
+  datePicker: {
+    height: 120,
+    top: -10,
+  },
 });
 
 export { styles };
