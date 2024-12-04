@@ -11,6 +11,7 @@ import { DateInput } from "../../components/DateInput";
 import Botao from "../../components/Botao";
 import Toast from "react-native-toast-message";
 import { Picker } from "@react-native-picker/picker";
+import HeaderFixo from "../../components/HeaderFixo";
 
 const cadastroTrasnporteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -61,6 +62,7 @@ function CadastroTransporte() {
 
   return(
     <View style={styles.container}>
+      <HeaderFixo />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Titulo texto="Novo transporte" />

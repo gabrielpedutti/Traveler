@@ -12,6 +12,11 @@ import BaseCadastroViagem from './src/pages/BaseCadastroViagem';
 import { RootStackParamList } from './src/types/RootStackParamList';
 import Viagens from './src/pages/Viagens';
 import ViagemSelecionada from './src/pages/ViagemSelecionada';
+import CadastroViagem from './src/pages/CadastroViagem';
+import CadastroHospedagem from './src/pages/CadastroHospedagem';
+import CadastroTurismo from './src/pages/CadastroTurismo';
+import CadastroTransporte from './src/pages/CadastroTransporte';
+import CadastroViagemNavigator from './src/navigation/cadastroViagemNavigator';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -87,6 +92,13 @@ export default function App() {
           <Stack.Screen
             name="ViagemSelecionada"
             component={ViagemSelecionada}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CadastroViagemNavigator"
+            component={CadastroViagemNavigator}
             options={{
               headerShown: false,
             }}

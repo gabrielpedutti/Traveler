@@ -19,6 +19,9 @@ import { ErroResponseDto } from "../../types/dto/ErroResponseDto";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
 import Titulo from "../../components/Titulo";
+import HeaderFixo from "../../components/HeaderFixo";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../types/RootStackParamList";
 
 const cadastroViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -54,15 +57,12 @@ const cadastroViagemSchema = z.object({
     path: ["data_inicio"], // Vincular erro ao campo `data_inicio`
   });
 
-type CadastroViagemProps = {
-  navigation: MaterialTopTabNavigationProp<ParamListBase>; // Tipo correto para tab navigation
-};
-
 type CadastroViagemSchema = z.infer<typeof cadastroViagemSchema>;
 
-function CadastroViagem({navigation}: CadastroViagemProps) {
+function CadastroViagem() {
 
   const { user } = useContext(CadastroContext);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const { control, handleSubmit, formState: { errors } } = useForm<CadastroViagemSchema>({
     resolver: zodResolver(cadastroViagemSchema),
@@ -118,9 +118,11 @@ function CadastroViagem({navigation}: CadastroViagemProps) {
       throw response;
     }
 
+    console.log('Cadastro realizado com sucesso:', response);
+
     // Aguardar 4 segundos antes de mudar de página
     setTimeout(() => {
-      navigation.jumpTo("Transporte");
+      navigation.navigate('CadastroTransporte');
     }, 1000); // Delay em milissegundos (1 segundos)
   
     } catch (error) {
@@ -175,6 +177,7 @@ function CadastroViagem({navigation}: CadastroViagemProps) {
 
   return(
     <View style={styles.container}>
+      <HeaderFixo />
       <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <View style={styles.noImage}>

@@ -11,6 +11,7 @@ import { DateInput } from "../../components/DateInput";
 import SelecionarPaisEstadoCidade from "../../components/SelecionarPaisEstadoCidade";
 import Botao from "../../components/Botao";
 import Toast from "react-native-toast-message";
+import HeaderFixo from "../../components/HeaderFixo";
 
 const cadastroHospedagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -54,6 +55,7 @@ function CadastroHospedagem() {
 
   return(
     <View style={styles.container}>
+      <HeaderFixo />
       <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
         <ScrollView contentContainerStyle={styles.scrollView}>
         <Titulo texto="Nova hospedagem" />

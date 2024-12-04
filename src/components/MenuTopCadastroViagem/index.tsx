@@ -17,7 +17,7 @@ const Tab = createMaterialTopTabNavigator();
 
 
 
-const MenuTopCadastroViagem: React.FC = () => {
+function MenuTopCadastroViagem() {
   return (
     <NavigationContainer independent={true}>
       <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} 

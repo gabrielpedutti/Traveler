@@ -12,6 +12,7 @@ import { RootStackParamList } from "../../types/RootStackParamList";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ModalNovoItem from "../../components/ModalNovoItem";
 import { useState } from "react";
+import Input from "../../components/InputCadastro";
 
 function ViagemSelecionada() {
 
@@ -43,6 +44,7 @@ function ViagemSelecionada() {
             <Text style={styles.descricao}>{item.descricao}</Text>
           </View>
           <Text style={styles.titulo}>Destino</Text>
+          <Input placeholder="teste" label="Destino" onChangeText={()=> ("")} value="" />
         </ScrollView>
         <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
           <AntDesign name={'plus'} size={35} color='#fff'/>

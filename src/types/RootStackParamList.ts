@@ -1,5 +1,12 @@
 import { GetViagensResponseDto } from "./dto/GetViagensResponseDto";
 
+export type CadastroViagemParamList = {
+  CadastroHospedagem: undefined;
+  CadastroTransporte: undefined;
+  CadastroTurismo: undefined;
+  CadastroViagem: undefined;
+}
+
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
@@ -15,4 +22,5 @@ export type RootStackParamList = {
   ResumoViagem: undefined;
   Viagens: undefined;
   ViagemSelecionada: { item: GetViagensResponseDto };
-}
+  CadastroViagemNavigator: { screen: keyof CadastroViagemParamList; params?: any };
+};

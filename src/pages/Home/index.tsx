@@ -22,7 +22,7 @@ function Home(){
       <HeaderFixo />
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Text style={styles.titulo}>Viaje sem preocupações, deixe-nos ser sua assistente de viagens!</Text>
-        <Botao label={'Cadastre uma nova viagem'} onPress={() => navigation.navigate('BaseCadastroViagem')}/>
+        <Botao label={'Cadastre uma nova viagem'} onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroViagem" })}/>
         <Image
           style={styles.imagem}
           source={require('../../assets/WorldMap.png')}
