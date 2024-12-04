@@ -83,7 +83,8 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    top: '25%',
+    top: '10%',
+    marginBottom: 40,
     alignItems: 'center',
   },
   text: {
@@ -102,6 +103,10 @@ const styles = StyleSheet.create({
   linha: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  wrapperExcluir: {
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   botaoExcluir: {
     height: 50,

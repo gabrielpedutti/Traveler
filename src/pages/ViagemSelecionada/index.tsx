@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import Input from "../../components/InputCadastro";
 import travelerApi from "../../services/api/travelerApi";
 import Loading from "../../components/Loading";
-import { set } from "zod";
 import ItemDespesa from "../../components/ItemDespesa";
 import Titulo from "../../components/Titulo";
 import Botao from "../../components/Botao";
@@ -70,7 +69,7 @@ function ViagemSelecionada() {
 
     buscarDespesas();
     buscarTransporte();
-  } ,[]);
+  }, []);
 
   function excluirViagem() {
     travelerApi.delete(`/viagem/${item.id}/delete`)
@@ -82,11 +81,21 @@ function ViagemSelecionada() {
       })
   }
 
+  function botaoExcluir() {
+    return(
+      <View style={styles.wrapperExcluir}>
+        <TouchableOpacity style={styles.botaoExcluir} onPress={excluirViagem}>
+          <Text style={styles.textoExcluir}>Excluir Viagem</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   return(
     <View style={styles.container}>
       <HeaderFixo />
       <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
           <View style={styles.noImage}>
             <FontAwesome6Icon name={'image'} size={40} color='#000' style={styles.icon}/>
             <TouchableOpacity style={styles.editButton}>
@@ -100,49 +109,46 @@ function ViagemSelecionada() {
             </View>
             <Text style={styles.descricao}>{item.descricao}</Text>
           </View>
-          <Titulo texto="Transportes" />
-          {isLoading &&
-          <View style={styles.wrapper}>
-            <Loading />
-          </View>
+          {isLoading && 
+            <View style={styles.wrapper}>
+              <Loading />
+            </View>
           }
-          {transporte && transporte.length == 0 && !isLoading &&
-          <View style={styles.wrapper}>
-            <Text style={styles.text}>Você ainda não possui nenhum transporte cadastrado.</Text>
-          </View> }    
-          {transporte && transporte.length > 0 && !isLoading &&
+          {!isLoading && 
             <FlatList
+              ListHeaderComponent={<Titulo texto="Transportes" />}
               data={transporte}
               renderItem={renderItemTransporte}
               keyExtractor={(item, index) => index.toString()}
-            />}
-          <Titulo texto="Despesas" />
-          {isLoading &&
-          <View style={styles.wrapper}>
-            <Loading />
-          </View>
+              ListEmptyComponent={<>
+                <View style={styles.wrapper}>
+                  <Text style={styles.text}>Você ainda não possui nenhum transporte cadastrado.</Text>
+                </View>
+              </>}
+              scrollEnabled={false} // Desativa o scroll na FlatList
+            />
           }
-          {despesa && despesa.length == 0 && !isLoading &&
-          <View style={styles.wrapper}>
-            <Text style={styles.text}>Você ainda não possui nenhuma despesa cadastrada.</Text>
-          </View> }    
-          {despesa && despesa.length > 0 && !isLoading &&
+          {!isLoading && 
             <FlatList
+              ListHeaderComponent={<Titulo texto="Despesas" />}
               data={despesa}
               renderItem={renderItemDespesa}
               keyExtractor={(item, index) => index.toString()}
-            />}
-        <View>
-          <TouchableOpacity style={styles.botaoExcluir} onPress={excluirViagem}>
-            <Text style={styles.textoExcluir}>Excluir Viagem</Text>
+              ListFooterComponent={botaoExcluir}
+              ListEmptyComponent={<>
+                <View style={styles.wrapper}>
+                  <Text style={styles.text}>Você ainda não possui nenhuma despesa cadastrada.</Text>
+                </View>
+              </>}
+              scrollEnabled={false} // Desativa o scroll na FlatList
+            />
+          }
+          <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
+            <AntDesign name={'plus'} size={35} color='#fff'/>
           </TouchableOpacity>
-        </View>
+          {isModalVisible && <ModalNovoItem closeModal={handleModal}/>}
+          <Toast />
         </ScrollView>
-        <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
-          <AntDesign name={'plus'} size={35} color='#fff'/>
-        </TouchableOpacity>
-        {isModalVisible && <ModalNovoItem closeModal={handleModal}/>}
-        <Toast />
       </KeyboardAvoidingView>
     </View>
   )
