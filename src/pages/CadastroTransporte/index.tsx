@@ -61,7 +61,7 @@ function CadastroTransporte() {
 
   return(
     <View style={styles.container}>
-      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
         <ScrollView contentContainerStyle={styles.scrollView}>
           <Titulo texto="Novo transporte" />
           <Controller
