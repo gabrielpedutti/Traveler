@@ -12,6 +12,14 @@ import Botao from "../../components/Botao";
 import Toast from "react-native-toast-message";
 import { Picker } from "@react-native-picker/picker";
 import HeaderFixo from "../../components/HeaderFixo";
+import { useContext } from "react";
+import { CadastroViagemContext } from "../../contexts/cadastroViagem";
+import { formatToISOString } from "../../utils/DataFormat";
+import { cadastrarDespesaBanco, cadastrarTransporteBanco } from "../../services/httpService";
+import { CadastroContext } from "../../contexts/cadastro";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../types/RootStackParamList";
+import { useNavigation } from "@react-navigation/native";
 
 const cadastroTrasnporteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -40,6 +48,10 @@ type CadastroTransporteSchema = z.infer<typeof cadastroTrasnporteSchema>;
 
 function CadastroTransporte() {
 
+  const { user } = useContext(CadastroContext);
+  const { viagem } = useContext(CadastroViagemContext);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const { control, handleSubmit, formState: { errors } } = useForm<CadastroTransporteSchema>({
     resolver: zodResolver(cadastroTrasnporteSchema),
     defaultValues: {
@@ -53,11 +65,94 @@ function CadastroTransporte() {
   });
 
   function onFormValidationError(errors: any) {
-    console.log(errors);
+    // Mostra um Toast geral informando que há erros
+    Toast.show({
+      type: "error",
+      text1: "Erro na validação",
+      text2: "Por favor, preencha os campos corretamente.",
+      visibilityTime: 4000,
+      autoHide: true,
+      topOffset: 30,
+      position: "top",
+      text1Style: {
+        fontSize: 16, // Tamanho do texto principal
+        fontWeight: "bold", // Negrito
+      },
+      text2Style: {
+        fontSize: 16, // Tamanho do texto secundário
+      },
+    });
+  
+    // (Opcional) Exibir detalhes adicionais para depuração
+    console.log("Erros de validação:", errors);
   }
 
   async function cadastrarTransporte(data: CadastroTransporteSchema) {
-    console.log(data);
+
+    try {
+      const dataFormatada = formatToISOString(data.data);
+      const payloadDespesa: CadastroDespesaRequestDto = {
+        data: dataFormatada,
+        descricao: "Transporte: " + data.nome,
+        usuario_id: user.id ?? 0,
+        valor: Number(data.valor),
+        viagem_id: Number(viagem.id),
+        tipo_despesa_id: 6, //6	TRANSPORTE  7 HOSPEDAGEM  8 ALIMENTACAO  9 PASSEIO  10 OUTROS
+      }
+
+      const responseDespesa = await cadastrarDespesaBanco(payloadDespesa);
+
+      // Verifique se a resposta é do tipo erro
+      if ('status' in responseDespesa) {
+        // Aqui sabemos que o response é do tipo ErroResponseDto
+        throw responseDespesa;
+      }
+
+      const payloadViagem: CadastroTransporteRequestDto = {
+        ...data,
+        tipo_id: 8,
+        despesa_id: responseDespesa.id,
+        viagem_id: Number(viagem.id),
+        data: dataFormatada,
+        transporte_origem_id: Number(data.viagem_origem),
+        transporte_destino_id: Number(data.viagem_destino),
+      }
+
+      const response = await cadastrarTransporteBanco(payloadViagem);
+
+      // Verifique se a resposta é do tipo erro
+      if ('status' in response) {
+        // Aqui sabemos que o response é do tipo ErroResponseDto
+        throw response;
+      }
+
+      // Navega para a próxima tela após um pequeno atraso
+      setTimeout(() => {
+        navigation.navigate("CadastroHospedagem");
+      }, 1000); // Delay de 1 segundo
+    } catch (error) {
+      console.error("Erro ao cadastrar transporte: ", error);
+    }
+
+    Toast.show({
+      type: "success",
+      text1: 'Cadastro realizado com sucesso',
+      visibilityTime: 4000,
+      autoHide: true,
+      topOffset: 30,
+      position: 'top',
+      text1Style: {
+        fontSize: 16, // Aumenta o tamanho da fonte para o texto principal
+        fontWeight: 'bold', // Torna o texto principal em negrito
+      },
+      text2Style: {
+        fontSize: 16, // Aumenta o tamanho da fonte para o texto secundário
+      },
+      onPress: () => {
+        Toast.hide();
+      }
+    });
+
   }
 
   return(
@@ -92,7 +187,7 @@ function CadastroTransporte() {
                   selectedValue={value}
                   onValueChange={(itemValue) => onChange(itemValue)}
                 >
-                  <Picker.Item label="Selecione o tipo de transporte" value="" />
+                  <Picker.Item label="Selecione o tipo de transporte" value="1" />
                   {/* {cidades.map((item) => (
                     <Picker.Item key={item.id} value={item.id} label={item.nm_municipio} />
                   ))} */}

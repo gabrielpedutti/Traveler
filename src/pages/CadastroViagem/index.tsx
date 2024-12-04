@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SelecionarPaisEstadoCidade from "../../components/SelecionarPaisEstadoCidade";
 import Botao from "../../components/Botao";
 import { formatToISO, formatToISOString } from "../../utils/DataFormat";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { CadastroContext } from "../../contexts/cadastro";
 import { cadastrarViagemBanco } from "../../services/httpService";
 import Toast from "react-native-toast-message";
@@ -22,6 +22,8 @@ import Titulo from "../../components/Titulo";
 import HeaderFixo from "../../components/HeaderFixo";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
+import { CadastroViagemContext } from "../../contexts/cadastroViagem";
+import travelerApi from "../../services/api/travelerApi";
 
 const cadastroViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -63,6 +65,7 @@ function CadastroViagem() {
 
   const { user } = useContext(CadastroContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { salvarDadosViagem } = useContext(CadastroViagemContext);
 
   const { control, handleSubmit, formState: { errors } } = useForm<CadastroViagemSchema>({
     resolver: zodResolver(cadastroViagemSchema),
@@ -113,12 +116,23 @@ function CadastroViagem() {
       });
 
     // Verifique se a resposta é do tipo erro
-    if ((response as ErroResponseDto).status) {
+    if ('status' in response) {
       // Aqui sabemos que o response é do tipo ErroResponseDto
       throw response;
     }
 
-    console.log('Cadastro realizado com sucesso:', response);
+    // Busca a viagem cadastrada para salvar no contexto e disponibilizar para as próximas telas
+    try {
+      const viagem = await travelerApi.get(`/viagem/${response.id}`);
+      salvarDadosViagem(viagem.data as GetViagemResponseDto);
+
+      // Navega para a próxima tela após um pequeno atraso
+      setTimeout(() => {
+        navigation.navigate("CadastroTransporte");
+      }, 1000); // Delay de 1 segundo
+    } catch (error) {
+      console.error("Erro ao salvar os dados da viagem no contexto:", error);
+    }
 
     // Aguardar 4 segundos antes de mudar de página
     setTimeout(() => {

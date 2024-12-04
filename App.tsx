@@ -19,6 +19,7 @@ import CadastroTransporte from './src/pages/CadastroTransporte';
 import CadastroViagemNavigator from './src/navigation/cadastroViagemNavigator';
 
 
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {

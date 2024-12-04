@@ -81,6 +81,45 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 2,
   },
+  wrapper: {
+    flex: 1,
+    top: '25%',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 18,
+    color: '#2b88d9',
+    margin: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  img: {
+    margin: 15,
+    marginRight: 0,
+    width: 70,
+    height: 70,
+  },
+  linha: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  botaoExcluir: {
+    height: 50,
+    width: '80%',
+    marginStart: '10%',
+    marginBottom: 20,
+    backgroundColor: '#e75757',
+    borderWidth: 2,
+    borderColor: '#eb4545',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  textoExcluir: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
 });
 
 export { styles };

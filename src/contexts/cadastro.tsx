@@ -2,7 +2,7 @@ import React, { createContext, useState, ReactNode } from "react";
 import { useNavigation } from '@react-navigation/native';
 
 interface User {
-  id?: string,
+  id?: number,
   nome?: string,
   data_nascimento?: string,
   email?: string,

@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useState } from "react";
 
 interface CadastroViagemContextType {
-  viagem: CadastroViagemResponseDto;
-  salvarDadosViagem: (viagem: CadastroViagemResponseDto) => void;
+  viagem: GetViagemResponseDto;
+  salvarDadosViagem: (viagem: GetViagemResponseDto) => void;
 }
 
 export const CadastroViagemContext = createContext<CadastroViagemContextType>({} as CadastroViagemContextType);
@@ -13,9 +13,9 @@ interface CadastroViagemProviderProps {
 
 function CadastroViagemProvider({ children }: CadastroViagemProviderProps) {
 
-  const [viagem, setViagem] = useState<CadastroViagemResponseDto>({});
+  const [viagem, setViagem] = useState<GetViagemResponseDto>({});
 
-  function salvarDadosViagem(viagem: CadastroViagemResponseDto) {
+  function salvarDadosViagem(viagem: GetViagemResponseDto) {
     setViagem(viagem);
   }
 

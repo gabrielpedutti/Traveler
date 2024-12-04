@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, KeyboardAvoidingView, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -11,8 +11,15 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ModalNovoItem from "../../components/ModalNovoItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../../components/InputCadastro";
+import travelerApi from "../../services/api/travelerApi";
+import Loading from "../../components/Loading";
+import { set } from "zod";
+import ItemDespesa from "../../components/ItemDespesa";
+import Titulo from "../../components/Titulo";
+import Botao from "../../components/Botao";
+import ItemTransporte from "../../components/ItemTransporte";
 
 function ViagemSelecionada() {
 
@@ -20,9 +27,59 @@ function ViagemSelecionada() {
   const { item } = route.params as { item: GetViagensResponseDto };
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [transporte, setTransporte] = useState<GetTransportesPorViagemDto[]>();
+  const [hospedagem, setHospedagem] = useState<string>('');
+  const [passeio, setPasseio] = useState<string>('');
+  const [despesa, setDespesa] = useState<CadastroDespesaResponseDto[]>();
 
   function handleModal() {
     setIsModalVisible(!isModalVisible);
+  }
+
+  const renderItemTransporte = ({ item }: { item: GetTransportesPorViagemDto }) => (
+    <ItemTransporte item={item} />
+  );
+
+  const renderItemDespesa = ({ item }: { item: CadastroDespesaResponseDto }) => (
+    <ItemDespesa item={item} />
+  );
+
+  useEffect(() => {
+    const buscarDespesas = async () => {
+      setIsLoading(true);
+      try {
+        const response = await travelerApi.get(`/despesa/viagem/${item.id}`);
+        
+        setDespesa(response.data);
+
+      } catch (error) {
+        console.error("Erro ao buscar despesas:", error);
+      }
+    }
+
+    const buscarTransporte = async () => {
+      try {
+        const response = await travelerApi.get(`/transporte/viagem/${item.id}`);
+        setTransporte(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Erro ao buscar transporte:", error);
+      }
+    }
+
+    buscarDespesas();
+    buscarTransporte();
+  } ,[]);
+
+  function excluirViagem() {
+    travelerApi.delete(`/viagem/${item.id}/delete`)
+      .then(() => {
+        navigation.navigate('Viagens');
+      })
+      .catch((error) => {
+        console.error("Erro ao excluir viagem:", error);
+      })
   }
 
   return(
@@ -43,8 +100,43 @@ function ViagemSelecionada() {
             </View>
             <Text style={styles.descricao}>{item.descricao}</Text>
           </View>
-          <Text style={styles.titulo}>Destino</Text>
-          <Input placeholder="teste" label="Destino" onChangeText={()=> ("")} value="" />
+          <Titulo texto="Transportes" />
+          {isLoading &&
+          <View style={styles.wrapper}>
+            <Loading />
+          </View>
+          }
+          {transporte && transporte.length == 0 && !isLoading &&
+          <View style={styles.wrapper}>
+            <Text style={styles.text}>Você ainda não possui nenhum transporte cadastrado.</Text>
+          </View> }    
+          {transporte && transporte.length > 0 && !isLoading &&
+            <FlatList
+              data={transporte}
+              renderItem={renderItemTransporte}
+              keyExtractor={(item, index) => index.toString()}
+            />}
+          <Titulo texto="Despesas" />
+          {isLoading &&
+          <View style={styles.wrapper}>
+            <Loading />
+          </View>
+          }
+          {despesa && despesa.length == 0 && !isLoading &&
+          <View style={styles.wrapper}>
+            <Text style={styles.text}>Você ainda não possui nenhuma despesa cadastrada.</Text>
+          </View> }    
+          {despesa && despesa.length > 0 && !isLoading &&
+            <FlatList
+              data={despesa}
+              renderItem={renderItemDespesa}
+              keyExtractor={(item, index) => index.toString()}
+            />}
+        <View>
+          <TouchableOpacity style={styles.botaoExcluir} onPress={excluirViagem}>
+            <Text style={styles.textoExcluir}>Excluir Viagem</Text>
+          </TouchableOpacity>
+        </View>
         </ScrollView>
         <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
           <AntDesign name={'plus'} size={35} color='#fff'/>
