@@ -27,7 +27,11 @@ const MenuTopCadastroViagem: React.FC = () => {
         { name: "Hospedagem", iconName: "bed", iconLibrary: FontAwesome },
         { name: "Turismo", iconName: "bus", iconLibrary: Ionicons },
       ]}
-      />}>
+      />} 
+      screenOptions={{
+        swipeEnabled: true,
+        
+      }}>
         <Tab.Screen name="Viagem" component={CadastroViagem} />
         <Tab.Screen name="Transporte" component={CadastroTransporte} />
         <Tab.Screen name="Hospedagem" component={CadastroHospedagem} />

@@ -16,6 +16,9 @@ import { CadastroContext } from "../../contexts/cadastro";
 import { cadastrarViagemBanco } from "../../services/httpService";
 import Toast from "react-native-toast-message";
 import { ErroResponseDto } from "../../types/dto/ErroResponseDto";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
+import Titulo from "../../components/Titulo";
 
 const cadastroViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -51,10 +54,13 @@ const cadastroViagemSchema = z.object({
     path: ["data_inicio"], // Vincular erro ao campo `data_inicio`
   });
 
+type CadastroViagemProps = {
+  navigation: MaterialTopTabNavigationProp<ParamListBase>; // Tipo correto para tab navigation
+};
 
 type CadastroViagemSchema = z.infer<typeof cadastroViagemSchema>;
 
-function CadastroViagem() {
+function CadastroViagem({navigation}: CadastroViagemProps) {
 
   const { user } = useContext(CadastroContext);
 
@@ -71,10 +77,6 @@ function CadastroViagem() {
   });
 
   async function cadastrarViagem(data: CadastroViagemSchema) {
-
-    console.log("AAAAAAAAAAAAAAAAAAAAAAA")
-    console.log(data.data_inicio)
-    console.log(data.viagem_destino)
 
     const dataInicioFormatada = formatToISOString(data.data_inicio);
     const dataFimFormatada = formatToISOString(data.data_fim);
@@ -115,6 +117,11 @@ function CadastroViagem() {
       // Aqui sabemos que o response é do tipo ErroResponseDto
       throw response;
     }
+
+    // Aguardar 4 segundos antes de mudar de página
+    setTimeout(() => {
+      navigation.jumpTo("Transporte");
+    }, 1000); // Delay em milissegundos (1 segundos)
   
     } catch (error) {
       // Verifique se o erro é uma instância de ErroResponseDto
@@ -176,7 +183,7 @@ function CadastroViagem() {
               <MaterialIcons name={'edit'} size={40} color='#000' style={styles.icon}/>
             </TouchableOpacity>
           </View>
-          <Text style={styles.titulo}>Nova Viagem</Text>
+          <Titulo texto="Nova viagem" />
           <Controller
               control={control}
               name="nome"
@@ -205,39 +212,45 @@ function CadastroViagem() {
               )}
             />
             {errors.descricao && <Text style={styles.error} >{errors.descricao.message}</Text>}
-          <Controller
-            control={control}
-            name="data_inicio"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DateInput
-                label="Data da Viagem"
-                placeholder="__/__/__"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
+          <View style={styles.containerDatas}>
+            <View  style={styles.containerData}>
+              <Controller
+                control={control}
+                name="data_inicio"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <DateInput
+                    label="Data da Viagem"
+                    placeholder="__/__/__"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
               />
-            )}
-          />
-          {errors.data_inicio && <Text style={styles.error} >{errors.data_inicio.message}</Text>}
-          <Controller
-            control={control}
-            name="data_fim"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DateInput
-                label="Data fim da Viagem"
-                placeholder="__/__/__"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
+              {errors.data_inicio && <Text style={styles.error} >{errors.data_inicio.message}</Text>}
+            </View>
+            <View style={styles.containerData}>
+              <Controller
+                control={control}
+                name="data_fim"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <DateInput
+                    label="Data fim da Viagem"
+                    placeholder="__/__/__"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                  />
+                )}
               />
-            )}
-          />
-          {errors.data_fim && <Text style={styles.error} >{errors.data_fim.message}</Text>}
+              {errors.data_fim && <Text style={styles.error} >{errors.data_fim.message}</Text>}
+            </View>
+          </View>
           <Text style={styles.titulo}>Selecione a Origem</Text>
           <SelecionarPaisEstadoCidade municipioName={"viagem_origem"} control={control} errors={errors} />
           <Text style={styles.titulo}>Selecione o Destino</Text>
           <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
-          <Botao label="Cadastrar" onPress={handleSubmit(cadastrarViagem, onFormValidationError)} />
+          <Botao label="Continuar" onPress={handleSubmit(cadastrarViagem, onFormValidationError)} />
         </ScrollView>
         <Toast />
       </KeyboardAvoidingView>

@@ -41,6 +41,15 @@ const styles = StyleSheet.create({
     marginStart: 20,
     marginTop: 5
   },
+  containerDatas: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginStart: 0,
+    marginEnd: 1,
+  },
+  containerData: {
+    width: '48%',
+  }
 });
 
 export { styles };

@@ -14,7 +14,7 @@ type CustomTabBarProps = {
   tabsConfig: TabConfig[]; // Configuração dinâmica das abas
 };
 
-function CustomTabBar({ state, descriptors, navigation, tabsConfig }: CustomTabBarProps) {
+function CustomTabBar({ state, descriptors, tabsConfig }: CustomTabBarProps) {
   return (
     <View style={styles.tabBar}>
       {state.routes.map((route: any, index: number) => {
@@ -24,23 +24,8 @@ function CustomTabBar({ state, descriptors, navigation, tabsConfig }: CustomTabB
         // Encontrar a configuração correspondente ao nome da rota
         const tabConfig = tabsConfig.find((tab) => tab.name === route.name);
 
-        const onPress = () => {
-          const emitEvent = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-          });
-
-          if (!isFocused && !emitEvent.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
-
         return (
-          <TouchableOpacity
-            key={route.key}
-            onPress={onPress}
-            style={styles.tabItem}
-          >
+          <View key={route.key} style={styles.tabItem}>
             {/* Ícone */}
             {tabConfig && (
               <tabConfig.iconLibrary
@@ -51,12 +36,11 @@ function CustomTabBar({ state, descriptors, navigation, tabsConfig }: CustomTabB
             )}
             {/* Nome da Aba Apenas se Estiver Selecionada */}
             {isFocused && <Text style={styles.tabLabel}>{route.name}</Text>}
-          </TouchableOpacity>
+          </View>
         );
       })}
     </View>
   );
 }
-
 
 export default CustomTabBar;

@@ -5,13 +5,24 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { styles } from "./styles";
 import HeaderFixo from "../../components/HeaderFixo";
 import { GetViagensResponseDto } from "../../types/dto/GetViagensResponseDto";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { formatDate } from "../../utils/DataFormat";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../types/RootStackParamList";
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import ModalNovoItem from "../../components/ModalNovoItem";
+import { useState } from "react";
 
 function ViagemSelecionada() {
 
   const route = useRoute();
   const { item } = route.params as { item: GetViagensResponseDto };
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
+  function handleModal() {
+    setIsModalVisible(!isModalVisible);
+  }
 
   return(
     <View style={styles.container}>
@@ -33,6 +44,10 @@ function ViagemSelecionada() {
           </View>
           <Text style={styles.titulo}>Destino</Text>
         </ScrollView>
+        <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
+          <AntDesign name={'plus'} size={35} color='#fff'/>
+        </TouchableOpacity>
+        {isModalVisible && <ModalNovoItem closeModal={handleModal}/>}
         <Toast />
       </KeyboardAvoidingView>
     </View>

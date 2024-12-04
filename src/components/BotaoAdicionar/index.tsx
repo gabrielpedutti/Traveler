@@ -1,5 +1,5 @@
 import { View, TouchableOpacity } from "react-native";
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 
 import { styles } from "./styles";
@@ -12,7 +12,7 @@ function BotaoAdicionar() {
 
   return(
     <TouchableOpacity style={styles.botaoMais} onPress={() => navigation.navigate('BaseCadastroViagem')}>
-        <Ionicons name={'add-circle-outline'} size={50} color='#2b88d9'/>
+      <AntDesign name={'plus'} size={35} color='#fff'/>
     </TouchableOpacity>
   )
 }
