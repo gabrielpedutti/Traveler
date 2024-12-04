@@ -143,12 +143,13 @@ function ViagemSelecionada() {
               scrollEnabled={false} // Desativa o scroll na FlatList
             />
           }
-          <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
+
+          {isModalVisible && <ModalNovoItem closeModal={handleModal}/>}
+        </ScrollView>
+        <Toast />
+        <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
             <AntDesign name={'plus'} size={35} color='#fff'/>
           </TouchableOpacity>
-          {isModalVisible && <ModalNovoItem closeModal={handleModal}/>}
-          <Toast />
-        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   )

@@ -12,7 +12,7 @@ import Botao from "../../components/Botao";
 import Toast from "react-native-toast-message";
 import { Picker } from "@react-native-picker/picker";
 import HeaderFixo from "../../components/HeaderFixo";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CadastroViagemContext } from "../../contexts/cadastroViagem";
 import { formatToISOString } from "../../utils/DataFormat";
 import { cadastrarDespesaBanco, cadastrarTransporteBanco } from "../../services/httpService";
@@ -20,10 +20,17 @@ import { CadastroContext } from "../../contexts/cadastro";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
 import { useNavigation } from "@react-navigation/native";
+import travelerApi from "../../services/api/travelerApi";
 
 const cadastroTrasnporteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  tipoTransporte: z.string().min(1, "Tipo de transporte é obrigatório"),
+  tipoTransporte:   z.union([z.string(), z.number()]) // Aceita tanto string quanto número
+  .refine((val) => !isNaN(Number(val)), { message: "Tipo de tranpsorte é obrigatório" }) // Verifica se é um número válido
+  .transform((val) => {
+    // Se for string (iOS), converte para número, se já for número (Android), deixa como está
+    return Platform.OS === 'ios' ? Number(val) : val;
+  })
+  .refine((val) => Number(val) > 0, { message: "Tipo de tranpsorte é obrigatório" }),
   valor: z.string().min(1, "Valor é obrigatório"),
   data: z.string().min(1, "Data é obrigatório"),
   viagem_origem: z
@@ -51,6 +58,7 @@ function CadastroTransporte() {
   const { user } = useContext(CadastroContext);
   const { viagem } = useContext(CadastroViagemContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [tipoTransporte, setTipoTransporte] = useState<GetTipoTransporteDto[]>([]);
 
   const { control, handleSubmit, formState: { errors } } = useForm<CadastroTransporteSchema>({
     resolver: zodResolver(cadastroTrasnporteSchema),
@@ -87,6 +95,14 @@ function CadastroTransporte() {
     console.log("Erros de validação:", errors);
   }
 
+  useEffect(() => {
+    const consultaPaises = async () => {
+      const response = await travelerApi.get('/transporte/tipos');
+      setTipoTransporte(response.data)
+    }
+    consultaPaises();
+  }, [])
+
   async function cadastrarTransporte(data: CadastroTransporteSchema) {
 
     try {
@@ -110,7 +126,7 @@ function CadastroTransporte() {
 
       const payloadViagem: CadastroTransporteRequestDto = {
         ...data,
-        tipo_id: 8,
+        tipo_id: Number(data.tipoTransporte),
         despesa_id: responseDespesa.id,
         viagem_id: Number(viagem.id),
         data: dataFormatada,
@@ -188,9 +204,9 @@ function CadastroTransporte() {
                   onValueChange={(itemValue) => onChange(itemValue)}
                 >
                   <Picker.Item label="Selecione o tipo de transporte" value="1" />
-                  {/* {cidades.map((item) => (
-                    <Picker.Item key={item.id} value={item.id} label={item.nm_municipio} />
-                  ))} */}
+                  {tipoTransporte.map((item) => (
+                    <Picker.Item key={item.id} value={item.id} label={item.descricao} />
+                  ))}
                 </Picker>
               )}
             />
