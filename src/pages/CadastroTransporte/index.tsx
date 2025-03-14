@@ -113,7 +113,7 @@ function CadastroTransporte() {
         usuario_id: user.id ?? 0,
         valor: Number(data.valor),
         viagem_id: Number(viagem.id),
-        tipo_despesa_id: 6, //6	TRANSPORTE  7 HOSPEDAGEM  8 ALIMENTACAO  9 PASSEIO  10 OUTROS
+        tipo_despesa_id: 1, //1	TRANSPORTE  2 HOSPEDAGEM  3 ALIMENTACAO  4 PASSEIO  5 OUTROS
       }
 
       const responseDespesa = await cadastrarDespesaBanco(payloadDespesa);

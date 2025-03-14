@@ -89,7 +89,7 @@ function CadastroViagem() {
       data_fim: dataFimFormatada,
       viagem_origem_id: Number(data.viagem_origem),
       viagem_destino_id: Number(data.viagem_destino),
-      status_viagem_id: 5, //5-Planejada 6-Em andamento 7-Concluída 8-Cancelada
+      status_viagem_id: 1, //1-Planejada 2-Em andamento 3-Concluída 4-Cancelada
       usuario_id: Number(user.id)
     }
 

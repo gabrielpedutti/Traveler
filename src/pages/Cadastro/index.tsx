@@ -103,7 +103,7 @@ function Cadastro(): JSX.Element {
       ...data,
       data_nascimento: dataFormatada,
       municipio_id: Number(data.municipio_id),
-      tipo_usuario_id: 4,
+      tipo_usuario_id: 2, //1-Administrador, 2-Usuário
       tipo_cadastro_id: 1
     }
   
