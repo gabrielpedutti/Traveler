@@ -31,6 +31,26 @@ const styles = StyleSheet.create({
     marginStart: 20,
     marginTop: 5
   },
+  dropdown: {
+    margin: 16,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
 })
 
 export { styles };

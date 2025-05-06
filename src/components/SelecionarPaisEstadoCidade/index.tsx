@@ -8,6 +8,8 @@ import { PaisResponseDto } from "../../types/dto/PaisResponseDto";
 
 import { styles } from "./styles";
 import travelerApi from "../../services/api/travelerApi";
+import { Dropdown } from "react-native-element-dropdown";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 interface SelecionarPaisEstadoCidadeProps {
   control: Control<any>; // Especifique os tipos esperados pelo react-hook-form
@@ -79,37 +81,59 @@ function SelecionarPaisEstadoCidade({
       <View style={styles.wrapper}>
         <Text style={styles.label}>Selecione o país</Text>
         <View style={styles.containerInput}>
-          <Picker
-            selectedValue={paisEscolhido}
-            onValueChange={(itemValue) => {
-              setPaisEscolhido(itemValue);
+          <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={paises}
+            search
+            maxHeight={300}
+            labelField="nm_pais" // Propriedade no objeto do país para exibir
+            valueField="id"     // Propriedade no objeto do país para usar como valor
+            placeholder="Selecione o país"
+            searchPlaceholder="Buscar..."
+            value={paisEscolhido}
+            keyboardAvoiding={false}
+            onChange={item => {
+              setPaisEscolhido(item.id);
               limparEstados();
-              limparCidades();
             }}
-          >
-            <Picker.Item label="Selecione o país" value="" />
-            {paises.map((item) => (
-              <Picker.Item key={item.id} value={item.id} label={item.nm_pais} />
-            ))}
-          </Picker>
+             renderLeftIcon={() => (
+            <FontAwesome6Icon style={styles.icon} color="#2c88d9" name="globe" size={16} />
+            )}
+          />
         </View>
       </View>
 
       <View style={styles.wrapper}>
         <Text style={styles.label}>Selecione o estado</Text>
         <View style={styles.containerInput}>
-          <Picker
-            selectedValue={estadoEscolhido}
-            onValueChange={(itemValue) => {
-              setEstadoEscolhido(itemValue);
-              limparCidades();
+           <Dropdown
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={estados} // Usar a lista de estados
+            search
+            maxHeight={300}
+            labelField="nm_estado" // Propriedade no objeto do estado
+            valueField="id"     // Propriedade no objeto do estado para usar como valor
+            placeholder="Selecione o estado"
+            searchPlaceholder="Buscar..."
+            value={estadoEscolhido}
+            keyboardAvoiding={false}
+            dropdownPosition="top"
+            onChange={item => {
+              setEstadoEscolhido(item.id);
             }}
-          >
-            <Picker.Item label="Selecione o estado" value="" />
-            {estados.map((item) => (
-              <Picker.Item key={item.id} value={item.id} label={item.nm_estado} />
-            ))}
-          </Picker>
+            disable={estados.length === 0} // Desabilitar se não houver estados
+             renderLeftIcon={() => (
+            <FontAwesome6Icon style={styles.icon} color="#2c88d9" name="map" size={16} />
+            )}
+          />
         </View>
       </View>
 
@@ -119,17 +143,30 @@ function SelecionarPaisEstadoCidade({
           <Controller
             name={municipioName}
             control={control}
-            defaultValue=""
             render={({ field: { onChange, value } }) => (
-              <Picker
-                selectedValue={value}
-                onValueChange={(itemValue) => onChange(itemValue)}
-              >
-                <Picker.Item label="Selecione a cidade" value="" />
-                {cidades.map((item) => (
-                  <Picker.Item key={item.id} value={item.id} label={item.nm_municipio} />
-                ))}
-              </Picker>
+              <Dropdown
+                style={styles.dropdown}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={cidades} // Usar a lista de cidades
+                search
+                maxHeight={300}
+                labelField="nm_municipio" // Propriedade no objeto do município
+                valueField="id"     // Propriedade no objeto do município para usar como valor
+                placeholder="Selecione a cidade"
+                searchPlaceholder="Buscar..."
+                value={value} // O valor agora vem do react-hook-form
+                keyboardAvoiding={false}
+                onChange={item => {
+                  onChange(item.id); // Atualizar o valor no react-hook-form
+                }}
+                disable={cidades.length === 0} // Desabilitar se não houver cidades
+                renderLeftIcon={() => (
+                <FontAwesome6Icon style={styles.icon} color="#2c88d9" name="city" size={16} />
+                )}
+              />
             )}
           />
         </View>

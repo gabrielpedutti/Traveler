@@ -33,14 +33,6 @@ const cadastroTrasnporteSchema = z.object({
   .refine((val) => Number(val) > 0, { message: "Tipo de tranpsorte é obrigatório" }),
   valor: z.string().min(1, "Valor é obrigatório"),
   data: z.string().min(1, "Data é obrigatório"),
-  viagem_origem: z
-    .union([z.string(), z.number()]) // Aceita tanto string quanto número
-    .refine((val) => !isNaN(Number(val)), { message: "Origem é obrigatório" }) // Verifica se é um número válido
-    .transform((val) => {
-      // Se for string (iOS), converte para número, se já for número (Android), deixa como está
-      return Platform.OS === 'ios' ? Number(val) : val;
-    })
-    .refine((val) => Number(val) > 0, { message: "Origem é obrigatório" }),
   viagem_destino: z
     .union([z.string(), z.number()]) // Aceita tanto string quanto número
     .refine((val) => !isNaN(Number(val)), { message: "Destino é obrigatório" }) // Verifica se é um número válido
@@ -67,7 +59,6 @@ function CadastroTransporte() {
       tipoTransporte: "",
       valor: "",
       data: "",
-      viagem_origem: 0,
       viagem_destino: 0,
     }
   });
@@ -107,22 +98,22 @@ function CadastroTransporte() {
 
     try {
       const dataFormatada = formatToISOString(data.data);
-      const payloadDespesa: CadastroDespesaRequestDto = {
-        data: dataFormatada,
-        descricao: "Transporte: " + data.nome,
-        usuario_id: user.id ?? 0,
-        valor: Number(data.valor),
-        viagem_id: Number(viagem.id),
-        tipo_despesa_id: 1, //1	TRANSPORTE  2 HOSPEDAGEM  3 ALIMENTACAO  4 PASSEIO  5 OUTROS
-      }
+      // const payloadDespesa: CadastroDespesaRequestDto = {
+      //   data: dataFormatada,
+      //   descricao: "Transporte: " + data.nome,
+      //   usuario_id: user.id ?? 0,
+      //   valor: Number(data.valor),
+      //   viagem_id: Number(viagem.id),
+      //   tipo_despesa_id: 1, //1	TRANSPORTE  2 HOSPEDAGEM  3 ALIMENTACAO  4 PASSEIO  5 OUTROS
+      // }
 
-      const responseDespesa = await cadastrarDespesaBanco(payloadDespesa);
+      // const responseDespesa = await cadastrarDespesaBanco(payloadDespesa);
 
-      // Verifique se a resposta é do tipo erro
-      if ('status' in responseDespesa) {
-        // Aqui sabemos que o response é do tipo ErroResponseDto
-        throw responseDespesa;
-      }
+      // // Verifique se a resposta é do tipo erro
+      // if ('status' in responseDespesa) {
+      //   // Aqui sabemos que o response é do tipo ErroResponseDto
+      //   throw responseDespesa;
+      // }
 
       const payloadViagem: CadastroTransporteRequestDto = {
         ...data,
@@ -130,7 +121,6 @@ function CadastroTransporte() {
         despesa_id: responseDespesa.id,
         viagem_id: Number(viagem.id),
         data: dataFormatada,
-        transporte_origem_id: Number(data.viagem_origem),
         transporte_destino_id: Number(data.viagem_destino),
       }
 
@@ -242,8 +232,6 @@ function CadastroTransporte() {
             )}
           />
           {errors.data && <Text style={styles.error} >{errors.data.message}</Text>}
-          <Text style={styles.titulo}>Selecione a Origem</Text>
-          <SelecionarPaisEstadoCidade municipioName={"viagem_origem"} control={control} errors={errors} />
           <Text style={styles.titulo}>Selecione o Destino</Text>
           <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
           <Botao label="Continuar" onPress={handleSubmit(cadastrarTransporte, onFormValidationError)} />

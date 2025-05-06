@@ -4,6 +4,5 @@ interface CadastroTransporteRequestDto {
   data: string;
   despesa_id: number;
   viagem_id: number;
-  transporte_origem_id: number;
   transporte_destino_id: number;
 }

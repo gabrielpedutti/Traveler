@@ -13,12 +13,12 @@ function MenuPrincipal(){
         <Header botaoFechar={true}/>
         <View style={styles.wrapper}>
           <ItemMenu label="Viagens" name='airplane-outline' pagina = "Viagens" />
-          <Divisoria />
+          {/* <Divisoria />
           <ItemMenu label="Transportes" name='bus-outline' pagina = "" />
           <Divisoria />
           <ItemMenu label="Hospedagens" name='business-outline' pagina = "" />
           <Divisoria />
-          <ItemMenu label="Passeios turísticos" name='ticket-outline' pagina = "" />
+          <ItemMenu label="Passeios turísticos" name='ticket-outline' pagina = "" /> */}
           <Divisoria />
           <ItemMenu label="Financeiro" name='wallet-outline' pagina = "" />
         </View>

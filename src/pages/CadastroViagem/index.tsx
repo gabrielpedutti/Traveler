@@ -27,17 +27,8 @@ import travelerApi from "../../services/api/travelerApi";
 
 const cadastroViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  descricao: z.string().min(1, "Descrição é obrigatório"),
   data_inicio: z.string().min(1, "Data Inicial é obrigatório"),
   data_fim: z.string().min(1, "Data Final é obrigatório"),
-  viagem_origem: z
-    .union([z.string(), z.number()]) // Aceita tanto string quanto número
-    .refine((val) => !isNaN(Number(val)), { message: "Origem é obrigatório" }) // Verifica se é um número válido
-    .transform((val) => {
-      // Se for string (iOS), converte para número, se já for número (Android), deixa como está
-      return Platform.OS === 'ios' ? Number(val) : val;
-    })
-    .refine((val) => Number(val) > 0, { message: "Origem é obrigatório" }),
   viagem_destino: z
     .union([z.string(), z.number()]) // Aceita tanto string quanto número
     .refine((val) => !isNaN(Number(val)), { message: "Destino é obrigatório" }) // Verifica se é um número válido
@@ -71,10 +62,8 @@ function CadastroViagem() {
     resolver: zodResolver(cadastroViagemSchema),
     defaultValues: {
       nome: '',
-      descricao: '',
       data_inicio: '',
       data_fim: '',
-      viagem_origem: 0,
       viagem_destino: 0
     }
   });
@@ -87,9 +76,7 @@ function CadastroViagem() {
       ...data,
       data_inicio: dataInicioFormatada,
       data_fim: dataFimFormatada,
-      viagem_origem_id: Number(data.viagem_origem),
       viagem_destino_id: Number(data.viagem_destino),
-      status_viagem_id: 1, //1-Planejada 2-Em andamento 3-Concluída 4-Cancelada
       usuario_id: Number(user.id)
     }
 
@@ -215,20 +202,6 @@ function CadastroViagem() {
               )}
             />
             {errors.nome && <Text style={styles.error} >{errors.nome.message}</Text>}
-            <Controller
-              control={control}
-              name="descricao"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Descrição"
-                  placeholder="Descreva a viagem"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
-                />
-              )}
-            />
-            {errors.descricao && <Text style={styles.error} >{errors.descricao.message}</Text>}
           <View style={styles.containerDatas}>
             <View  style={styles.containerData}>
               <Controller
@@ -263,8 +236,6 @@ function CadastroViagem() {
               {errors.data_fim && <Text style={styles.error} >{errors.data_fim.message}</Text>}
             </View>
           </View>
-          <Text style={styles.titulo}>Selecione a Origem</Text>
-          <SelecionarPaisEstadoCidade municipioName={"viagem_origem"} control={control} errors={errors} />
           <Text style={styles.titulo}>Selecione o Destino</Text>
           <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
           <Botao label="Continuar" onPress={handleSubmit(cadastrarViagem, onFormValidationError)} />

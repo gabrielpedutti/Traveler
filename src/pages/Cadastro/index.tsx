@@ -18,7 +18,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
 import { CadastroRequestDto } from "../../types/dto/CadastroRequestDto";
 import { DateInput } from "../../components/DateInput";
-import { Picker } from "@react-native-picker/picker";
 import travelerApi from "../../services/api/travelerApi";
 import { PaisResponseDto } from "../../types/dto/PaisResponseDto";
 import { EstadoResponseDto } from "../../types/dto/EstadoResponseDto";
@@ -26,6 +25,7 @@ import { MunicipioResponseDto } from "../../types/dto/MunicipioResponseDto";
 import { cadastrarUsuario } from "../../services/httpService";
 import { formatToISOString } from "../../utils/DataFormat";
 import { ErroResponseDto } from "../../types/dto/ErroResponseDto";
+import SelecionarPaisEstadoCidade from "../../components/SelecionarPaisEstadoCidade";
 
 const CadastroSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -302,66 +302,7 @@ function Cadastro(): JSX.Element {
               secureTextEntry={true}
               value={confirmaSenha}
             />
-
-            <View style={styles.wrapper}>
-              <Text style={styles.label}>Selecione o país</Text>
-              <View style={styles.containerInput}>
-                <Picker
-                  selectedValue={paisEscolhido}
-                  onValueChange={ (itemValue, itemIndex) => {
-                    setPaisEscolhido(itemValue)
-                    limparEstados()
-                    limparCidades()
-                  }}
-                >
-                  <Picker.Item label="Selecione o país" value="" />
-                  {paises.map((item) => (
-                    <Picker.Item key={item.id} value={item.id} label={item.nm_pais} />
-                  ))}
-                </Picker>
-              </View>
-            </View>
-
-            <View style={styles.wrapper}>
-              <Text style={styles.label}>Selecione o estado</Text>
-              <View style={styles.containerInput}>
-                <Picker
-                  selectedValue={estadoEscolhido}
-                  onValueChange={ (itemValue, itemIndex) => {
-                    setEstadoEscolhido(itemValue)
-                    limparCidades()
-                  }}
-                >
-                  <Picker.Item label="Selecione o estado" value="" />
-                  {estados.map((item) => (
-                    <Picker.Item key={item.id} value={item.id} label={item.nm_estado} />
-                  ))}
-                </Picker>
-              </View>
-            </View>
-
-            <View style={styles.wrapper}>
-              <Text style={styles.label}>Selecione a cidade</Text>
-              <View style={styles.containerInput}>
-                <Controller
-                  name="municipio_id"
-                  control={control}
-                  defaultValue={0}
-                  render={({ field: { onChange, value } }) => (
-                    <Picker
-                      selectedValue={value}
-                      onValueChange={(itemValue) => onChange(itemValue)}
-                    >
-                      <Picker.Item label="Selecione a cidade" value="" />
-                      {cidades.map((item) => (
-                        <Picker.Item key={item.id} value={item.id} label={item.nm_municipio} />
-                      ))}
-                    </Picker>
-                  )}
-                />
-              </View>
-              {errors.municipio_id && <Text style={styles.error} >{errors.municipio_id.message}</Text>}
-            </View>
+            <SelecionarPaisEstadoCidade municipioName={"municipio_id"} control={control} errors={errors} />
             {errors.tipo_cadastro_id && <Text style={styles.error} >{errors.tipo_cadastro_id.message}</Text>}
             {errors.tipo_usuario_id && <Text style={styles.error} >{errors.tipo_usuario_id.message}</Text>}
 

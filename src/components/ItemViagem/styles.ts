@@ -8,16 +8,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#cacaca",
+    marginHorizontal: 5,
   },
   container: {
     flexDirection: 'column',
-    flexWrap: 'wrap',
     margin: 0,
     marginBottom: 20,
     marginTop: 15,
     paddingTop: 5,
     paddingBottom: 5,
     width: '100%',
+    gap: 5,
   },
   titulo: {
     color: "#2b88d9",
