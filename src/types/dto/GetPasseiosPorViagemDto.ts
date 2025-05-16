@@ -1,4 +1,4 @@
-interface GetTransportesPorViagemDto {
+interface GetPasseiosPorViagemDto {
   id: number;
   nome: string;
   tipo_id: number;
@@ -11,4 +11,4 @@ interface GetTransportesPorViagemDto {
   updated_at: string;
 }
 
-export default GetTransportesPorViagemDto;
+export default GetPasseiosPorViagemDto;

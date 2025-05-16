@@ -17,6 +17,8 @@ import CadastroHospedagem from './src/pages/CadastroHospedagem';
 import CadastroTurismo from './src/pages/CadastroTurismo';
 import CadastroTransporte from './src/pages/CadastroTransporte';
 import CadastroViagemNavigator from './src/navigation/cadastroViagemNavigator';
+import Tabs from './src/navigation/tabs';
+import DetalhesHospedagem from './src/pages/DetalhesHospedagem';
 
 
 
@@ -104,7 +106,15 @@ export default function App() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="DetalhesHospedagem"
+            component={DetalhesHospedagem}
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack.Navigator>
+        {/* <Tabs /> */}
       </CadastroProvider>
     </NavigationContainer>
   );

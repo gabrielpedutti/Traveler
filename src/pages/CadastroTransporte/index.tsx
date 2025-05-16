@@ -18,9 +18,13 @@ import { formatToISOString } from "../../utils/DataFormat";
 import { cadastrarDespesaBanco, cadastrarTransporteBanco } from "../../services/httpService";
 import { CadastroContext } from "../../contexts/cadastro";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../types/RootStackParamList";
-import { useNavigation } from "@react-navigation/native";
+import { CadastroTransporteRouteProp, RootStackParamList } from "../../types/RootStackParamList";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import travelerApi from "../../services/api/travelerApi";
+import { SafeAreaView } from "react-native-safe-area-context";
+import BotaoSecundario from "../../components/BotaoSecundario";
+import GetTipoTransporteDto from "../../types/dto/GetTipoTransporteDto";
+import CadastroTransporteRequestDto from "../../types/dto/CadastroTransporteRequestDto";
 
 const cadastroTrasnporteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -51,6 +55,8 @@ function CadastroTransporte() {
   const { viagem } = useContext(CadastroViagemContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [tipoTransporte, setTipoTransporte] = useState<GetTipoTransporteDto[]>([]);
+  const route = useRoute<CadastroTransporteRouteProp>();
+  const { isCreatingViagem } = route.params;
 
   const { control, handleSubmit, formState: { errors } } = useForm<CadastroTransporteSchema>({
     resolver: zodResolver(cadastroTrasnporteSchema),
@@ -86,39 +92,34 @@ function CadastroTransporte() {
     console.log("Erros de validação:", errors);
   }
 
+  // Efeito para carregar os tipos de transporte
   useEffect(() => {
-    const consultaPaises = async () => {
-      const response = await travelerApi.get('/transporte/tipos');
-      setTipoTransporte(response.data)
+    const consultaTiposTransporte = async () => {
+      try {
+        const response = await travelerApi.get('/transporte/tipos');
+        setTipoTransporte(response.data);
+      } catch (error) {
+         console.error("Erro ao buscar tipos de transporte:", error);
+         Toast.show({
+            type: "error",
+            text1: "Erro",
+            text2: "Não foi possível carregar os tipos de transporte.",
+         });
+      }
     }
-    consultaPaises();
-  }, [])
+    consultaTiposTransporte();
+  }, []);
 
   async function cadastrarTransporte(data: CadastroTransporteSchema) {
 
     try {
       const dataFormatada = formatToISOString(data.data);
-      // const payloadDespesa: CadastroDespesaRequestDto = {
-      //   data: dataFormatada,
-      //   descricao: "Transporte: " + data.nome,
-      //   usuario_id: user.id ?? 0,
-      //   valor: Number(data.valor),
-      //   viagem_id: Number(viagem.id),
-      //   tipo_despesa_id: 1, //1	TRANSPORTE  2 HOSPEDAGEM  3 ALIMENTACAO  4 PASSEIO  5 OUTROS
-      // }
-
-      // const responseDespesa = await cadastrarDespesaBanco(payloadDespesa);
-
-      // // Verifique se a resposta é do tipo erro
-      // if ('status' in responseDespesa) {
-      //   // Aqui sabemos que o response é do tipo ErroResponseDto
-      //   throw responseDespesa;
-      // }
 
       const payloadViagem: CadastroTransporteRequestDto = {
         ...data,
         tipo_id: Number(data.tipoTransporte),
-        despesa_id: responseDespesa.id,
+        valor: Number(data.valor),
+        usuario_id: user.id || 0,
         viagem_id: Number(viagem.id),
         data: dataFormatada,
         transporte_destino_id: Number(data.viagem_destino),
@@ -127,118 +128,156 @@ function CadastroTransporte() {
       const response = await cadastrarTransporteBanco(payloadViagem);
 
       // Verifique se a resposta é do tipo erro
-      if ('status' in response) {
-        // Aqui sabemos que o response é do tipo ErroResponseDto
-        throw response;
+      if (response && 'status' in response && response.status >= 400) {
+        // Aqui sabemos que o response é do tipo ErroResponseDto ou similar indicando falha
+        throw new Error(`Erro ao cadastrar transporte: ${response.mensagem || response.detail || JSON.stringify(response)}`);
+     }
+
+      //   // Navega para a próxima tela após um pequeno atraso
+      //   setTimeout(() => {
+      //     navigation.navigate("CadastroHospedagem");
+      //   }, 1000); // Delay de 1 segundo
+      // } catch (error) {
+      //   console.error("Erro ao cadastrar transporte: ", error);
+      // }
+
+      Toast.show({
+        type: "success",
+        text1: 'Cadastro realizado com sucesso',
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 30,
+        position: 'top',
+        text1Style: {
+          fontSize: 16, // Aumenta o tamanho da fonte para o texto principal
+          fontWeight: 'bold', // Torna o texto principal em negrito
+        },
+        text2Style: {
+          fontSize: 16, // Aumenta o tamanho da fonte para o texto secundário
+        },
+        onPress: () => {
+          Toast.hide();
+        }
+      });
+
+      if (isCreatingViagem) {
+        setTimeout(() => {
+            navigation.navigate("CadastroHospedagem", {
+              isCreatingViagem: true
+            });
+          }, 1000);
+      } else {
+          setTimeout(() => {
+            navigation.navigate('ViagemSelecionada', viagem);
+          }, 1000);
       }
 
-      // Navega para a próxima tela após um pequeno atraso
-      setTimeout(() => {
-        navigation.navigate("CadastroHospedagem");
-      }, 1000); // Delay de 1 segundo
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao cadastrar transporte: ", error);
+        Toast.show({
+          type: "error",
+          text1: "Erro ao cadastrar",
+          text2: error.message || "Ocorreu um erro ao salvar o transporte.",
+          visibilityTime: 4000,
+          autoHide: true,
+          topOffset: 30,
+          position: "top",
+          text1Style: { fontSize: 16, fontWeight: "bold" },
+          text2Style: { fontSize: 16 },
+        });
     }
-
-    Toast.show({
-      type: "success",
-      text1: 'Cadastro realizado com sucesso',
-      visibilityTime: 4000,
-      autoHide: true,
-      topOffset: 30,
-      position: 'top',
-      text1Style: {
-        fontSize: 16, // Aumenta o tamanho da fonte para o texto principal
-        fontWeight: 'bold', // Torna o texto principal em negrito
-      },
-      text2Style: {
-        fontSize: 16, // Aumenta o tamanho da fonte para o texto secundário
-      },
-      onPress: () => {
-        Toast.hide();
-      }
-    });
-
   }
 
   return(
-    <View style={styles.container}>
-      <HeaderFixo />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <Titulo texto="Novo transporte" />
-          <Controller
-            control={control}
-            name="nome"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Nome do Transporte"
-                placeholder="Digite o nome do Transporte"
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
-              />
-            )}
-          />
-          {errors.nome && <Text style={styles.error} >{errors.nome.message}</Text>}
-          <View style={styles.wrapper}>
-            <Text style={styles.label}>Selecione o tipo de transporte</Text>
-            <View style={styles.containerInput}>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <HeaderFixo />
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <Titulo texto="Novo transporte" />
             <Controller
-              name="tipoTransporte"
               control={control}
-              defaultValue=""
-              render={({ field: { onChange, value } }) => (
-                <Picker
-                  selectedValue={value}
-                  onValueChange={(itemValue) => onChange(itemValue)}
-                >
-                  <Picker.Item label="Selecione o tipo de transporte" value="1" />
-                  {tipoTransporte.map((item) => (
-                    <Picker.Item key={item.id} value={item.id} label={item.descricao} />
-                  ))}
-                </Picker>
+              name="nome"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Nome do Transporte"
+                  placeholder="Digite o nome do Transporte"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                />
               )}
             />
-          </View>
-          {errors.tipoTransporte && <Text style={styles.error} >{errors.tipoTransporte.message}</Text>}
-          </View>
-          <Controller
-            control={control}
-            name="valor"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Valor"
-                keyboardType="numeric"
-                placeholder="Digite o valor"
-                onChangeText={onChange}
-                onBlur={onBlur}
-                value={value}
+            {errors.nome && <Text style={styles.error} >{errors.nome.message}</Text>}
+            <View style={styles.wrapper}>
+              <Text style={styles.label}>Selecione o tipo de transporte</Text>
+              <View style={styles.containerInput}>
+              <Controller
+                name="tipoTransporte"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, value } }) => (
+                  <Picker
+                    selectedValue={value}
+                    onValueChange={(itemValue) => onChange(itemValue)}
+                  >
+                    <Picker.Item label="Selecione o tipo de transporte" value="1" />
+                    {tipoTransporte.map((item) => (
+                      <Picker.Item key={item.id} value={item.id} label={item.descricao} />
+                    ))}
+                  </Picker>
+                )}
               />
+            </View>
+            {errors.tipoTransporte && <Text style={styles.error} >{errors.tipoTransporte.message}</Text>}
+            </View>
+            <Controller
+              control={control}
+              name="valor"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Valor"
+                  keyboardType="numeric"
+                  placeholder="Digite o valor"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                />
+              )}
+            />
+            {errors.valor && <Text style={styles.error} >{errors.valor.message}</Text>}
+            <Controller
+              control={control}
+              name="data"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DateInput
+                  label="Data do Transporte"
+                  placeholder="__/__/__"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+            {errors.data && <Text style={styles.error} >{errors.data.message}</Text>}
+            <Text style={styles.titulo}>Selecione o Destino</Text>
+            <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
+            {isCreatingViagem ? 
+            (
+            <View style={styles.containerButton}>
+              <BotaoSecundario label="Pular" onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroHospedagem", params: { isCreatingViagem: true } })} />
+              <Botao label="Continuar" onPress={handleSubmit(cadastrarTransporte, onFormValidationError)} />
+            </View>
+            )
+            :
+            (
+              <Botao label="Continuar" onPress={handleSubmit(cadastrarTransporte, onFormValidationError)} />
             )}
-          />
-          {errors.valor && <Text style={styles.error} >{errors.valor.message}</Text>}
-          <Controller
-            control={control}
-            name="data"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DateInput
-                label="Data do Transporte"
-                placeholder="__/__/__"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
-            )}
-          />
-          {errors.data && <Text style={styles.error} >{errors.data.message}</Text>}
-          <Text style={styles.titulo}>Selecione o Destino</Text>
-          <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
-          <Botao label="Continuar" onPress={handleSubmit(cadastrarTransporte, onFormValidationError)} />
-        </ScrollView>
-        <Toast />
-      </KeyboardAvoidingView>
-    </View>
+          </ScrollView>
+          <Toast />
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
   )
 }
 

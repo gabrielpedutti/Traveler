@@ -24,6 +24,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
 import { CadastroViagemContext } from "../../contexts/cadastroViagem";
 import travelerApi from "../../services/api/travelerApi";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const cadastroViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -115,7 +116,9 @@ function CadastroViagem() {
 
       // Navega para a próxima tela após um pequeno atraso
       setTimeout(() => {
-        navigation.navigate("CadastroTransporte");
+        navigation.navigate("CadastroTransporte", {
+              isCreatingViagem: true
+            });
       }, 1000); // Delay de 1 segundo
     } catch (error) {
       console.error("Erro ao salvar os dados da viagem no contexto:", error);
@@ -123,7 +126,9 @@ function CadastroViagem() {
 
     // Aguardar 4 segundos antes de mudar de página
     setTimeout(() => {
-      navigation.navigate('CadastroTransporte');
+      navigation.navigate('CadastroTransporte', {
+              isCreatingViagem: true
+            });
     }, 1000); // Delay em milissegundos (1 segundos)
   
     } catch (error) {
@@ -177,72 +182,74 @@ function CadastroViagem() {
   }
 
   return(
-    <View style={styles.container}>
-      <HeaderFixo />
-      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <View style={styles.noImage}>
-            <FontAwesome6 name={'image'} size={40} color='#000' style={styles.icon}/>
-            <TouchableOpacity style={styles.editButton}>
-              <MaterialIcons name={'edit'} size={40} color='#000' style={styles.icon}/>
-            </TouchableOpacity>
-          </View>
-          <Titulo texto="Nova viagem" />
-          <Controller
-              control={control}
-              name="nome"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Nome da Viagem"
-                  placeholder="Digite o nome da viagem"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <HeaderFixo />
+        <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <View style={styles.noImage}>
+              <FontAwesome6 name={'image'} size={40} color='#000' style={styles.icon}/>
+              <TouchableOpacity style={styles.editButton}>
+                <MaterialIcons name={'edit'} size={40} color='#000' style={styles.icon}/>
+              </TouchableOpacity>
+            </View>
+            <Titulo texto="Nova viagem" />
+            <Controller
+                control={control}
+                name="nome"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Nome da Viagem"
+                    placeholder="Digite o nome da viagem"
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                  />
+                )}
+              />
+              {errors.nome && <Text style={styles.error} >{errors.nome.message}</Text>}
+            <View style={styles.containerDatas}>
+              <View  style={styles.containerData}>
+                <Controller
+                  control={control}
+                  name="data_inicio"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <DateInput
+                      label="Data da Viagem"
+                      placeholder="__/__/__"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                    />
+                  )}
                 />
-              )}
-            />
-            {errors.nome && <Text style={styles.error} >{errors.nome.message}</Text>}
-          <View style={styles.containerDatas}>
-            <View  style={styles.containerData}>
-              <Controller
-                control={control}
-                name="data_inicio"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <DateInput
-                    label="Data da Viagem"
-                    placeholder="__/__/__"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-              />
-              {errors.data_inicio && <Text style={styles.error} >{errors.data_inicio.message}</Text>}
+                {errors.data_inicio && <Text style={styles.error} >{errors.data_inicio.message}</Text>}
+              </View>
+              <View style={styles.containerData}>
+                <Controller
+                  control={control}
+                  name="data_fim"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <DateInput
+                      label="Data fim da Viagem"
+                      placeholder="__/__/__"
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                    />
+                  )}
+                />
+                {errors.data_fim && <Text style={styles.error} >{errors.data_fim.message}</Text>}
+              </View>
             </View>
-            <View style={styles.containerData}>
-              <Controller
-                control={control}
-                name="data_fim"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <DateInput
-                    label="Data fim da Viagem"
-                    placeholder="__/__/__"
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                  />
-                )}
-              />
-              {errors.data_fim && <Text style={styles.error} >{errors.data_fim.message}</Text>}
-            </View>
-          </View>
-          <Text style={styles.titulo}>Selecione o Destino</Text>
-          <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
-          <Botao label="Continuar" onPress={handleSubmit(cadastrarViagem, onFormValidationError)} />
-        </ScrollView>
-        <Toast />
-      </KeyboardAvoidingView>
-    </View>
+            <Text style={styles.titulo}>Selecione o Destino</Text>
+            <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
+            <Botao label="Continuar" onPress={handleSubmit(cadastrarViagem, onFormValidationError)} />
+          </ScrollView>
+          <Toast />
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
   )
 }
 

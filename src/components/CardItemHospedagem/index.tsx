@@ -11,14 +11,15 @@ import travelerApi from "../../services/api/travelerApi";
 import { set } from "zod";
 import { styles } from "./styles";
 import { formatarParaReal } from "../../utils/CurrencyFormat";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import GetHospedagemResponseDto from "../../types/dto/GetHospedagemPorViagemDto";
 
-interface ItemTransporteProps {
+interface CardItemHospedagemProps {
   imagem?: any;
-  item: GetTransportesPorViagemDto;
+  item: GetHospedagemResponseDto;
 }
 
-function ItemTransporte({item, imagem}: ItemTransporteProps) {
+function CardItemHospedagem({item, imagem}: CardItemHospedagemProps) {
 
   const [nomeTruncado, setNomeTruncado] = useState<string>('');
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -32,24 +33,24 @@ function ItemTransporte({item, imagem}: ItemTransporteProps) {
   }, [item.nome]);
 
   return(
-    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('Home')}}>
+    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('DetalhesHospedagem', {hospedagem: item})}}>
       <View style={styles.containerItem}>
-      <MaterialCommunityIcons name={'bus-side'} size={40} color='#2b88d9'/>
+        <FontAwesome6Icon name={'house'} size={40} color='#2b88d9'/>
       </View>
       <View style={styles.container}>
         <View style={styles.linha}>
           <Text style={styles.titulo}>{nomeTruncado}</Text>
-          <Text style={styles.tituloData}>{formatDate(item.data)}</Text>
+          <Text style={styles.tituloData}>{formatDate(item.data_checkin)}</Text>
         </View>
         <View style={styles.linha}>
 
         </View>
         <View style={styles.linha}>
-        <Text style={styles.text}>Destino: {item.transporte_destino_id}</Text>
+        <Text style={styles.text}>Valor: {formatarParaReal(item.despesa.valor)}</Text>
         </View>
       </View>
     </TouchableOpacity>
   )
 }
 
-export default ItemTransporte;
+export default CardItemHospedagem;

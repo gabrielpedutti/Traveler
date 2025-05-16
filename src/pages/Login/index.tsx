@@ -106,7 +106,7 @@ function Login(): JSX.Element {
   
       if (response.status === 200) {
         if (lembrar) {
-          await salvarLogin(data.email, data.senha);
+          await salvarLogin(payload.email, payload.senha);
         } else {
           await deletarLoginSalvo();
           setValue('email', '');
@@ -115,7 +115,6 @@ function Login(): JSX.Element {
         salvarDados(data);
         navigation.navigate('Home');
       } else {
-        console.log("Não deu sucesso?")
         console.log(response.data.message);
         setHasErroLogin(true);
       }

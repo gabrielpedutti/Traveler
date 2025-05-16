@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+    backgroundColor: "#F2F2F2",
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -41,6 +42,15 @@ const styles = StyleSheet.create({
     marginEnd: 15,
     borderWidth: 1,
     borderColor: '#2c88d9'
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#2b88d9',
+    paddingTop: -100,
+  },
+  containerButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

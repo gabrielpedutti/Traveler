@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
+    backgroundColor: "#F2F2F2",
   },
   noImage: {
     height: 250,
@@ -124,6 +125,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F2F2F2',
+    paddingTop: -100,
   },
 });
 

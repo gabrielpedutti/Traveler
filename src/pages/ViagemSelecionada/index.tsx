@@ -15,10 +15,17 @@ import { useEffect, useState } from "react";
 import Input from "../../components/InputCadastro";
 import travelerApi from "../../services/api/travelerApi";
 import Loading from "../../components/Loading";
-import ItemDespesa from "../../components/ItemDespesa";
+import CardItemDespesa from "../../components/CardItemDespesa";
 import Titulo from "../../components/Titulo";
 import Botao from "../../components/Botao";
-import ItemTransporte from "../../components/ItemTransporte";
+import CardItemTransporte from "../../components/CardItemTransporte";
+import { SafeAreaView } from "react-native-safe-area-context";
+import GetTransportesPorViagemDto from "../../types/dto/GetTransportesPorViagemDto";
+import CadastroDespesaResponseDto from "../../types/dto/CadastroDespesaResponseDto";
+import GetHospedagemResponseDto from "../../types/dto/GetHospedagemPorViagemDto";
+import CardItemHospedagem from "../../components/CardItemHospedagem";
+import GetPasseiosPorViagemDto from "../../types/dto/GetPasseiosPorViagemDto";
+import CardItemPasseio from "../../components/CardItemPasseio";
 
 function ViagemSelecionada() {
 
@@ -28,20 +35,28 @@ function ViagemSelecionada() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [transporte, setTransporte] = useState<GetTransportesPorViagemDto[]>();
-  const [hospedagem, setHospedagem] = useState<string>('');
-  const [passeio, setPasseio] = useState<string>('');
+  const [hospedagem, setHospedagem] = useState<GetHospedagemResponseDto[]>();
+  const [passeio, setPasseio] = useState<GetPasseiosPorViagemDto[]>();
   const [despesa, setDespesa] = useState<CadastroDespesaResponseDto[]>();
 
   function handleModal() {
     setIsModalVisible(!isModalVisible);
   }
 
-  const renderItemTransporte = ({ item }: { item: GetTransportesPorViagemDto }) => (
-    <ItemTransporte item={item} />
+  const renderCardItemTransporte = ({ item }: { item: GetTransportesPorViagemDto }) => (
+    <CardItemTransporte item={item} />
   );
 
-  const renderItemDespesa = ({ item }: { item: CadastroDespesaResponseDto }) => (
-    <ItemDespesa item={item} />
+  const renderCardItemDespesa = ({ item }: { item: CadastroDespesaResponseDto }) => (
+    <CardItemDespesa item={item} />
+  );
+
+  const renderCardItemHospedagem = ({ item }: { item: GetHospedagemResponseDto }) => (
+    <CardItemHospedagem item={item} />
+  );
+
+  const renderCardItemPasseio = ({ item }: { item: GetPasseiosPorViagemDto }) => (
+    <CardItemPasseio item={item} />
   );
 
   useEffect(() => {
@@ -61,14 +76,34 @@ function ViagemSelecionada() {
       try {
         const response = await travelerApi.get(`/transporte/viagem/${item.id}`);
         setTransporte(response.data);
-        setIsLoading(false);
       } catch (error) {
         console.error("Erro ao buscar transporte:", error);
       }
     }
 
+    const buscarHospedagem = async () => {
+      try {
+        const response = await travelerApi.get(`/hospedagem/viagem/${item.id}`);
+        setHospedagem(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar hospedagem:", error);
+      }
+    }
+
+    const buscarPasseio = async () => {
+      try {
+        const response = await travelerApi.get(`/passeio/viagem/${item.id}`);
+        setPasseio(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar passeio:", error);
+      }
+    }
+
     buscarDespesas();
     buscarTransporte();
+    buscarHospedagem();
+    buscarPasseio();
+    setIsLoading(false);
   }, []);
 
   function excluirViagem() {
@@ -92,66 +127,95 @@ function ViagemSelecionada() {
   }
 
   return(
-    <View style={styles.container}>
-      <HeaderFixo />
-      <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-          <View style={styles.noImage}>
-            <FontAwesome6Icon name={'image'} size={40} color='#000' style={styles.icon}/>
-            <TouchableOpacity style={styles.editButton}>
-              <MaterialIcons name={'edit'} size={40} color='#000' style={styles.icon}/>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.headerContainer}>
-            <View style={styles.titleWrapper}>
-              <Text style={styles.titulo}>{item.nome}</Text>
-              <Text style={styles.data}>{formatDate(item.data_inicio)}</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <HeaderFixo />
+        <KeyboardAvoidingView behavior="padding" style={styles.keyboardAvoidingView}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+            <View style={styles.noImage}>
+              <FontAwesome6Icon name={'image'} size={40} color='#000' style={styles.icon}/>
+              <TouchableOpacity style={styles.editButton}>
+                <MaterialIcons name={'edit'} size={40} color='#000' style={styles.icon}/>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.descricao}>{item.descricao}</Text>
-          </View>
-          {isLoading && 
-            <View style={styles.wrapper}>
-              <Loading />
+            <View style={styles.headerContainer}>
+              <View style={styles.titleWrapper}>
+                <Text style={styles.titulo}>{item.nome}</Text>
+                <Text style={styles.data}>{formatDate(item.data_inicio)}</Text>
+              </View>
             </View>
-          }
-          {!isLoading && 
-            <FlatList
-              ListHeaderComponent={<Titulo texto="Transportes" />}
-              data={transporte}
-              renderItem={renderItemTransporte}
-              keyExtractor={(item, index) => index.toString()}
-              ListEmptyComponent={<>
-                <View style={styles.wrapper}>
-                  <Text style={styles.text}>Você ainda não possui nenhum transporte cadastrado.</Text>
-                </View>
-              </>}
-              scrollEnabled={false} // Desativa o scroll na FlatList
-            />
-          }
-          {!isLoading && 
-            <FlatList
-              ListHeaderComponent={<Titulo texto="Despesas" />}
-              data={despesa}
-              renderItem={renderItemDespesa}
-              keyExtractor={(item, index) => index.toString()}
-              ListFooterComponent={botaoExcluir}
-              ListEmptyComponent={<>
-                <View style={styles.wrapper}>
-                  <Text style={styles.text}>Você ainda não possui nenhuma despesa cadastrada.</Text>
-                </View>
-              </>}
-              scrollEnabled={false} // Desativa o scroll na FlatList
-            />
-          }
+            {isLoading && 
+              <View style={styles.wrapper}>
+                <Loading />
+              </View>
+            }
+            {!isLoading && 
+              <FlatList
+                ListHeaderComponent={<Titulo texto="Transportes" />}
+                data={transporte}
+                renderItem={renderCardItemTransporte}
+                keyExtractor={(item, index) => index.toString()}
+                ListEmptyComponent={
+                  <View style={styles.wrapper}>
+                    <Text style={styles.text}>Você ainda não possui nenhum transporte cadastrado.</Text>
+                  </View>
+                }
+                scrollEnabled={false} // Desativa o scroll na FlatList
+              />
+            }
+            {!isLoading && 
+              <FlatList
+                ListHeaderComponent={<Titulo texto="Hospedagens" />}
+                data={hospedagem}
+                renderItem={renderCardItemHospedagem}
+                keyExtractor={(item, index) => index.toString()}
+                ListEmptyComponent={
+                  <View style={styles.wrapper}>
+                    <Text style={styles.text}>Você ainda não possui nenhuma hospedagem cadastrada.</Text>
+                  </View>
+                }
+                scrollEnabled={false} // Desativa o scroll na FlatList
+              />
+            }
+            {!isLoading && 
+              <FlatList
+                ListHeaderComponent={<Titulo texto="Passeios Turísticos" />}
+                data={passeio}
+                renderItem={renderCardItemPasseio}
+                keyExtractor={(item, index) => index.toString()}
+                ListEmptyComponent={
+                  <View style={styles.wrapper}>
+                    <Text style={styles.text}>Você ainda não possui nenhum passeio turístico cadastrado.</Text>
+                  </View>
+                }
+                scrollEnabled={false} // Desativa o scroll na FlatList
+              />
+            }
+            {!isLoading && 
+              <FlatList
+                ListHeaderComponent={<Titulo texto="Despesas" />}
+                data={despesa}
+                renderItem={renderCardItemDespesa}
+                keyExtractor={(item, index) => index.toString()}
+                ListFooterComponent={botaoExcluir}
+                ListEmptyComponent={
+                  <View style={styles.wrapper}>
+                    <Text style={styles.text}>Você ainda não possui nenhuma despesa cadastrada.</Text>
+                  </View>
+                }
+                scrollEnabled={false} // Desativa o scroll na FlatList
+              />
+            }
 
-          {isModalVisible && <ModalNovoItem closeModal={handleModal}/>}
-        </ScrollView>
-        <Toast />
-        <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
-            <AntDesign name={'plus'} size={35} color='#fff'/>
-          </TouchableOpacity>
-      </KeyboardAvoidingView>
-    </View>
+          </ScrollView>
+          {isModalVisible && <ModalNovoItem closeModal={handleModal} viagemId={item.id}/>}
+          <Toast />
+          <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
+              <AntDesign name={'plus'} size={35} color='#fff'/>
+            </TouchableOpacity>
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
   )
 }
 

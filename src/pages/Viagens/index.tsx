@@ -10,6 +10,7 @@ import { GetViagensResponseDto } from "../../types/dto/GetViagensResponseDto";
 import { CadastroContext } from "../../contexts/cadastro";
 import Loading from "../../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function Viagens() {
   const { user } = useContext(CadastroContext);
@@ -42,26 +43,28 @@ function Viagens() {
   );
 
   return (
-    <View style={styles.container}>
-      <HeaderFixo />
-      <Titulo texto="Viagens" />
-      {isLoading ? (
-        <View style={styles.wrapper}>
-          <Loading />
-        </View>
-      ) : viagens.length === 0 ? (
-        <View style={styles.wrapper}>
-          <Text style={styles.text}>Você ainda não possui nenhuma viagem cadastrada.</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={viagens}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      )}
-      <BotaoAdicionar />
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <HeaderFixo />
+        <Titulo texto="Viagens" />
+        {isLoading ? (
+          <View style={styles.wrapper}>
+            <Loading />
+          </View>
+        ) : viagens.length === 0 ? (
+          <View style={styles.wrapper}>
+            <Text style={styles.text}>Você ainda não possui nenhuma viagem cadastrada.</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={viagens}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
+        <BotaoAdicionar />
+      </View>
+    </SafeAreaView>
   );
 }
 
