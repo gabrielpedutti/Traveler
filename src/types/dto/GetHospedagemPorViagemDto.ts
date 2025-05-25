@@ -2,6 +2,10 @@ interface HospedagemDespesaDto {
   valor: number;
 }
 
+interface tipoHospedagem {
+  descricao: string;
+}
+
 interface GetHospedagemResponseDto {
   id: number;
   nome: string;
@@ -16,6 +20,7 @@ interface GetHospedagemResponseDto {
   updated_at: string; // Formato ISO 8601 string
   usuario_id: number;
   despesa: HospedagemDespesaDto;
+  tipo_hospedagem: tipoHospedagem;
 }
 
 export default GetHospedagemResponseDto;

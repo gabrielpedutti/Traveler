@@ -6,10 +6,11 @@ import { styles } from "./styles";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
+import { GetViagensResponseDto } from "../../types/dto/GetViagensResponseDto";
 
 interface ModalNovoItemProps {
   closeModal: () => void;
-  viagemId: number;
+  viagem: GetViagensResponseDto;
 }
 
 function ModalNovoItem(props: ModalNovoItemProps) {
@@ -22,19 +23,19 @@ function ModalNovoItem(props: ModalNovoItemProps) {
         <View style={styles.header}>
           <Text style={styles.title}>Adicione um Novo Item</Text>
         </View>
-        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroTransporte", params: { isCreatingViagem: false } })}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroTransporte", { isCreatingViagem: false, viagem: props.viagem})}>
           <MaterialCommunityIcons name={'airplane'} size={40} color='#2b88d9'/>
           <Text style={styles.text}>Novo Transporte</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroHospedagem", params: { isCreatingViagem: false } })}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate( "CadastroHospedagem", { isCreatingViagem: false, viagem: props.viagem })}>
          <MaterialIcons name={'house'} size={40} color='#2b88d9'/>
           <Text style={styles.text}>Nova Hospedagem</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroTurismo", params: { isCreatingViagem: false } })}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroTurismo", { isCreatingViagem: false, viagem: props.viagem })}>
           <MaterialCommunityIcons name={'bus-side'} size={40} color='#2b88d9'/>
           <Text style={styles.text}>Novo Passeio Turístico</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroTransporte", params: { isCreatingViagem: false } })}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroTransporte", { isCreatingViagem: false, viagem: props.viagem })}>
           <FontAwesome6 name={'coins'} size={40} color='#2b88d9'/>
           <Text style={styles.text}>Nova Despesa</Text>
         </TouchableOpacity>

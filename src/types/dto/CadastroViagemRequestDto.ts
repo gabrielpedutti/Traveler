@@ -5,3 +5,5 @@ interface CadastroViagemRequestDto {
   data_fim: string;
   usuario_id: number;
 }
+
+export default CadastroViagemRequestDto;

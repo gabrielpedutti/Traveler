@@ -32,3 +32,5 @@ interface GetViagemResponseDto {
   viagem_destino?: Municipio;
   status_viagem?: StatusViagem;
 }
+
+export default GetViagemResponseDto;

@@ -16,7 +16,7 @@ import CadastroViagem from './src/pages/CadastroViagem';
 import CadastroHospedagem from './src/pages/CadastroHospedagem';
 import CadastroTurismo from './src/pages/CadastroTurismo';
 import CadastroTransporte from './src/pages/CadastroTransporte';
-import CadastroViagemNavigator from './src/navigation/cadastroViagemNavigator';
+// import CadastroViagemNavigator from './src/navigation/cadastroViagemNavigator';
 import Tabs from './src/navigation/tabs';
 import DetalhesHospedagem from './src/pages/DetalhesHospedagem';
 
@@ -99,9 +99,37 @@ export default function App() {
               headerShown: false,
             }}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="CadastroViagemNavigator"
             component={CadastroViagemNavigator}
+            options={{
+              headerShown: false,
+            }}
+          /> */}
+          <Stack.Screen
+            name="CadastroViagem"
+            component={CadastroViagem}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CadastroHospedagem"
+            component={CadastroHospedagem}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CadastroTurismo"
+            component={CadastroTurismo}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CadastroTransporte"
+            component={CadastroTransporte}
             options={{
               headerShown: false,
             }}

@@ -22,7 +22,7 @@ function ItemViagem({item, imagem}: ItemViagemProps) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return(
-    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('ViagemSelecionada', {item})}}>
+    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('ViagemSelecionada', {viagem: item})}}>
       {imagem == null ? 
       (<NoImage />)
       : 

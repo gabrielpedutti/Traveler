@@ -25,6 +25,8 @@ import { RootStackParamList } from "../../types/RootStackParamList";
 import { CadastroViagemContext } from "../../contexts/cadastroViagem";
 import travelerApi from "../../services/api/travelerApi";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CadastroViagemRequestDto from "../../types/dto/CadastroViagemRequestDto";
+import GetViagemResponseDto from "../../types/dto/GetViagemResponseDto";
 
 const cadastroViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -112,12 +114,13 @@ function CadastroViagem() {
     // Busca a viagem cadastrada para salvar no contexto e disponibilizar para as próximas telas
     try {
       const viagem = await travelerApi.get(`/viagem/${response.id}`);
-      salvarDadosViagem(viagem.data as GetViagemResponseDto);
+      // salvarDadosViagem(viagem.data as GetViagemResponseDto);
 
       // Navega para a próxima tela após um pequeno atraso
       setTimeout(() => {
         navigation.navigate("CadastroTransporte", {
-              isCreatingViagem: true
+              isCreatingViagem: true,
+              viagem: viagem.data
             });
       }, 1000); // Delay de 1 segundo
     } catch (error) {
@@ -127,7 +130,8 @@ function CadastroViagem() {
     // Aguardar 4 segundos antes de mudar de página
     setTimeout(() => {
       navigation.navigate('CadastroTransporte', {
-              isCreatingViagem: true
+              isCreatingViagem: true,
+              viagem: response.data
             });
     }, 1000); // Delay em milissegundos (1 segundos)
   

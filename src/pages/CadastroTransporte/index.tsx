@@ -52,11 +52,10 @@ type CadastroTransporteSchema = z.infer<typeof cadastroTrasnporteSchema>;
 function CadastroTransporte() {
 
   const { user } = useContext(CadastroContext);
-  const { viagem } = useContext(CadastroViagemContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [tipoTransporte, setTipoTransporte] = useState<GetTipoTransporteDto[]>([]);
   const route = useRoute<CadastroTransporteRouteProp>();
-  const { isCreatingViagem } = route.params;
+  const { isCreatingViagem, viagem } = route.params;
 
   const { control, handleSubmit, formState: { errors } } = useForm<CadastroTransporteSchema>({
     resolver: zodResolver(cadastroTrasnporteSchema),
@@ -163,12 +162,13 @@ function CadastroTransporte() {
       if (isCreatingViagem) {
         setTimeout(() => {
             navigation.navigate("CadastroHospedagem", {
-              isCreatingViagem: true
+              isCreatingViagem: true,
+              viagem
             });
           }, 1000);
       } else {
           setTimeout(() => {
-            navigation.navigate('ViagemSelecionada', viagem);
+            navigation.navigate('ViagemSelecionada', { viagem });
           }, 1000);
       }
 
@@ -265,7 +265,7 @@ function CadastroTransporte() {
             {isCreatingViagem ? 
             (
             <View style={styles.containerButton}>
-              <BotaoSecundario label="Pular" onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroHospedagem", params: { isCreatingViagem: true } })} />
+              <BotaoSecundario label="Pular" onPress={() => navigation.navigate("CadastroHospedagem", { isCreatingViagem: true, viagem })} />
               <Botao label="Continuar" onPress={handleSubmit(cadastrarTransporte, onFormValidationError)} />
             </View>
             )

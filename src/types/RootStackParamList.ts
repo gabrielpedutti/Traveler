@@ -2,12 +2,12 @@ import { RouteProp } from "@react-navigation/native";
 import { GetViagensResponseDto } from "./dto/GetViagensResponseDto";
 import GetHospedagemResponseDto from "./dto/GetHospedagemPorViagemDto";
 
-export type CadastroViagemParamList = {
-  CadastroHospedagem: undefined;
-  CadastroTransporte: undefined;
-  CadastroTurismo: undefined;
-  CadastroViagem: undefined;
-}
+// export type CadastroViagemParamList = {
+//   CadastroHospedagem: undefined;
+//   CadastroTransporte: undefined;
+//   CadastroTurismo: undefined;
+//   CadastroViagem: undefined;
+// }
 
 export type RootStackParamList = {
   Home: undefined;
@@ -16,15 +16,15 @@ export type RootStackParamList = {
   CadastroEndereco: undefined;
   MenuPerfil: undefined;
   MenuPrincipal: undefined;
-  CadastroTransporte: { isCreatingViagem?: boolean };
-  CadastroHospedagem: { isCreatingViagem?: boolean };
-  CadastroTurismo: { isCreatingViagem?: boolean };
+  CadastroTransporte: { isCreatingViagem?: boolean, viagem: GetViagensResponseDto };
+  CadastroHospedagem: { isCreatingViagem?: boolean, viagem: GetViagensResponseDto };
+  CadastroTurismo: { isCreatingViagem?: boolean, viagem: GetViagensResponseDto };
   CadastroViagem: undefined;
   BaseCadastroViagem: undefined;
   ResumoViagem: undefined;
   Viagens: undefined;
-  ViagemSelecionada: { item: GetViagensResponseDto };
-  CadastroViagemNavigator: { screen: keyof CadastroViagemParamList; params?: any };
+  ViagemSelecionada: { viagem: GetViagensResponseDto };
+  // CadastroViagemNavigator: { screen: keyof CadastroViagemParamList; params?: any };
   DetalhesHospedagem: { hospedagem: GetHospedagemResponseDto };
   DetalhesTransporte: { viagem: GetViagensResponseDto };
   DetalhesTurismo: { viagem: GetViagensResponseDto };

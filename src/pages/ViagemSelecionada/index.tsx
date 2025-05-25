@@ -5,13 +5,13 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { styles } from "./styles";
 import HeaderFixo from "../../components/HeaderFixo";
 import { GetViagensResponseDto } from "../../types/dto/GetViagensResponseDto";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { formatDate } from "../../utils/DataFormat";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import ModalNovoItem from "../../components/ModalNovoItem";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Input from "../../components/InputCadastro";
 import travelerApi from "../../services/api/travelerApi";
 import Loading from "../../components/Loading";
@@ -30,7 +30,7 @@ import CardItemPasseio from "../../components/CardItemPasseio";
 function ViagemSelecionada() {
 
   const route = useRoute();
-  const { item } = route.params as { item: GetViagensResponseDto };
+  const { viagem } = route.params as { viagem: GetViagensResponseDto };
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -59,55 +59,72 @@ function ViagemSelecionada() {
     <CardItemPasseio item={item} />
   );
 
-  useEffect(() => {
-    const buscarDespesas = async () => {
-      setIsLoading(true);
-      try {
-        const response = await travelerApi.get(`/despesa/viagem/${item.id}`);
-        
-        setDespesa(response.data);
 
-      } catch (error) {
-        console.error("Erro ao buscar despesas:", error);
-      }
+  const buscarDespesas = async () => {
+    setIsLoading(true);
+    try {
+      const response = await travelerApi.get(`/despesa/viagem/${viagem.id}`);
+      
+      setDespesa(response.data);
+
+    } catch (error) {
+      console.error("Erro ao buscar despesas:", error);
     }
+  }
 
-    const buscarTransporte = async () => {
-      try {
-        const response = await travelerApi.get(`/transporte/viagem/${item.id}`);
-        setTransporte(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar transporte:", error);
-      }
+  const buscarTransporte = async () => {
+    try {
+      const response = await travelerApi.get(`/transporte/viagem/${viagem.id}`);
+      setTransporte(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar transporte:", error);
     }
+  }
 
-    const buscarHospedagem = async () => {
-      try {
-        const response = await travelerApi.get(`/hospedagem/viagem/${item.id}`);
-        setHospedagem(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar hospedagem:", error);
-      }
+  const buscarHospedagem = async () => {
+    try {
+      const response = await travelerApi.get(`/hospedagem/viagem/${viagem.id}`);
+      setHospedagem(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar hospedagem:", error);
     }
+  }
 
-    const buscarPasseio = async () => {
-      try {
-        const response = await travelerApi.get(`/passeio/viagem/${item.id}`);
-        setPasseio(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar passeio:", error);
-      }
+  const buscarPasseio = async () => {
+    try {
+      const response = await travelerApi.get(`/passeio/viagem/${viagem.id}`);
+      setPasseio(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar passeio:", error);
     }
+  }
 
-    buscarDespesas();
-    buscarTransporte();
-    buscarHospedagem();
-    buscarPasseio();
-    setIsLoading(false);
-  }, []);
+  // useEffect(() => {
+  //   buscarDespesas();
+  //   buscarTransporte();
+  //   buscarHospedagem();
+  //   buscarPasseio();
+  //   setIsLoading(false);
+  // }, []);
+
+  // Usando useFocusEffect para carregar viagens ao voltar para a tela
+  useFocusEffect(
+    useCallback(() => {
+      // Chama a função de forma síncrona
+      if(isModalVisible) {
+        handleModal();
+      }
+      buscarDespesas();
+      buscarTransporte();
+      buscarHospedagem();
+      buscarPasseio();
+      setIsLoading(false);
+    }, [viagem.id])
+  );
+  
 
   function excluirViagem() {
-    travelerApi.delete(`/viagem/${item.id}/delete`)
+    travelerApi.delete(`/viagem/${viagem.id}/delete`)
       .then(() => {
         navigation.navigate('Viagens');
       })
@@ -140,8 +157,8 @@ function ViagemSelecionada() {
             </View>
             <View style={styles.headerContainer}>
               <View style={styles.titleWrapper}>
-                <Text style={styles.titulo}>{item.nome}</Text>
-                <Text style={styles.data}>{formatDate(item.data_inicio)}</Text>
+                <Text style={styles.titulo}>{viagem.nome}</Text>
+                <Text style={styles.data}>{formatDate(viagem.data_inicio)}</Text>
               </View>
             </View>
             {isLoading && 
@@ -208,7 +225,7 @@ function ViagemSelecionada() {
             }
 
           </ScrollView>
-          {isModalVisible && <ModalNovoItem closeModal={handleModal} viagemId={item.id}/>}
+          {isModalVisible && <ModalNovoItem closeModal={handleModal} viagem={viagem}/>}
           <Toast />
           <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
               <AntDesign name={'plus'} size={35} color='#fff'/>

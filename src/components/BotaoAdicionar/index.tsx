@@ -11,7 +11,7 @@ function BotaoAdicionar() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return(
-    <TouchableOpacity style={styles.botaoMais} onPress={() => navigation.navigate("CadastroViagemNavigator", { screen: "CadastroViagem" })}>
+    <TouchableOpacity style={styles.botaoMais} onPress={() => navigation.navigate("CadastroViagem")}>
       <AntDesign name={'plus'} size={35} color='#fff'/>
     </TouchableOpacity>
   )

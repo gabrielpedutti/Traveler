@@ -2,7 +2,12 @@ import { View, Text } from "react-native";
 
 import { styles } from './styles';
 
-function ModalErro(props) {
+interface ModalErroProps {
+  titulo: string;
+  erro: string;
+}
+
+function ModalErro(props: ModalErroProps) {
   
   return(
     <View style={styles.modal}>
