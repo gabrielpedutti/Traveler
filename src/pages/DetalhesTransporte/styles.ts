@@ -42,11 +42,15 @@ const styles = StyleSheet.create({
     marginStart: 20,
     marginTop: 5
   },
+  wrapperInfos: {
+    flexDirection: 'column',
+    marginEnd: 30,
+    gap: 10,
+  },
   containerInfos: {
     flexDirection: 'row',
     alignItems: 'center',
     marginEnd: 30,
-    marginLeft: 10,
     gap: 10,
   },
   containerDataIcone: {
@@ -54,8 +58,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dateIcons: {
-    marginBottom: -8,
-    marginLeft: 10,
+    marginRight: 10,
   },
   arrow: {
     marginLeft: 10,
@@ -100,10 +103,12 @@ const styles = StyleSheet.create({
     marginEnd: 10
   },
   cardPontilhadoCima: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#fff',
     borderTopStartRadius: 10,
     borderTopEndRadius: 10,
-    padding: 10,
+    padding: 20,
     paddingBlock: 20,
     marginLeft: 10,
     marginTop: 0,

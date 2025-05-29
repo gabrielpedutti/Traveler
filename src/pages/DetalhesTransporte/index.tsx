@@ -28,25 +28,57 @@ function DetalhesTransporte({ route }: any) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
 
-  // Função para lidar com o clique no botão "Abrir Comprovante"
+  const getIconePorTipoTransporte = (tipoDescricao: string) => {
+    switch (tipoDescricao.toLowerCase()) {
+      case "aplicativo de transporte":
+        return "car-side"; // Exemplo, FontAwesome5 não tem um ícone específico, pode precisar de outro conjunto ou um genérico
+      case "avião":
+        return "plane-departure";
+      case "barco/ferry":
+        return "ship";
+      case "bicicleta":
+        return "bicycle";
+      case "carro alugado":
+        return "car-alt";
+      case "cruzeiro":
+        return "ship"; // Similar a Barco/Ferry
+      case "helicóptero":
+        return "helicopter";
+      case "metrô":
+        return "subway";
+      case "moto":
+        return "motorcycle";
+      case "moto-táxi":
+        return "motorcycle"; // Similar a Moto
+      case "ônibus":
+        return "bus-alt";
+      case "táxi":
+        return "taxi";
+      case "trem":
+        return "train";
+      case "van/shuttle":
+        return "shuttle-van";
+      case "veículo próprio":
+        return "car";
+      default:
+        return "plane-departure"; // Ícone padrão
+    }
+  };
+
   const handleOpenDocument = async () => {
       if (transporte.documento_anexo) {
-        console.log("Caminho do documento:", transporte.documento_anexo);
-        // Chama a função para abrir o arquivo salvo localmente
         await openLocalDocument(transporte.documento_anexo);
       } else {
-        console.warn("Caminho do documento não disponível para esta transporte.");
         Toast.show({
           type: 'error',
           text1: 'Erro',
-          text2: 'Caminho do documento não disponível para esta transporte.',
+          text2: 'Caminho do documento não disponível para este transporte.',
           visibilityTime: 4000,
         });
       }
   };
 
   async function excluirTransporte() {
-
     const currentDocumentPath = transporte.documento_anexo;
     if (currentDocumentPath) {
       await deleteLocalDocument(currentDocumentPath);
@@ -91,7 +123,7 @@ function DetalhesTransporte({ route }: any) {
     }
   }
 
-  function handleExcluirHospedagem() {
+  function handleExcluirTransporte() { // Renomeado de handleExcluirHospedagem
     setIsConfirmandoExcluir(true);
   }
 
@@ -114,12 +146,20 @@ function DetalhesTransporte({ route }: any) {
             <Titulo texto="Transporte" />
             <View style={styles.cardPontilhadoContainer}>
               <View style={styles.cardPontilhadoCima}>
-                <View style={styles.containerInfos}>
-                  <Text style={styles.textoHospedagem}>{transporte.nome}</Text>
-                </View>
-                <View style={styles.containerInfos}>
-                  <Text style={styles.textoHospedagem}>Tipo: </Text>
-                  <Text style={styles.dadosHospedagem}>{transporte.tipo_transporte.descricao}</Text>
+                <FontAwesome5Icon
+                  name={getIconePorTipoTransporte(transporte.tipo_transporte.descricao)}
+                  size={30}
+                  color='#2b88d9'
+                  style={styles.dateIcons}
+                />
+                <View style={styles.wrapperInfos}>
+                  <View style={styles.containerInfos}>
+                    <Text style={styles.textoHospedagem}>{transporte.nome}</Text>
+                  </View>
+                  <View style={styles.containerInfos}>
+                    <Text style={styles.textoHospedagem}>Tipo: </Text>
+                    <Text style={styles.dadosHospedagem}>{transporte.tipo_transporte.descricao}</Text>
+                  </View>
                 </View>
               </View>
               <View style={styles.dottedLine} />
@@ -128,10 +168,15 @@ function DetalhesTransporte({ route }: any) {
                   <View style={styles.containerData}>
                     <Text style={styles.textCheckInOut}>Embarque</Text>
                     <View style={styles.containerDataIcone}>
-                      <FontAwesome5Icon name={'plane-departure'} size={30} color='#2b88d9' style={styles.dateIcons}/>
+                      <FontAwesome5Icon
+                        name='calendar-alt'
+                        size={30}
+                        color='#2b88d9'
+                        style={styles.dateIcons}
+                      />
                       <Text style={styles.dateText}>{formatDate(transporte.data)}</Text>
                     </View>
-                  </View>          
+                  </View>
                 </View>
               </View>
             </View>
@@ -140,13 +185,10 @@ function DetalhesTransporte({ route }: any) {
               <View style={styles.containerEndereco}>
                 <FontAwesome5Icon name={'map-marker-alt'} size={30} color='#2b88d9'/>
                 {
-                  true ? (
-                    // <Text style={styles.textoEndereco} onPress={handleOpenAddressInMaps}>
-                    //   "Rua tal, 123 - Bairro tal, Cidade tal - Estado tal" Mais textos aqui lalalala
-                    // </Text>
-                    <Text>{transporte.transporte_destino.nm_municipio} - {transporte.transporte_destino.nm_estado}</Text>
+                  transporte.transporte_destino && transporte.transporte_destino.nm_municipio ? (
+                    <Text style={styles.textoHospedagem}>{transporte.transporte_destino.nm_municipio} - {transporte.transporte_destino.nm_estado}</Text>
                   ) : (
-                    <Text style={styles.textoHospedagem}>Nenhum endereço encontrado</Text>
+                    <Text style={styles.textoHospedagem}>Nenhum local de destino encontrado</Text>
                   )
                 }
               </View>
@@ -158,7 +200,7 @@ function DetalhesTransporte({ route }: any) {
                   {
                     transporte.documento_anexo ? (
                       <Text style={styles.textoHospedagem} >
-                        {transporte.documento_anexo}
+                        {transporte.documento_anexo.split('/').pop()}
                       </Text>
                     ) : (
                       <Text style={styles.textoHospedagem}>Nenhum documento anexado</Text>
@@ -173,10 +215,10 @@ function DetalhesTransporte({ route }: any) {
                   <Text style={styles.dadosHospedagem}>{formatarParaReal(transporte.despesa.valor)}</Text>
                 </View>
               </View>
-            
+
             <View style={styles.containerBotoes}>
-              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9'/>} onPress={() => {}} />
-              <BotaoExcluir onPress={handleExcluirHospedagem} />
+              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9'/>}  onPress={() => {}} />
+              <BotaoExcluir onPress={handleExcluirTransporte} />
             </View>
 
           </ScrollView>
@@ -193,4 +235,3 @@ function DetalhesTransporte({ route }: any) {
 }
 
 export default DetalhesTransporte;
-

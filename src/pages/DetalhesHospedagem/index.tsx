@@ -28,6 +28,39 @@ function DetalhesHospedagem({ route }: any) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
 
+  const getIconePorTipoHospedagem = (tipoDescricao: string) => {
+    switch (tipoDescricao.toLowerCase()) {
+      case "airbnb":
+        return "house-user";
+      case "apartamento/casa alugada":
+        return "home";
+      case "camping":
+        return "campground";
+      case "casa de amigos/familiares":
+        return "users";
+      case "chalé":
+        return "mountain"; // Ícone genérico, pode precisar de um mais específico se disponível
+      case "flat/apart-hotel":
+        return "building";
+      case "homestay/couchsurfing":
+        return "couch";
+      case "hostel":
+        return "bed"; // Pode ser usado para hostel também
+      case "hotel":
+        return "hotel";
+      case "hotel-fazenda":
+        return "tractor"; // Ícone genérico, pode precisar de um mais específico
+      case "pousada":
+        return "concierge-bell";
+      case "resort":
+        return "umbrella-beach";
+      case "spa":
+        return "spa";
+      default:
+        return "hotel"; // Ícone padrão
+    }
+  };
+
   async function handleOpenAddressInMaps() {
     const address = hospedagem.endereco;
 
@@ -160,12 +193,20 @@ function DetalhesHospedagem({ route }: any) {
             <Titulo texto="Hospedagem" />
             <View style={styles.cardPontilhadoContainer}>
               <View style={styles.cardPontilhadoCima}>
-                <View style={styles.containerInfos}>
-                  <Text style={styles.textoHospedagem}>{hospedagem.nome}</Text>
-                </View>
-                <View style={styles.containerInfos}>
-                  <Text style={styles.textoHospedagem}>Tipo: </Text>
-                  <Text style={styles.dadosHospedagem}>{hospedagem.tipo_hospedagem.descricao}</Text>
+                <FontAwesome5Icon
+                  name={getIconePorTipoHospedagem(hospedagem.tipo_hospedagem.descricao)}
+                  size={30}
+                  color='#2b88d9'
+                  style={styles.dateIcons}
+                />
+                <View style={styles.wrapperInfos}>
+                  <View style={styles.containerInfos}>
+                    <Text style={styles.textoHospedagem}>{hospedagem.nome}</Text>
+                  </View>
+                  <View style={styles.containerInfos}>
+                    <Text style={styles.textoHospedagem}>Tipo: </Text>
+                    <Text style={styles.dadosHospedagem}>{hospedagem.tipo_hospedagem.descricao}</Text>
+                  </View>
                 </View>
               </View>
               <View style={styles.dottedLine} />

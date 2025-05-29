@@ -2,6 +2,7 @@ import { RouteProp } from "@react-navigation/native";
 import { GetViagensResponseDto } from "./dto/GetViagensResponseDto";
 import GetHospedagemResponseDto from "./dto/GetHospedagemPorViagemDto";
 import GetTransporteResponseDto from "./dto/GetTransportePorViagemDto";
+import GetPasseiosPorViagemDto from "./dto/GetPasseiosPorViagemDto";
 
 // export type CadastroViagemParamList = {
 //   CadastroHospedagem: undefined;
@@ -28,7 +29,7 @@ export type RootStackParamList = {
   // CadastroViagemNavigator: { screen: keyof CadastroViagemParamList; params?: any };
   DetalhesHospedagem: { hospedagem: GetHospedagemResponseDto };
   DetalhesTransporte: { transporte: GetTransporteResponseDto };
-  DetalhesTurismo: { passeio: GetViagensResponseDto };
+  DetalhesPasseio: { passeio: GetPasseiosPorViagemDto };
 };
 
 export type CadastroTransporteRouteProp = RouteProp<RootStackParamList, 'CadastroTransporte'>;

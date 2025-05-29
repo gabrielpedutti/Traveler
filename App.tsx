@@ -19,6 +19,8 @@ import CadastroTransporte from './src/pages/CadastroTransporte';
 // import CadastroViagemNavigator from './src/navigation/cadastroViagemNavigator';
 import Tabs from './src/navigation/tabs';
 import DetalhesHospedagem from './src/pages/DetalhesHospedagem';
+import DetalhesTransporte from './src/pages/DetalhesTransporte';
+import DetalhesPasseio from './src/pages/DetalhesPasseio';
 
 
 
@@ -137,6 +139,20 @@ export default function App() {
           <Stack.Screen
             name="DetalhesHospedagem"
             component={DetalhesHospedagem}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="DetalhesTransporte"
+            component={DetalhesTransporte}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="DetalhesPasseio"
+            component={DetalhesPasseio} // Substituir pelo componente correto de detalhes de passeio
             options={{
               headerShown: false,
             }}
