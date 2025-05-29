@@ -1,28 +1,24 @@
-import { View, Text, TextInput, Platform, KeyboardAvoidingView, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, Platform, KeyboardAvoidingView, ScrollView } from "react-native";
 
 import { styles } from "./styles";
 import Titulo from "../../components/Titulo";
 import Input from "../../components/InputCadastro";
-import { set, z } from "zod";
+import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Picker } from "@react-native-picker/picker";
 import { DateInput } from "../../components/DateInput";
-import SelecionarPaisEstadoCidade from "../../components/SelecionarPaisEstadoCidade";
 import Botao from "../../components/Botao";
 import Toast from "react-native-toast-message";
 import HeaderFixo from "../../components/HeaderFixo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BotaoSecundario from "../../components/BotaoSecundario";
-import { useContext, useEffect, useState } from "react";
-import { CadastroContext } from "../../contexts/cadastro";
-import { CadastroViagemContext } from "../../contexts/cadastroViagem";
+import { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CadastroTransporteRouteProp, RootStackParamList } from "../../types/RootStackParamList";
 import GetTipoHospedagemDto from "../../types/dto/GetTipoHospedagemDto";
 import { deleteLocalDocument, pickAndSaveDocument } from "../../utils/fileUploadUtils";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import BotaoAnexarArquivo from "../../components/BotaoAnexarArquivo";
 import travelerApi from "../../services/api/travelerApi";
 import { formatToISOString } from "../../utils/DataFormat";
@@ -83,7 +79,6 @@ function CadastroHospedagem() {
 
   // Função para lidar com o clique no botão "Anexar Comprovante"
   const handleAttachDocument = async () => {
-    set
     // Permite PDF e qualquer tipo de imagem
     const result = await pickAndSaveDocument(['application/pdf', 'image/*']);
     if (result) {
@@ -149,15 +144,15 @@ function CadastroHospedagem() {
         valor: Number(data.valor),
         viagem_id: viagem.id,
         endereco: data.endereco,
-        documento_anexo: data.documentPath,
+        documento_anexo: data.documentPath || "",
       }      
 
       const response = await cadastrarHospedagemBanco(payloadHospedagem);
 
       // Verifique se a resposta é do tipo erro
-      if (response && 'status' in response && response.status >= 400) {
+      if (response && 'status' in response && Number(response.status) >= 400) {
         // Aqui sabemos que o response é do tipo ErroResponseDto ou similar indicando falha
-        throw new Error(`Erro ao cadastrar transporte: ${response.mensagem || response.detail || JSON.stringify(response)}`);
+        throw new Error(`Erro ao cadastrar transporte: Código: ${response.statusCode} Erro: ${response.message || JSON.stringify(response)}`);
       }
 
       Toast.show({

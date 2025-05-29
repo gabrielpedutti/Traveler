@@ -26,6 +26,7 @@ import GetHospedagemResponseDto from "../../types/dto/GetHospedagemPorViagemDto"
 import CardItemHospedagem from "../../components/CardItemHospedagem";
 import GetPasseiosPorViagemDto from "../../types/dto/GetPasseiosPorViagemDto";
 import CardItemPasseio from "../../components/CardItemPasseio";
+import GetTransporteResponseDto from "../../types/dto/GetTransportePorViagemDto";
 
 function ViagemSelecionada() {
 
@@ -43,7 +44,7 @@ function ViagemSelecionada() {
     setIsModalVisible(!isModalVisible);
   }
 
-  const renderCardItemTransporte = ({ item }: { item: GetTransportesPorViagemDto }) => (
+  const renderCardItemTransporte = ({ item }: { item: GetTransporteResponseDto }) => (
     <CardItemTransporte item={item} />
   );
 

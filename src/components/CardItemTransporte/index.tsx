@@ -13,10 +13,11 @@ import { styles } from "./styles";
 import { formatarParaReal } from "../../utils/CurrencyFormat";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import GetTransportesPorViagemDto from "../../types/dto/GetTransportesPorViagemDto";
+import GetTransporteResponseDto from "../../types/dto/GetTransportePorViagemDto";
 
 interface CardItemTransporteProps {
   imagem?: any;
-  item: GetTransportesPorViagemDto;
+  item: GetTransporteResponseDto;
 }
 
 function CardItemTransporte({item, imagem}: CardItemTransporteProps) {
@@ -33,7 +34,7 @@ function CardItemTransporte({item, imagem}: CardItemTransporteProps) {
   }, [item.nome]);
 
   return(
-    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('Home')}}>
+    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('DetalhesTransporte', {transporte: item})}}>
       <View style={styles.containerItem}>
       <MaterialCommunityIcons name={'bus-side'} size={40} color='#2b88d9'/>
       </View>
@@ -46,7 +47,7 @@ function CardItemTransporte({item, imagem}: CardItemTransporteProps) {
 
         </View>
         <View style={styles.linha}>
-        <Text style={styles.text}>Destino: {item.transporte_destino_id}</Text>
+        <Text style={styles.text}>Destino: {item.transporte_destino.nm_municipio}</Text>
         </View>
       </View>
     </TouchableOpacity>

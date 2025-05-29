@@ -107,7 +107,8 @@ export async function openLocalDocument(localUri: string) {
         const supported = await Linking.canOpenURL(uriToOpen);
 
         if (supported) {
-            await Linking.openURL(uriToOpen);
+            // await Linking.openURL(uriToOpen);
+            await FileViewer.open(uriToOpen, { showOpenWithDialog: true });
             console.log('Arquivo aberto com Linking.openURL:', uriToOpen);
         } else {
             console.error(`Nenhum aplicativo pode abrir este tipo de arquivo: ${uriToOpen}`);

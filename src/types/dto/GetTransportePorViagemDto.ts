@@ -12,7 +12,7 @@ interface transporteDestinoDto {
   nm_pais: string;
 }
 
-interface GetTransportesPorViagemDto {
+interface GetTransporteResponseDto {
   id: number;
   nome: string;
   tipo_id: number;
@@ -29,4 +29,4 @@ interface GetTransportesPorViagemDto {
   transporte_destino: transporteDestinoDto;
 }
 
-export default GetTransportesPorViagemDto;
+export default GetTransporteResponseDto;
