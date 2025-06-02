@@ -25,6 +25,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BotaoSecundario from "../../components/BotaoSecundario";
 import GetTipoTransporteDto from "../../types/dto/GetTipoTransporteDto";
 import CadastroTransporteRequestDto from "../../types/dto/CadastroTransporteRequestDto";
+import { deleteLocalDocument, pickAndSaveDocument } from "../../utils/fileUploadUtils";
+import BotaoAnexarArquivo from "../../components/BotaoAnexarArquivo";
 
 const cadastroTrasnporteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -45,19 +47,22 @@ const cadastroTrasnporteSchema = z.object({
       return Platform.OS === 'ios' ? Number(val) : val;
     })
     .refine((val) => Number(val) > 0, { message: "Destino é obrigatório" }),
+  documentPath: z.string().optional(), // Campo para armazenar o URI local
+  documentName: z.string().optional(), // Campo opcional para exibir o nome original
 })
 
 type CadastroTransporteSchema = z.infer<typeof cadastroTrasnporteSchema>;
 
 function CadastroTransporte() {
 
-  const { user } = useContext(CadastroContext);
+  // const { user } = useContext(CadastroContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [tipoTransporte, setTipoTransporte] = useState<GetTipoTransporteDto[]>([]);
   const route = useRoute<CadastroTransporteRouteProp>();
   const { isCreatingViagem, viagem } = route.params;
+  const [isLoadingUploads, setIsLoadingUploads] = useState(false);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<CadastroTransporteSchema>({
+  const { control, handleSubmit, formState: { errors }, watch, setValue, getValues  } = useForm<CadastroTransporteSchema>({
     resolver: zodResolver(cadastroTrasnporteSchema),
     defaultValues: {
       nome: "",
@@ -65,8 +70,26 @@ function CadastroTransporte() {
       valor: "",
       data: "",
       viagem_destino: 0,
+      documentPath: undefined,
+      documentName: undefined,
     }
   });
+
+  // Use watch para obter o valor atual de documentName para exibição
+  const attachedDocumentName = watch('documentName');
+
+  // Função para lidar com o clique no botão "Anexar Comprovante"
+  const handleAttachDocument = async () => {
+    // Permite PDF e qualquer tipo de imagem
+    const result = await pickAndSaveDocument(['application/pdf', 'image/*']);
+    if (result) {
+        // Atualiza o campo do formulário com o caminho local e nome
+        setValue('documentPath', result.localUri);
+        setValue('documentName', result.fileName);
+        // Opcional: Exibir um toast de sucesso "Arquivo anexado: NomeArquivo.pdf"
+    }
+    setIsLoadingUploads(false);
+  };
 
   function onFormValidationError(errors: any) {
     // Mostra um Toast geral informando que há erros
@@ -95,7 +118,7 @@ function CadastroTransporte() {
   useEffect(() => {
     const consultaTiposTransporte = async () => {
       try {
-        const response = await travelerApi.get('/transporte/tipos');
+        const response = await travelerApi.get('/tipo-transporte');
         setTipoTransporte(response.data);
       } catch (error) {
          console.error("Erro ao buscar tipos de transporte:", error);
@@ -118,27 +141,19 @@ function CadastroTransporte() {
         ...data,
         tipo_id: Number(data.tipoTransporte),
         valor: Number(data.valor),
-        usuario_id: user.id || 0,
         viagem_id: Number(viagem.id),
         data: dataFormatada,
         transporte_destino_id: Number(data.viagem_destino),
+        documento_anexo: data.documentPath || ""
       }
 
       const response = await cadastrarTransporteBanco(payloadViagem);
 
       // Verifique se a resposta é do tipo erro
-      if (response && 'status' in response && response.status >= 400) {
+      if (response && 'status' in response && Number(response.status) >= 400) {
         // Aqui sabemos que o response é do tipo ErroResponseDto ou similar indicando falha
-        throw new Error(`Erro ao cadastrar transporte: ${response.mensagem || response.detail || JSON.stringify(response)}`);
+        throw new Error(`Erro ao cadastrar transporte: Código: ${response.statusCode} Erro: ${response.message || JSON.stringify(response)}`);
      }
-
-      //   // Navega para a próxima tela após um pequeno atraso
-      //   setTimeout(() => {
-      //     navigation.navigate("CadastroHospedagem");
-      //   }, 1000); // Delay de 1 segundo
-      // } catch (error) {
-      //   console.error("Erro ao cadastrar transporte: ", error);
-      // }
 
       Toast.show({
         type: "success",
@@ -185,6 +200,16 @@ function CadastroTransporte() {
           text1Style: { fontSize: 16, fontWeight: "bold" },
           text2Style: { fontSize: 16 },
         });
+    }
+  }
+
+  async function handleDeletarAnexoButton() {
+    const currentDocumentPath = getValues('documentPath');
+    
+    setValue('documentPath', undefined); 
+    setValue('documentName', undefined); 
+    if (currentDocumentPath) {
+      await deleteLocalDocument(currentDocumentPath);
     }
   }
 
@@ -262,6 +287,13 @@ function CadastroTransporte() {
             {errors.data && <Text style={styles.error} >{errors.data.message}</Text>}
             <Text style={styles.titulo}>Selecione o Destino</Text>
             <SelecionarPaisEstadoCidade municipioName={"viagem_destino"} control={control} errors={errors} />
+            <BotaoAnexarArquivo 
+              handleAttachDocument={handleAttachDocument} 
+              handleDeletarAnexoButton={handleDeletarAnexoButton}
+              label="Anexar Comprovante"
+              attachedDocumentName={attachedDocumentName || ""}
+            />
+            
             {isCreatingViagem ? 
             (
             <View style={styles.containerButton}>
