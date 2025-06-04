@@ -33,3 +33,5 @@ export type RootStackParamList = {
 };
 
 export type CadastroTransporteRouteProp = RouteProp<RootStackParamList, 'CadastroTransporte'>;
+export type CadastroHospedagemRouteProp = RouteProp<RootStackParamList, 'CadastroHospedagem'>;
+export type CadastroTurismoRouteProp = RouteProp<RootStackParamList, 'CadastroTurismo'>;

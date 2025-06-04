@@ -145,18 +145,20 @@ function DetalhesPasseio({ route }: any) {
             <Titulo texto="Passeio Turístico" />
             <View style={styles.cardPontilhadoContainer}>
               <View style={styles.cardPontilhadoCima}>
+                <FontAwesome5Icon
+                  name={getIconePorTipoPasseio(passeio.tipo_passeio.descricao)}
+                  size={30}
+                  color='#2b88d9'
+                  style={styles.dateIcons}
+                />
                 <View style={styles.wrapperInfos}>
-                  <FontAwesome5Icon
-                    name={getIconePorTipoPasseio(passeio.tipo_passeio.descricao)}
-                    size={24} // Ajuste o tamanho conforme necessário
-                    color='#2b88d9'
-                    style={styles.dateIcons} // Adicione este estilo em styles.ts
-                  />
-                  <Text style={styles.textoHospedagem}>{passeio.nome}</Text>
-                </View>
-                <View style={styles.containerInfos}>
-                  <Text style={styles.textoHospedagem}>Tipo: </Text>
-                  <Text style={styles.dadosHospedagem}>{passeio.tipo_passeio.descricao}</Text>
+                  <View style={styles.containerInfos}>
+                    <Text style={styles.textoHospedagem}>{passeio.nome}</Text>
+                  </View>
+                  <View style={styles.containerInfos}>
+                    <Text style={styles.textoHospedagem}>Tipo: </Text>
+                    <Text style={styles.dadosHospedagem}>{passeio.tipo_passeio.descricao}</Text>
+                  </View>
                 </View>
               </View>
               <View style={styles.dottedLine} />

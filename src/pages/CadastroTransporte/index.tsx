@@ -27,17 +27,25 @@ import GetTipoTransporteDto from "../../types/dto/GetTipoTransporteDto";
 import CadastroTransporteRequestDto from "../../types/dto/CadastroTransporteRequestDto";
 import { deleteLocalDocument, pickAndSaveDocument } from "../../utils/fileUploadUtils";
 import BotaoAnexarArquivo from "../../components/BotaoAnexarArquivo";
+import { formatarParaReal } from "../../utils/CurrencyFormat";
 
 const cadastroTrasnporteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
   tipoTransporte:   z.union([z.string(), z.number()]) // Aceita tanto string quanto número
-  .refine((val) => !isNaN(Number(val)), { message: "Tipo de tranpsorte é obrigatório" }) // Verifica se é um número válido
+  .refine((val) => !isNaN(Number(val)), { message: "Tipo de transporte é obrigatório" }) // Verifica se é um número válido
   .transform((val) => {
     // Se for string (iOS), converte para número, se já for número (Android), deixa como está
     return Platform.OS === 'ios' ? Number(val) : val;
   })
-  .refine((val) => Number(val) > 0, { message: "Tipo de tranpsorte é obrigatório" }),
-  valor: z.string().min(1, "Valor é obrigatório"),
+  .refine((val) => Number(val) > 0, { message: "Tipo de transporte é obrigatório" }),
+  valor: z.string()
+    .min(1, "O valor é obrigatório.")
+    .transform((val) => {
+      const cleanedValue = val.replace(/[R$\s.]/g, '').replace(',', '.');
+      const num = parseFloat(cleanedValue);
+      return isNaN(num) ? "0" : num.toString();
+    })
+    .refine(val => Number(val) > 0, { message: "O valor deve ser maior que zero." }),
   data: z.string().min(1, "Data é obrigatório"),
   viagem_destino: z
     .union([z.string(), z.number()]) // Aceita tanto string quanto número
@@ -55,19 +63,19 @@ type CadastroTransporteSchema = z.infer<typeof cadastroTrasnporteSchema>;
 
 function CadastroTransporte() {
 
-  // const { user } = useContext(CadastroContext);
+  const { user } = useContext(CadastroContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [tipoTransporte, setTipoTransporte] = useState<GetTipoTransporteDto[]>([]);
   const route = useRoute<CadastroTransporteRouteProp>();
   const { isCreatingViagem, viagem } = route.params;
   const [isLoadingUploads, setIsLoadingUploads] = useState(false);
 
-  const { control, handleSubmit, formState: { errors }, watch, setValue, getValues  } = useForm<CadastroTransporteSchema>({
+  const { control, handleSubmit, formState: { errors }, watch, setValue, getValues, reset } = useForm<CadastroTransporteSchema>({
     resolver: zodResolver(cadastroTrasnporteSchema),
     defaultValues: {
       nome: "",
       tipoTransporte: "",
-      valor: "",
+      valor: "0.00",
       data: "",
       viagem_destino: 0,
       documentPath: undefined,
@@ -134,6 +142,19 @@ function CadastroTransporte() {
 
   async function cadastrarTransporte(data: CadastroTransporteSchema) {
 
+    if (!user) {
+      Toast.show({
+        type: "error",
+        text1: "Erro",
+        text2: "Usuário não autenticado. Faça login novamente.",
+      });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+      return;
+    }
+
     try {
       const dataFormatada = formatToISOString(data.data);
 
@@ -153,7 +174,7 @@ function CadastroTransporte() {
       if (response && 'status' in response && Number(response.status) >= 400) {
         // Aqui sabemos que o response é do tipo ErroResponseDto ou similar indicando falha
         throw new Error(`Erro ao cadastrar transporte: Código: ${response.statusCode} Erro: ${response.message || JSON.stringify(response)}`);
-     }
+      }
 
       Toast.show({
         type: "success",
@@ -173,6 +194,19 @@ function CadastroTransporte() {
           Toast.hide();
         }
       });
+
+      // Resetar o formulário para os valores padrão APÓS o sucesso
+      reset({
+        nome: "",
+        tipoTransporte: 0,
+        data: "", // Ou um valor padrão que seu DateInput aceite para "limpar"
+        valor: "0.00",
+        documentPath: undefined,
+        documentName: undefined,
+      });
+      
+      setValue('documentPath', undefined); 
+      setValue('documentName', undefined); 
 
       if (isCreatingViagem) {
         setTimeout(() => {
@@ -263,10 +297,19 @@ function CadastroTransporte() {
                 <Input
                   label="Valor"
                   keyboardType="numeric"
-                  placeholder="Digite o valor"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value}
+                  placeholder="0,00"
+                  onChangeText={(text) => {
+                    let cleanedText = text.replace(/[^0-9,.]/g, '');
+
+                    cleanedText = cleanedText.replace(/,/g, '.');
+                    // Se houver múltiplos pontos, remove os extras (mantendo o primeiro).
+                    const parts = cleanedText.split('.');
+                    if (parts.length > 2) {
+                        cleanedText = parts[0] + '.' + parts.slice(1).join('');
+                    }
+                    onChange(cleanedText);
+                  }}
+                  value={formatarParaReal(value)}
                 />
               )}
             />

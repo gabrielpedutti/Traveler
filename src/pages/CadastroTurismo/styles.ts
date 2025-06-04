@@ -4,23 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-  },
-  noImage: {
-    height: 250,
-    width: "100%",
-    backgroundColor: "#cacaca",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#cacaca",
-  },
-  icon: {
-    opacity: 0.3,
-  },
-  editButton: {
-    position: "absolute",
-    right: 10,
-    top: 10,
+    backgroundColor: "#F2F2F2",
   },
   keyboardAvoidingView: {
     flex: 1,
@@ -41,15 +25,33 @@ const styles = StyleSheet.create({
     marginStart: 20,
     marginTop: 5
   },
-  containerDatas: {
+  wrapper: {
+    marginTop: 20
+  },
+  label: {
+    color: "#2c88d9",
+    fontWeight: 'bold',
+    marginLeft: 15,
+    marginBottom: 10,
+    fontSize: 16
+  },
+  containerInput: {
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    marginStart: 15,
+    marginEnd: 15,
+    borderWidth: 1,
+    borderColor: '#2c88d9'
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#2b88d9',
+    paddingTop: -100,
+  },
+  containerButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginStart: 0,
-    marginEnd: 1,
   },
-  containerData: {
-    width: '48%',
-  }
 });
 
 export { styles };

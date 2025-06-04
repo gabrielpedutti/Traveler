@@ -16,7 +16,7 @@ import BotaoSecundario from "../../components/BotaoSecundario";
 import { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { CadastroTransporteRouteProp, RootStackParamList } from "../../types/RootStackParamList";
+import { CadastroHospedagemRouteProp, CadastroTransporteRouteProp, RootStackParamList } from "../../types/RootStackParamList";
 import GetTipoHospedagemDto from "../../types/dto/GetTipoHospedagemDto";
 import { deleteLocalDocument, pickAndSaveDocument } from "../../utils/fileUploadUtils";
 import BotaoAnexarArquivo from "../../components/BotaoAnexarArquivo";
@@ -33,7 +33,14 @@ const cadastroHospedagemSchema = z.object({
     return Platform.OS === 'ios' ? Number(val) : val;
   })
   .refine((val) => Number(val) > 0, { message: "Tipo de hospedagem é obrigatório" }),
-  valor: z.string().min(1, "Valor é obrigatório"),
+ valor: z.string()
+    .min(1, "O valor é obrigatório.")
+    .transform((val) => {
+      const cleanedValue = val.replace(/[R$\s.]/g, '').replace(',', '.');
+      const num = parseFloat(cleanedValue);
+      return isNaN(num) ? "0" : num.toString();
+    })
+    .refine(val => Number(val) > 0, { message: "O valor deve ser maior que zero." }),
   data_checkin: z.string().min(1, "Data é obrigatório"),
   data_checkout: z.string().min(1, "Data é obrigatório"),
   // localHospedagem: z
@@ -55,16 +62,16 @@ function CadastroHospedagem() {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [tipoHospedagem, setTipoHospedagem] = useState<GetTipoHospedagemDto[]>([]);
-  const route = useRoute<CadastroTransporteRouteProp>();
+  const route = useRoute<CadastroHospedagemRouteProp>();
   const { isCreatingViagem, viagem } = route.params;
   const [isLoadingUploads, setIsLoadingUploads] = useState(false);
 
-  const { control, handleSubmit, formState: { errors }, watch, setValue, getValues } = useForm<CadastroHospedagemSchema>({
+  const { control, handleSubmit, formState: { errors }, watch, setValue, getValues, reset } = useForm<CadastroHospedagemSchema>({
     resolver: zodResolver(cadastroHospedagemSchema),
     defaultValues: {
       nome: "",
       tipoHospedagem: "",
-      valor: "",
+      valor: "0,00",
       data_checkin: "",
       data_checkout: "",
       // localHospedagem: 0,
@@ -173,6 +180,21 @@ function CadastroHospedagem() {
           Toast.hide();
         }
       });
+
+      // Resetar o formulário para os valores padrão APÓS o sucesso
+      reset({
+        nome: "",
+        tipoHospedagem: "",
+        valor: "0,00",
+        data_checkin: "",
+        data_checkout: "",
+        endereco: "",
+        documentPath: undefined,
+        documentName: undefined,
+      });
+      
+      setValue('documentPath', undefined); 
+      setValue('documentName', undefined); 
 
       if (isCreatingViagem) {
         setTimeout(() => {
