@@ -14,7 +14,7 @@ import HeaderFixo from "../../components/HeaderFixo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BotaoSecundario from "../../components/BotaoSecundario";
 import { useEffect, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { CommonActions, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CadastroHospedagemRouteProp, CadastroTransporteRouteProp, RootStackParamList } from "../../types/RootStackParamList";
 import GetTipoHospedagemDto from "../../types/dto/GetTipoHospedagemDto";
@@ -203,9 +203,24 @@ function CadastroHospedagem() {
             });
           }, 1000);
       } else {
-          setTimeout(() => {
-            navigation.navigate('ViagemSelecionada', { viagem });
-          }, 1000);
+        // Se não estiver criando a viagem (edição ou adição avulsa),
+        // navegue para ViagemSelecionada e redefina a pilha.
+        setTimeout(() => {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0, // O índice da rota ativa na nova pilha. 0 significa a primeira rota.
+              routes: [
+                { 
+                  name: 'Viagens' // Nome da rota para a tela de listagem de viagens
+                },
+                { 
+                  name: 'ViagemSelecionada', // Nome da rota para a tela de detalhes da viagem
+                  params: { viagem } // Parâmetros da viagem selecionada
+                },
+              ],
+            })
+          );
+        }, 1000);
       }
 
     } catch (error: any) {
@@ -298,9 +313,23 @@ function CadastroHospedagem() {
                 <Input
                   label="Valor"
                   keyboardType="numeric"
-                  placeholder="Digite o valor"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
+                  placeholder="0.00"
+                  onChangeText={(text) => {
+
+                    let cleanedText = text.replace(/[^0-9.,]/g, '');
+                    cleanedText = cleanedText.replace(/,/g, '.');
+                    const parts = cleanedText.split('.');
+                    if (parts.length > 2) {
+                        cleanedText = parts[0] + '.' + parts.slice(1).join('');
+                    }
+                    if (cleanedText.includes('.')) {
+                        const [integerPart, decimalPart] = cleanedText.split('.');
+                        if (decimalPart.length > 2) {
+                            cleanedText = integerPart + '.' + decimalPart.substring(0, 2);
+                        }
+                    }
+                    onChange(cleanedText);
+                  }}
                   value={value}
                 />
               )}

@@ -19,7 +19,7 @@ import { cadastrarDespesaBanco, cadastrarTransporteBanco } from "../../services/
 import { CadastroContext } from "../../contexts/cadastro";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { CadastroTransporteRouteProp, RootStackParamList } from "../../types/RootStackParamList";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { CommonActions, useNavigation, useRoute } from "@react-navigation/native";
 import travelerApi from "../../services/api/travelerApi";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BotaoSecundario from "../../components/BotaoSecundario";
@@ -216,8 +216,22 @@ function CadastroTransporte() {
             });
           }, 1000);
       } else {
+          // navegue para ViagemSelecionada e redefina a pilha.
           setTimeout(() => {
-            navigation.navigate('ViagemSelecionada', { viagem });
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0, // O índice da rota ativa na nova pilha. 0 significa a primeira rota.
+                routes: [
+                  { 
+                    name: 'Viagens' // Nome da rota para a tela de listagem de viagens
+                  },
+                  { 
+                    name: 'ViagemSelecionada', // Nome da rota para a tela de detalhes da viagem
+                    params: { viagem } // Parâmetros da viagem selecionada
+                  },
+                ],
+              })
+            );
           }, 1000);
       }
 
@@ -297,19 +311,24 @@ function CadastroTransporte() {
                 <Input
                   label="Valor"
                   keyboardType="numeric"
-                  placeholder="0,00"
+                  placeholder="0.00"
                   onChangeText={(text) => {
-                    let cleanedText = text.replace(/[^0-9,.]/g, '');
 
+                    let cleanedText = text.replace(/[^0-9.,]/g, '');
                     cleanedText = cleanedText.replace(/,/g, '.');
-                    // Se houver múltiplos pontos, remove os extras (mantendo o primeiro).
                     const parts = cleanedText.split('.');
                     if (parts.length > 2) {
                         cleanedText = parts[0] + '.' + parts.slice(1).join('');
                     }
+                    if (cleanedText.includes('.')) {
+                        const [integerPart, decimalPart] = cleanedText.split('.');
+                        if (decimalPart.length > 2) {
+                            cleanedText = integerPart + '.' + decimalPart.substring(0, 2);
+                        }
+                    }
                     onChange(cleanedText);
                   }}
-                  value={formatarParaReal(value)}
+                  value={value}
                 />
               )}
             />

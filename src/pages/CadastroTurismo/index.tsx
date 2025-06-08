@@ -13,7 +13,7 @@ import HeaderFixo from "../../components/HeaderFixo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BotaoSecundario from "../../components/BotaoSecundario";
 import { useEffect, useState, useContext } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { CommonActions, useNavigation, useRoute } from "@react-navigation/native";
 import { CadastroTurismoRouteProp, RootStackParamList } from "../../types/RootStackParamList";
 import GetTipoPasseioDto from "../../types/dto/GetTipoPasseioDto"; // Importar o DTO de tipo de passeio
 import { deleteLocalDocument, pickAndSaveDocument } from "../../utils/fileUploadUtils";
@@ -39,9 +39,9 @@ const cadastroPasseioSchema = z.object({
     .transform((val) => {
       const cleanedValue = val.replace(/[R$\s.]/g, '').replace(',', '.');
       const num = parseFloat(cleanedValue);
-      return isNaN(num) ? 0 : num;
+      return isNaN(num) ? "0" : num.toString();
     })
-    .refine(val => val > 0, { message: "O valor deve ser maior que zero." }),
+    .refine(val => Number(val) > 0, { message: "O valor deve ser maior que zero." }),
   documentPath: z.string().optional(), // Campo para armazenar o URI local
   documentName: z.string().optional(), // Campo opcional para exibir o nome original
 });
@@ -62,6 +62,7 @@ export default function CadastroTurismo() {
     setValue,
     getValues,
     watch,
+    reset,
     formState: { errors },
   } = useForm<CadastroPasseioSchema>({
     resolver: zodResolver(cadastroPasseioSchema),
@@ -69,7 +70,7 @@ export default function CadastroTurismo() {
       nome: "",
       tipoPasseio: "",
       data: "",
-      valor: 0,
+      valor: "0.00",
       documentPath: undefined,
       documentName: undefined,
     },
@@ -185,15 +186,37 @@ export default function CadastroTurismo() {
         }
       });
 
-      if (isCreatingViagem) {
-        setTimeout(() => {
-            navigation.navigate('ViagemSelecionada', { viagem });
-          }, 1000);
-      } else {
-          setTimeout(() => {
-            navigation.navigate('ViagemSelecionada', { viagem });
-          }, 1000);
-      }
+      // Resetar o formulário para os valores padrão APÓS o sucesso
+      reset({
+        nome: "",
+        tipoPasseio: "",
+        data: "",
+        valor: "0.00",
+        documentPath: undefined,
+        documentName: undefined,
+      });
+      
+      setValue('documentPath', undefined); 
+      setValue('documentName', undefined); 
+
+      // Se não estiver criando a viagem (edição ou adição avulsa),
+      // navegue para ViagemSelecionada e redefina a pilha.
+      setTimeout(() => {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0, // O índice da rota ativa na nova pilha. 0 significa a primeira rota.
+            routes: [
+              { 
+                name: 'Viagens' // Nome da rota para a tela de listagem de viagens
+              },
+              { 
+                name: 'ViagemSelecionada', // Nome da rota para a tela de detalhes da viagem
+                params: { viagem } // Parâmetros da viagem selecionada
+              },
+            ],
+          })
+        );
+      }, 1000);
 
     } catch (error: any) {
       console.error("Erro ao cadastrar passeio: ", error);
@@ -271,10 +294,24 @@ export default function CadastroTurismo() {
                 <Input
                   label="Valor"
                   keyboardType="numeric"
-                  placeholder="Digite o valor"
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  value={value.toString()}
+                  placeholder="0.00"
+                  onChangeText={(text) => {
+
+                    let cleanedText = text.replace(/[^0-9.,]/g, '');
+                    cleanedText = cleanedText.replace(/,/g, '.');
+                    const parts = cleanedText.split('.');
+                    if (parts.length > 2) {
+                        cleanedText = parts[0] + '.' + parts.slice(1).join('');
+                    }
+                    if (cleanedText.includes('.')) {
+                        const [integerPart, decimalPart] = cleanedText.split('.');
+                        if (decimalPart.length > 2) {
+                            cleanedText = integerPart + '.' + decimalPart.substring(0, 2);
+                        }
+                    }
+                    onChange(cleanedText);
+                  }}
+                  value={value}
                 />
               )}
             />
@@ -293,7 +330,6 @@ export default function CadastroTurismo() {
               )}
             />
             {errors.data && <Text style={styles.error} >{errors.data.message}</Text>}
-            <Text style={styles.titulo}>Selecione o Destino</Text>
             <BotaoAnexarArquivo 
               handleAttachDocument={handleAttachDocument} 
               handleDeletarAnexoButton={handleDeletarAnexoButton}
