@@ -11,50 +11,48 @@ import Botao from "../../components/Botao";
 import Toast from "react-native-toast-message";
 import HeaderFixo from "../../components/HeaderFixo";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BotaoSecundario from "../../components/BotaoSecundario";
 import { useEffect, useState, useContext } from "react";
 import { CommonActions, useNavigation, useRoute } from "@react-navigation/native";
-import { CadastroTurismoRouteProp, RootStackParamList } from "../../types/RootStackParamList";
-import GetTipoPasseioDto from "../../types/dto/GetTipoPasseioDto"; // Importar o DTO de tipo de passeio
-import { deleteLocalDocument, pickAndSaveDocument } from "../../utils/fileUploadUtils";
-import BotaoAnexarArquivo from "../../components/BotaoAnexarArquivo";
+import { CadastroDespesaRouteProp, RootStackParamList } from "../../types/RootStackParamList";
 import travelerApi from "../../services/api/travelerApi";
 import { formatToISOString } from "../../utils/DataFormat";
 import { CadastroContext } from "../../contexts/cadastro";
-import { cadastrarPasseioBanco } from "../../services/httpService";
+import { cadastrarDespesaBanco } from "../../services/httpService";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import GetTipoDespesaDto from "../../types/dto/GetTipoDespesaDto";
 import { InputValor } from "../../components/InputValor";
 
-const cadastroPasseioSchema = z.object({
-  nome: z.string().min(1, "O nome do passeio é obrigatório."),
-  tipoPasseio:   z.union([z.string(), z.number()]) // Aceita tanto string quanto número
-  .refine((val) => !isNaN(Number(val)), { message: "Tipo de passeio é obrigatório" }) // Verifica se é um número válido
+const cadastroDespesaSchema = z.object({
+  descricao: z.string().min(1, "O nome da despesa é obrigatório."),
+  tipoDespesa:   z.union([z.string(), z.number()]) // Aceita tanto string quanto número
+  .refine((val) => !isNaN(Number(val)), { message: "Tipo da despesa é obrigatório" }) // Verifica se é um número válido
   .transform((val) => {
     // Se for string (iOS), converte para número, se já for número (Android), deixa como está
     return Platform.OS === 'ios' ? Number(val) : val;
   })
-  .refine((val) => Number(val) > 0, { message: "Tipo de passeio é obrigatório" }),
+  .refine((val) => Number(val) > 0, { message: "Tipo da despesa é obrigatório" }),
   data: z.string().min(1, "Data é obrigatório"),
   valor: z.string()
     .min(1, "O valor é obrigatório.")
     .transform((val) => {
+      console.log("Valor recebido:", val);
       const cleanedValue = val.replace(/[R$\s.]/g, '').replace(',', '.');
+      console.log("Valor limpo:", cleanedValue);
       const num = parseFloat(cleanedValue);
-      return isNaN(num) ? "0" : num.toString();
+      console.log("Número convertido:", num);
+      return isNaN(num) ? "0.00" : num;
     })
-    .refine(val => Number(val) > 0, { message: "O valor deve ser maior que zero." }),
-  documentPath: z.string().optional(), // Campo para armazenar o URI local
-  documentName: z.string().optional(), // Campo opcional para exibir o nome original
+    .refine(val => Number(val) > 0, { message: "O valor deve ser maior que zero." })
 });
 
-type CadastroPasseioSchema = z.infer<typeof cadastroPasseioSchema>;
+type CadastroDespesaSchema = z.infer<typeof cadastroDespesaSchema>;
 
-export default function CadastroTurismo() {
+export default function CadastroDespesa() {
   const { user } = useContext(CadastroContext);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [tiposPasseio, setTiposPasseio] = useState<GetTipoPasseioDto[]>([]);
-  const route = useRoute<CadastroTurismoRouteProp>();
-  const { isCreatingViagem, viagem } = route.params;
+  const [tiposPasseio, setTiposPasseio] = useState<GetTipoDespesaDto[]>([]);
+  const route = useRoute<CadastroDespesaRouteProp>();
+  const { viagem } = route.params;
   const [isLoadingUploads, setIsLoadingUploads] = useState(false);
 
   const {
@@ -65,33 +63,15 @@ export default function CadastroTurismo() {
     watch,
     reset,
     formState: { errors },
-  } = useForm<CadastroPasseioSchema>({
-    resolver: zodResolver(cadastroPasseioSchema),
+  } = useForm<CadastroDespesaSchema>({
+    resolver: zodResolver(cadastroDespesaSchema),
     defaultValues: {
-      nome: "",
-      tipoPasseio: "",
+      descricao: "",
+      tipoDespesa: "",
       data: "",
-      valor: "0.00",
-      documentPath: undefined,
-      documentName: undefined,
+      valor: "0.00"
     },
   });
-
-  // Use watch para obter o valor atual de documentName para exibição
-  const attachedDocumentName = watch('documentName');
-
-  // Função para lidar com o clique no botão "Anexar Comprovante"
-  const handleAttachDocument = async () => {
-    // Permite PDF e qualquer tipo de imagem
-    const result = await pickAndSaveDocument(['application/pdf', 'image/*']);
-    if (result) {
-        // Atualiza o campo do formulário com o caminho local e nome
-        setValue('documentPath', result.localUri);
-        setValue('documentName', result.fileName);
-        // Opcional: Exibir um toast de sucesso "Arquivo anexado: NomeArquivo.pdf"
-    }
-    setIsLoadingUploads(false);
-  };
 
   function onFormValidationError(errors: any) {
     // Mostra um Toast geral informando que há erros
@@ -117,23 +97,23 @@ export default function CadastroTurismo() {
   }
 
   useEffect(() => {
-    async function consultarTiposPasseio() {
+    async function consultarTiposDespesa() {
       try {
-        const response = await travelerApi.get<GetTipoPasseioDto[]>("/tipo-passeio");
+        const response = await travelerApi.get<GetTipoDespesaDto[]>("/tipo-despesa");
         setTiposPasseio(response.data);
       } catch (error) {
-        console.error("Erro ao buscar tipos de passeio:", error);
+        console.error("Erro ao buscar tipos de despesa:", error);
         Toast.show({
           type: "error",
           text1: "Erro",
-          text2: "Não foi possível carregar os tipos de passeio.",
+          text2: "Não foi possível carregar os tipos de despesa.",
         });
       }
     }
-    consultarTiposPasseio() 
+    consultarTiposDespesa() 
   }, []);
 
-  const cadastrarPasseio = async (data: CadastroPasseioSchema) => {
+  const cadastrarPasseio = async (data: CadastroDespesaSchema) => {
     if (!user) {
       Toast.show({
         type: "error",
@@ -149,23 +129,22 @@ export default function CadastroTurismo() {
 
     try {
       const dataFormatada = formatToISOString(data.data);
-      console.log("VALOOOOOOOOOOOOR")
-      console.log(data.valor)
-      const payloadPasseio = {
-        nome: data.nome,
-        tipo_id: Number(data.tipoPasseio),
+      const payloadDespesa = {
+        descricao: data.descricao,
+        tipo_id: Number(data.tipoDespesa),
         data: dataFormatada,
         valor: Number(data.valor),
         viagem_id: viagem.id,
-        documento_anexo: data.documentPath || ""
+        usuario_id: Number(user.id),
       };
+      console.log("Payload da despesa:", payloadDespesa);
 
-      const response = await cadastrarPasseioBanco(payloadPasseio);
+      const response = await cadastrarDespesaBanco(payloadDespesa);
 
       // Verifique se a resposta é do tipo erro
       if (response && 'status' in response && Number(response.status) >= 400) {
         // Aqui sabemos que o response é do tipo ErroResponseDto ou similar indicando falha
-        throw new Error(`Erro ao cadastrar transporte: Código: ${response.statusCode} Erro: ${response.message || JSON.stringify(response)}`);
+        throw new Error(`Erro ao cadastrar despesa: Código: ${response.statusCode} Erro: ${response.message || JSON.stringify(response)}`);
       }
 
       Toast.show({
@@ -189,18 +168,12 @@ export default function CadastroTurismo() {
 
       // Resetar o formulário para os valores padrão APÓS o sucesso
       reset({
-        nome: "",
-        tipoPasseio: "",
+        descricao: "",
+        tipoDespesa: "",
         data: "",
-        valor: "0.00",
-        documentPath: undefined,
-        documentName: undefined,
+        valor: "0.00"
       });
-      
-      setValue('documentPath', undefined); 
-      setValue('documentName', undefined); 
 
-      // Se não estiver criando a viagem (edição ou adição avulsa),
       // navegue para ViagemSelecionada e redefina a pilha.
       setTimeout(() => {
         navigation.dispatch(
@@ -220,11 +193,11 @@ export default function CadastroTurismo() {
       }, 1000);
 
     } catch (error: any) {
-      console.error("Erro ao cadastrar passeio: ", error);
+      console.error("Erro ao cadastrar despesa: ", error);
         Toast.show({
           type: "error",
           text1: "Erro ao cadastrar",
-          text2: error.message || "Ocorreu um erro ao salvar o passeio.",
+          text2: error.message || "Ocorreu um erro ao salvar o despesa.",
           visibilityTime: 4000,
           autoHide: true,
           topOffset: 30,
@@ -235,42 +208,32 @@ export default function CadastroTurismo() {
     }
   };
 
-  async function handleDeletarAnexoButton() {
-    const currentDocumentPath = getValues('documentPath');
-    
-    setValue('documentPath', undefined); 
-    setValue('documentName', undefined); 
-    if (currentDocumentPath) {
-      await deleteLocalDocument(currentDocumentPath);
-    }
-  }
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <HeaderFixo />
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoidingView}>
           <ScrollView contentContainerStyle={styles.scrollView}>
-            <Titulo texto="Novo Passeio" />
+            <Titulo texto="Nova Despesa" />
             <Controller
               control={control}
-              name="nome"
+              name="descricao"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
-                  label="Nome do Passeio"
-                  placeholder="Digite o nome do Passeio"
+                  label="Descrição da Despesa"
+                  placeholder="Digite a descrição da Despesa"
                   onChangeText={onChange}
                   onBlur={onBlur}
                   value={value}
                 />
               )}
             />
-            {errors.nome && <Text style={styles.error} >{errors.nome.message}</Text>}
+            {errors.descricao && <Text style={styles.error} >{errors.descricao.message}</Text>}
             <View style={styles.wrapper}>
-              <Text style={styles.label}>Selecione o tipo de passeio</Text>
+              <Text style={styles.label}>Selecione o tipo de despesa</Text>
               <View style={styles.containerInput}>
               <Controller
-                name="tipoPasseio"
+                name="tipoDespesa"
                 control={control}
                 defaultValue=""
                 render={({ field: { onChange, value } }) => (
@@ -278,7 +241,7 @@ export default function CadastroTurismo() {
                     selectedValue={value}
                     onValueChange={(itemValue) => onChange(itemValue)}
                   >
-                    <Picker.Item label="Selecione o tipo de passeio" value="1" />
+                    <Picker.Item label="Selecione o tipo de despesa" value="1" />
                     {tiposPasseio.map((item) => (
                       <Picker.Item key={item.id} value={item.id} label={item.descricao} />
                     ))}
@@ -286,7 +249,7 @@ export default function CadastroTurismo() {
                 )}
               />
             </View>
-            {errors.tipoPasseio && <Text style={styles.error} >{errors.tipoPasseio.message}</Text>}
+            {errors.tipoDespesa && <Text style={styles.error} >{errors.tipoDespesa.message}</Text>}
             </View>
             <InputValor label="Valor" name="valor" control={control}/>
             {errors.valor && <Text style={styles.error} >{errors.valor.message}</Text>}
@@ -304,24 +267,7 @@ export default function CadastroTurismo() {
               )}
             />
             {errors.data && <Text style={styles.error} >{errors.data.message}</Text>}
-            <BotaoAnexarArquivo 
-              handleAttachDocument={handleAttachDocument} 
-              handleDeletarAnexoButton={handleDeletarAnexoButton}
-              label="Anexar Comprovante"
-              attachedDocumentName={attachedDocumentName || ""}
-            />
-            
-            {isCreatingViagem ? 
-            (
-            <View style={styles.containerButton}>
-              <BotaoSecundario label="Pular" onPress={() => navigation.navigate("ViagemSelecionada", {viagem})} />
-              <Botao label="Continuar" onPress={handleSubmit(cadastrarPasseio, onFormValidationError)} />
-            </View>
-            )
-            :
-            (
-              <Botao label="Continuar" onPress={handleSubmit(cadastrarPasseio, onFormValidationError)} />
-            )}
+            <Botao label="Continuar" onPress={handleSubmit(cadastrarPasseio, onFormValidationError)} />
           </ScrollView>
           <Toast />
         </KeyboardAvoidingView>

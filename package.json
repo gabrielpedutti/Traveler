@@ -31,6 +31,7 @@
     "react-native-dotenv": "^3.4.11",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-file-viewer": "^2.1.5",
+    "react-native-masked-text": "^1.13.0",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
     "react-native-tab-view": "^3.5.2",

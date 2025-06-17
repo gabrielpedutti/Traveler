@@ -21,6 +21,7 @@ export type RootStackParamList = {
   CadastroTransporte: { isCreatingViagem?: boolean, viagem: GetViagensResponseDto };
   CadastroHospedagem: { isCreatingViagem?: boolean, viagem: GetViagensResponseDto };
   CadastroTurismo: { isCreatingViagem?: boolean, viagem: GetViagensResponseDto };
+  CadastroDespesa: { viagem: GetViagensResponseDto };
   CadastroViagem: undefined;
   BaseCadastroViagem: undefined;
   ResumoViagem: undefined;
@@ -35,3 +36,4 @@ export type RootStackParamList = {
 export type CadastroTransporteRouteProp = RouteProp<RootStackParamList, 'CadastroTransporte'>;
 export type CadastroHospedagemRouteProp = RouteProp<RootStackParamList, 'CadastroHospedagem'>;
 export type CadastroTurismoRouteProp = RouteProp<RootStackParamList, 'CadastroTurismo'>;
+export type CadastroDespesaRouteProp = RouteProp<RootStackParamList, 'CadastroDespesa'>;

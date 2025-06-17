@@ -28,6 +28,7 @@ import CadastroTransporteRequestDto from "../../types/dto/CadastroTransporteRequ
 import { deleteLocalDocument, pickAndSaveDocument } from "../../utils/fileUploadUtils";
 import BotaoAnexarArquivo from "../../components/BotaoAnexarArquivo";
 import { formatarParaReal } from "../../utils/CurrencyFormat";
+import { InputValor } from "../../components/InputValor";
 
 const cadastroTrasnporteSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -304,34 +305,7 @@ function CadastroTransporte() {
             </View>
             {errors.tipoTransporte && <Text style={styles.error} >{errors.tipoTransporte.message}</Text>}
             </View>
-            <Controller
-              control={control}
-              name="valor"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  label="Valor"
-                  keyboardType="numeric"
-                  placeholder="0.00"
-                  onChangeText={(text) => {
-
-                    let cleanedText = text.replace(/[^0-9.,]/g, '');
-                    cleanedText = cleanedText.replace(/,/g, '.');
-                    const parts = cleanedText.split('.');
-                    if (parts.length > 2) {
-                        cleanedText = parts[0] + '.' + parts.slice(1).join('');
-                    }
-                    if (cleanedText.includes('.')) {
-                        const [integerPart, decimalPart] = cleanedText.split('.');
-                        if (decimalPart.length > 2) {
-                            cleanedText = integerPart + '.' + decimalPart.substring(0, 2);
-                        }
-                    }
-                    onChange(cleanedText);
-                  }}
-                  value={value}
-                />
-              )}
-            />
+            <InputValor label="Valor" name="valor" control={control}/>
             {errors.valor && <Text style={styles.error} >{errors.valor.message}</Text>}
             <Controller
               control={control}

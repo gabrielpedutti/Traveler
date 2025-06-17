@@ -35,7 +35,7 @@ function ModalNovoItem(props: ModalNovoItemProps) {
           <MaterialCommunityIcons name={'bus-side'} size={40} color='#2b88d9'/>
           <Text style={styles.text}>Novo Passeio Turístico</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroTransporte", { isCreatingViagem: false, viagem: props.viagem })}>
+        <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate("CadastroDespesa", { viagem: props.viagem })}>
           <FontAwesome6 name={'coins'} size={40} color='#2b88d9'/>
           <Text style={styles.text}>Nova Despesa</Text>
         </TouchableOpacity>

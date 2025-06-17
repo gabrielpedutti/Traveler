@@ -21,6 +21,7 @@ import Tabs from './src/navigation/tabs';
 import DetalhesHospedagem from './src/pages/DetalhesHospedagem';
 import DetalhesTransporte from './src/pages/DetalhesTransporte';
 import DetalhesPasseio from './src/pages/DetalhesPasseio';
+import CadastroDespesa from './src/pages/CadastroDespesa';
 
 
 
@@ -132,6 +133,13 @@ export default function App() {
           <Stack.Screen
             name="CadastroTransporte"
             component={CadastroTransporte}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CadastroDespesa"
+            component={CadastroDespesa}
             options={{
               headerShown: false,
             }}
