@@ -27,6 +27,7 @@ import CardItemHospedagem from "../../components/CardItemHospedagem";
 import GetPasseiosPorViagemDto from "../../types/dto/GetPasseiosPorViagemDto";
 import CardItemPasseio from "../../components/CardItemPasseio";
 import GetTransporteResponseDto from "../../types/dto/GetTransportePorViagemDto";
+import ModalConfirmacaoExcluir from "../../components/ModalConfirmacaoExcluir";
 
 function ViagemSelecionada() {
 
@@ -39,6 +40,7 @@ function ViagemSelecionada() {
   const [hospedagem, setHospedagem] = useState<GetHospedagemResponseDto[]>();
   const [passeio, setPasseio] = useState<GetPasseiosPorViagemDto[]>();
   const [despesa, setDespesa] = useState<CadastroDespesaResponseDto[]>();
+  const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
 
   function handleModal() {
     setIsModalVisible(!isModalVisible);
@@ -124,7 +126,7 @@ function ViagemSelecionada() {
   );
   
 
-  function excluirViagem() {
+  async function excluirViagem() {
     travelerApi.delete(`/viagem/${viagem.id}/delete`)
       .then(() => {
         navigation.navigate('Viagens');
@@ -134,10 +136,24 @@ function ViagemSelecionada() {
       })
   }
 
+  function handleExcluirPasseio() {
+    setIsConfirmandoExcluir(true);
+  }
+
+  function handleConfirmarExcluir() {
+    excluirViagem().then(() => {
+      setIsConfirmandoExcluir(false);
+    });
+  }
+
+  function handleCancelarExcluir() {
+    setIsConfirmandoExcluir(false);
+  }
+
   function botaoExcluir() {
     return(
       <View style={styles.wrapperExcluir}>
-        <TouchableOpacity style={styles.botaoExcluir} onPress={excluirViagem}>
+        <TouchableOpacity style={styles.botaoExcluir} onPress={handleExcluirPasseio}>
           <Text style={styles.textoExcluir}>Excluir Viagem</Text>
         </TouchableOpacity>
       </View>
@@ -229,8 +245,11 @@ function ViagemSelecionada() {
           {isModalVisible && <ModalNovoItem closeModal={handleModal} viagem={viagem}/>}
           <Toast />
           <TouchableOpacity style={styles.botaoMais} onPress={handleModal}>
-              <AntDesign name={'plus'} size={35} color='#fff'/>
-            </TouchableOpacity>
+            <AntDesign name={'plus'} size={35} color='#fff'/>
+          </TouchableOpacity>
+          {isConfirmandoExcluir && (
+            <ModalConfirmacaoExcluir onPressExcluir={handleConfirmarExcluir} onPressCancelar={handleCancelarExcluir} />
+          )}
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
