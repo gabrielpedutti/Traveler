@@ -44,14 +44,6 @@ const cadastroHospedagemSchema = z.object({
     .refine(val => Number(val) > 0, { message: "O valor deve ser maior que zero." }),
   data_checkin: z.string().min(1, "Data é obrigatório"),
   data_checkout: z.string().min(1, "Data é obrigatório"),
-  // localHospedagem: z
-  //   .union([z.string(), z.number()]) // Aceita tanto string quanto número
-  //   .refine((val) => !isNaN(Number(val)), { message: "Origem é obrigatório" }) // Verifica se é um número válido
-  //   .transform((val) => {
-  //     // Se for string (iOS), converte para número, se já for número (Android), deixa como está
-  //     return Platform.OS === 'ios' ? Number(val) : val;
-  //   })
-  //   .refine((val) => Number(val) > 0, { message: "Origem é obrigatório" }),
   endereco: z.string().min(1, "Endereço é obrigatório"),
   documentPath: z.string().optional(), // Campo para armazenar o URI local
   documentName: z.string().optional(), // Campo opcional para exibir o nome original
@@ -75,7 +67,6 @@ function CadastroHospedagem() {
       valor: "0,00",
       data_checkin: "",
       data_checkout: "",
-      // localHospedagem: 0,
       endereco: "",
       documentPath: undefined,
       documentName: undefined,

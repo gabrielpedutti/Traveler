@@ -22,6 +22,9 @@ import DetalhesHospedagem from './src/pages/DetalhesHospedagem';
 import DetalhesTransporte from './src/pages/DetalhesTransporte';
 import DetalhesPasseio from './src/pages/DetalhesPasseio';
 import CadastroDespesa from './src/pages/CadastroDespesa';
+import EditarTransporte from './src/pages/EditarTransporte';
+import EditarHospedagem from './src/pages/EditarHospedagem';
+import EditarPasseio from './src/pages/EditarPasseio';
 
 
 
@@ -161,6 +164,27 @@ export default function App() {
           <Stack.Screen
             name="DetalhesPasseio"
             component={DetalhesPasseio} // Substituir pelo componente correto de detalhes de passeio
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="EditarTransporte"
+            component={EditarTransporte}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="EditarHospedagem"
+            component={EditarHospedagem}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="EditarPasseio"
+            component={EditarPasseio}
             options={{
               headerShown: false,
             }}

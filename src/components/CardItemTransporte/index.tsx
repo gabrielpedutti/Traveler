@@ -7,10 +7,12 @@ import { useEffect, useState } from "react";
 import { styles } from "./styles";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5"; // Alterado para FontAwesome5Icon
 import GetTransporteResponseDto from "../../types/dto/GetTransportePorViagemDto";
+import GetViagemResponseDto from "../../types/dto/GetViagemResponseDto";
 
 interface CardItemTransporteProps {
   imagem?: any;
-  item: GetTransporteResponseDto;
+  transporte: GetTransporteResponseDto;
+  viagem: GetViagemResponseDto;
 }
 
 const getIconePorTipoTransporteCard = (tipoDescricao: string) => {
@@ -50,34 +52,34 @@ const getIconePorTipoTransporteCard = (tipoDescricao: string) => {
   }
 };
 
-function CardItemTransporte({item, imagem}: CardItemTransporteProps) {
+function CardItemTransporte({transporte, viagem, imagem}: CardItemTransporteProps) {
   const [nomeTruncado, setNomeTruncado] = useState<string>('');
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
-    if (item.nome.length > 30) {
-      setNomeTruncado(item.nome.substring(0, 26) + '...');
+    if (transporte.nome.length > 30) {
+      setNomeTruncado(transporte.nome.substring(0, 26) + '...');
     } else {
-      setNomeTruncado(item.nome);
+      setNomeTruncado(transporte.nome);
     }
-  }, [item.nome]);
+  }, [transporte.nome]);
 
-  const nomeIcone = getIconePorTipoTransporteCard(item.tipo_transporte.descricao);
+  const nomeIcone = getIconePorTipoTransporteCard(transporte.tipo_transporte.descricao);
 
   return(
-    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('DetalhesTransporte', {transporte: item})}}>
+    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('DetalhesTransporte', {transporte: transporte, viagem: viagem})}}>
       <View style={styles.containerItem}>
         <FontAwesome5Icon name={nomeIcone} size={40} color='#2b88d9'/>
       </View>
       <View style={styles.container}>
         <View style={styles.linha}>
           <Text style={styles.titulo}>{nomeTruncado}</Text>
-          <Text style={styles.tituloData}>{formatDate(item.data)}</Text>
+          <Text style={styles.tituloData}>{formatDate(transporte.data)}</Text>
         </View>
         <View style={styles.linha}>
         </View>
         <View style={styles.linha}>
-          <Text style={styles.text}>Destino: {item.transporte_destino.nm_municipio}</Text>
+          <Text style={styles.text}>Destino: {transporte.transporte_destino.nm_municipio}</Text>
         </View>
       </View>
     </TouchableOpacity>

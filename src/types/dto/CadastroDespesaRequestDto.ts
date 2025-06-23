@@ -6,3 +6,5 @@ interface CadastroDespesaRequestDto {
   viagem_id: number;
   tipo_despesa_id: number;
 }
+
+export default CadastroDespesaRequestDto;

@@ -24,7 +24,7 @@ import ModalConfirmacaoExcluir from "../../components/ModalConfirmacaoExcluir";
 
 function DetalhesHospedagem({ route }: any) {
 
-  const { hospedagem } = route.params as { hospedagem: GetHospedagemResponseDto };
+  const { hospedagem, viagem } = route.params as { hospedagem: GetHospedagemResponseDto, viagem: GetViagensResponseDto };
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
 
@@ -184,6 +184,10 @@ function DetalhesHospedagem({ route }: any) {
     setIsConfirmandoExcluir(false);
   }
 
+  function handleEditar() {
+    navigation.navigate('EditarHospedagem', { hospedagem: hospedagem, viagem: viagem });
+  }
+
   return(
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -237,7 +241,7 @@ function DetalhesHospedagem({ route }: any) {
                 {
                   true ? (
                     <Text style={styles.textoEndereco} onPress={handleOpenAddressInMaps}>
-                      "Rua tal, 123 - Bairro tal, Cidade tal - Estado tal" Mais textos aqui lalalala
+                      {hospedagem.endereco}
                     </Text>
                   ) : (
                     <Text style={styles.textoHospedagem}>Nenhum endereço encontrado</Text>
@@ -269,7 +273,7 @@ function DetalhesHospedagem({ route }: any) {
               </View>
             
             <View style={styles.containerBotoes}>
-              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9'/>} onPress={() => {}} />
+              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9'/>} onPress={handleEditar} />
               <BotaoExcluir onPress={handleExcluirHospedagem} />
             </View>
 

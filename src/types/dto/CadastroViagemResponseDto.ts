@@ -10,6 +10,7 @@ interface CadastroViagemResponseDto {
   status_viagem_id: number;
   created_at: string;
   updated_at: string;
+  despesa_id: number;
 }
 
 export default CadastroViagemResponseDto;

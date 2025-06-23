@@ -22,7 +22,7 @@ import ModalConfirmacaoExcluir from "../../components/ModalConfirmacaoExcluir";
 import GetPasseioResponseDto from "../../types/dto/GetPasseiosPorViagemDto"; // Certifique-se que este DTO corresponde aos dados do schema
 
 function DetalhesPasseio({ route }: any) {
-  const { passeio } = route.params as { passeio: GetPasseioResponseDto };
+  const { passeio, viagem } = route.params as { passeio: GetPasseioResponseDto, viagem: GetViagensResponseDto };
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
 
@@ -136,6 +136,10 @@ function DetalhesPasseio({ route }: any) {
     setIsConfirmandoExcluir(false);
   }
 
+    function handleEditar() {
+    navigation.navigate('EditarPasseio', { passeio, viagem });
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -196,7 +200,7 @@ function DetalhesPasseio({ route }: any) {
             </View>
 
             <View style={styles.containerBotoes}>
-              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9' />} onPress={() => {}} />
+              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9' />} onPress={handleEditar} />
               <BotaoExcluir onPress={handleExcluirPasseio} />
             </View>
           </ScrollView>

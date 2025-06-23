@@ -40,7 +40,12 @@ export const InputValor: React.FC<InputValorProps> = ({ name, control, label, er
           control={control}
           name={name}
           render={({ field: { onChange, onBlur, value } }) => {
-            const stringValueForMask = value != null ? String(value) : '';
+            let stringValueForMask = '';
+            if (value != null && !isNaN(Number(value))) {
+              stringValueForMask = Number(value).toFixed(2);
+            } else if (typeof value === 'string') {
+              stringValueForMask = value;
+            }
             if (stringValueForMask.length > 0) {
               lastValidFormattedText.current = stringValueForMask;
             } else if (stringValueForMask === '') {

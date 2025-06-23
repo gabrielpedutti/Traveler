@@ -27,6 +27,8 @@ import travelerApi from "../../services/api/travelerApi";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CadastroViagemRequestDto from "../../types/dto/CadastroViagemRequestDto";
 import GetViagemResponseDto from "../../types/dto/GetViagemResponseDto";
+import CadastroViagemResponseDto from "../../types/dto/CadastroViagemResponseDto";
+import { GetViagensResponseDto } from "../../types/dto/GetViagensResponseDto";
 
 const cadastroViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -131,7 +133,7 @@ function CadastroViagem() {
     setTimeout(() => {
       navigation.navigate('CadastroTransporte', {
               isCreatingViagem: true,
-              viagem: response.data
+              viagem: response as GetViagensResponseDto
             });
     }, 1000); // Delay em milissegundos (1 segundos)
   

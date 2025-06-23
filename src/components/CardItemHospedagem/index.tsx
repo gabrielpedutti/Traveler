@@ -8,10 +8,12 @@ import { styles } from "./styles";
 import { formatarParaReal } from "../../utils/CurrencyFormat";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5"; // Alterado para FontAwesome5Icon
 import GetHospedagemResponseDto from "../../types/dto/GetHospedagemPorViagemDto";
+import GetViagemResponseDto from "../../types/dto/GetViagemResponseDto";
 
 interface CardItemHospedagemProps {
   imagem?: any;
-  item: GetHospedagemResponseDto;
+  hospedagem: GetHospedagemResponseDto;
+  viagem: GetViagemResponseDto;
 }
 
 const getIconePorTipoHospedagemCard = (tipoDescricao: string) => {
@@ -47,34 +49,34 @@ const getIconePorTipoHospedagemCard = (tipoDescricao: string) => {
   }
 };
 
-function CardItemHospedagem({item, imagem}: CardItemHospedagemProps) {
+function CardItemHospedagem({hospedagem, viagem, imagem}: CardItemHospedagemProps) {
   const [nomeTruncado, setNomeTruncado] = useState<string>('');
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
-    if (item.nome.length > 30) {
-      setNomeTruncado(item.nome.substring(0, 26) + '...');
+    if (hospedagem.nome.length > 30) {
+      setNomeTruncado(hospedagem.nome.substring(0, 26) + '...');
     } else {
-      setNomeTruncado(item.nome);
+      setNomeTruncado(hospedagem.nome);
     }
-  }, [item.nome]);
+  }, [hospedagem.nome]);
 
-  const nomeIcone = getIconePorTipoHospedagemCard(item.tipo_hospedagem.descricao);
+  const nomeIcone = getIconePorTipoHospedagemCard(hospedagem.tipo_hospedagem.descricao);
 
   return(
-    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('DetalhesHospedagem', {hospedagem: item})}}>
+    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('DetalhesHospedagem', {hospedagem: hospedagem, viagem: viagem})}}>
       <View style={styles.containerItem}>
         <FontAwesome5Icon name={nomeIcone} size={40} color='#2b88d9'/>
       </View>
       <View style={styles.container}>
         <View style={styles.linha}>
           <Text style={styles.titulo}>{nomeTruncado}</Text>
-          <Text style={styles.tituloData}>{formatDate(item.data_checkin)}</Text>
+          <Text style={styles.tituloData}>{formatDate(hospedagem.data_checkin)}</Text>
         </View>
         <View style={styles.linha}>
         </View>
         <View style={styles.linha}>
-          <Text style={styles.text}>Valor: {formatarParaReal(item.despesa.valor)}</Text>
+          <Text style={styles.text}>Valor: {formatarParaReal(hospedagem.despesa.valor)}</Text>
         </View>
       </View>
     </TouchableOpacity>

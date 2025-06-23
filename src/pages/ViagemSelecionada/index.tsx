@@ -46,22 +46,21 @@ function ViagemSelecionada() {
     setIsModalVisible(!isModalVisible);
   }
 
-  const renderCardItemTransporte = ({ item }: { item: GetTransporteResponseDto }) => (
-    <CardItemTransporte item={item} />
+  const renderCardItemTransporte = ({ item }: { item: GetTransportesPorViagemDto }) => (
+    <CardItemTransporte transporte={item} viagem={viagem} />
   );
 
   const renderCardItemDespesa = ({ item }: { item: CadastroDespesaResponseDto }) => (
-    <CardItemDespesa item={item} />
+    <CardItemDespesa despesa={item} viagem={viagem} />
   );
 
   const renderCardItemHospedagem = ({ item }: { item: GetHospedagemResponseDto }) => (
-    <CardItemHospedagem item={item} />
+    <CardItemHospedagem hospedagem={item} viagem={viagem} />
   );
 
   const renderCardItemPasseio = ({ item }: { item: GetPasseiosPorViagemDto }) => (
-    <CardItemPasseio item={item} />
+    <CardItemPasseio passeio={item} viagem={viagem} />
   );
-
 
   const buscarDespesas = async () => {
     setIsLoading(true);

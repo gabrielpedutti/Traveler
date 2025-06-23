@@ -10,17 +10,20 @@ import { styles } from "./styles";
 import travelerApi from "../../services/api/travelerApi";
 import { Dropdown } from "react-native-element-dropdown";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import { LocationsIdResponseDto } from "../../types/dto/LocationsIdResponseDto";
 
 interface SelecionarPaisEstadoCidadeProps {
   control: Control<any>; // Especifique os tipos esperados pelo react-hook-form
   errors: FieldErrors;
   municipioName: string;
+  locationIds?: LocationsIdResponseDto;
 }
 
 function SelecionarPaisEstadoCidade({
   control,
   errors,
   municipioName,
+  locationIds
 }: SelecionarPaisEstadoCidadeProps) {
   const [paisEscolhido, setPaisEscolhido] = useState<string>("");
   const [paises, setPaises] = useState<PaisResponseDto[]>([]);
@@ -39,8 +42,15 @@ function SelecionarPaisEstadoCidade({
 
   useEffect(() => {
     const consultaPaises = async () => {
+      console.log("No useEffect de consultaPaises");
+      console.log("locationIds:", locationIds);
       const response = await travelerApi.get("/locations/paises");
       setPaises(response.data);
+      if (locationIds?.estado.pais.id) {
+        console.log("Definindo paisEscolhido:", locationIds.estado.pais.id);
+        setPaisEscolhido(locationIds?.estado.pais.id.toString());
+        console.log("Pais escolhido:", paisEscolhido);
+      }
     };
     consultaPaises();
   }, []);
@@ -59,7 +69,7 @@ function SelecionarPaisEstadoCidade({
       setEstados(response.data);
     };
     consultaEstados();
-  }, [paisEscolhido]);
+  }, [paisEscolhido, locationIds?.estado.pais.id]);
 
   useEffect(() => {
     if (!estadoEscolhido) {

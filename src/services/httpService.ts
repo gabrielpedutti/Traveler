@@ -1,10 +1,17 @@
+import CadastroDespesaRequestDto from "../types/dto/CadastroDespesaRequestDto";
+import CadastroDespesaResponseDto from "../types/dto/CadastroDespesaResponseDto";
 import CadastroHospedagemRequestDto from "../types/dto/CadastroHospedagemRequestDto";
 import CadastroPasseioRequestDto from "../types/dto/CadastroPasseioRequestDto";
 import { CadastroRequestDto } from "../types/dto/CadastroRequestDto";
 import CadastroTransporteRequestDto from "../types/dto/CadastroTransporteRequestDto";
 import CadastroViagemRequestDto from "../types/dto/CadastroViagemRequestDto";
 import CadastroViagemResponseDto from "../types/dto/CadastroViagemResponseDto";
+import EditarHospedagemRequestDto from "../types/dto/EditarHospedagemRequestDto";
+import EditarPasseioRequestDto from "../types/dto/EditarPasseioRequestDto";
+import EditarTransporteRequestDto from "../types/dto/EditarTransporteRequestDto";
 import { ErroResponseDto } from "../types/dto/ErroResponseDto";
+import GetViagemResponseDto from "../types/dto/GetViagemResponseDto";
+import { GetViagensResponseDto } from "../types/dto/GetViagensResponseDto";
 import travelerApi from "./api/travelerApi";
 
 export async function cadastrarUsuario(payload: CadastroRequestDto): Promise<CadastroRequestDto | ErroResponseDto> {
@@ -36,7 +43,7 @@ export async function cadastrarUsuario(payload: CadastroRequestDto): Promise<Cad
   }
 }
 
-export async function cadastrarViagemBanco(payload: CadastroViagemRequestDto): Promise<CadastroViagemResponseDto | ErroResponseDto> {
+export async function cadastrarViagemBanco(payload: CadastroViagemRequestDto): Promise<GetViagensResponseDto | ErroResponseDto> {
   try {
     console.log(payload);
     // Enviando a requisição via axios
@@ -158,6 +165,92 @@ export async function cadastrarPasseioBanco(payload: CadastroPasseioRequestDto):
     console.log(payload);
     // Enviando a requisição via axios
     const response = await travelerApi.post('/passeio', payload);
+    // Se a resposta for 201 (Criado), retorna os dados do passeio
+    if (response.status === 201) {
+      return response.data;  // Dados do passeio criado
+    }
+    // Se o status não for 201, retorna um erro customizado com a estrutura de erro
+    return {
+      status: 'error',  // Ou qualquer valor apropriado
+      statusCode: response.status,
+      message: response.data?.message || 'Erro desconhecido ao cadastrar passeio',
+    } as ErroResponseDto;
+  } catch (error: any) {
+    // Captura de erro se ocorrer um erro na requisição
+    const errorMessage = error.response?.data?.message || 'Erro inesperado ao cadastrar passeio';
+    return {
+      status: 'error',  // Definindo status como erro
+      statusCode: error.response?.status || 500,  // Retorna o status do erro ou 500 se não estiver presente
+      message: errorMessage,
+    } as ErroResponseDto;  // Retorna a estrutura de erro com a mensagem capturada
+  }
+}
+
+export async function atualizarTransporteBanco(payload: EditarTransporteRequestDto): Promise<EditarTransporteRequestDto | ErroResponseDto> {
+  try {
+      console.log("Atualizando transporte com os seguintes dados:");
+     console.log(payload);
+    // Enviando a requisição via axios
+    const response = await travelerApi.put(`/transporte/${payload.id}/update`, payload);
+
+    // Se a resposta for 201 (Criado), retorna os dados da despesa
+    if (response.status === 201) {
+      return response.data;  // Dados da despesa criada
+    }
+
+    // Se o status não for 201, retorna um erro customizado com a estrutura de erro
+    return {
+      status: 'error',  // Ou qualquer valor apropriado
+      statusCode: response.status,
+      message: response.data?.message || 'Erro desconhecido ao cadastrar despesa',
+    } as ErroResponseDto;
+
+  } catch (error: any) {
+    // Captura de erro se ocorrer um erro na requisição
+    const errorMessage = error.response?.data?.message || 'Erro inesperado ao cadastrar despesa';
+    
+    return {
+      status: 'error',  // Definindo status como erro
+      statusCode: error.response?.status || 500,  // Retorna o status do erro ou 500 se não estiver presente
+      message: errorMessage,
+    } as ErroResponseDto;  // Retorna a estrutura de erro com a mensagem capturada
+  }
+}
+
+export async function atualizarHospedagemBanco(payload: EditarHospedagemRequestDto): Promise<EditarHospedagemRequestDto | ErroResponseDto> {
+  try {
+    console.log("Atualizando hospedagem com os seguintes dados:");
+    console.log(payload);
+    // Enviando a requisição via axios
+    const response = await travelerApi.put(`/hospedagem/${payload.id}/update`, payload);
+    // Se a resposta for 201 (Criado), retorna os dados da hospedagem
+    if (response.status === 201) {
+      return response.data;  // Dados da hospedagem criada
+    }
+
+    // Se o status não for 201, retorna um erro customizado com a estrutura de erro
+    return {
+      status: 'error',  // Ou qualquer valor apropriado
+      statusCode: response.status,
+      message: response.data?.message || 'Erro desconhecido ao cadastrar hospedagem',
+    } as ErroResponseDto;
+  } catch (error: any) {
+    // Captura de erro se ocorrer um erro na requisição
+    const errorMessage = error.response?.data?.message || 'Erro inesperado ao cadastrar hospedagem';
+    return {
+      status: 'error',  // Definindo status como erro
+      statusCode: error.response?.status || 500,  // Retorna o status do erro ou 500 se não estiver presente
+      message: errorMessage,
+    } as ErroResponseDto;  // Retorna a estrutura de erro com a mensagem capturada
+  }
+}
+
+export async function atualizarPasseioBanco(payload: EditarPasseioRequestDto): Promise<EditarPasseioRequestDto | ErroResponseDto> {
+  try {
+    console.log("Atualizando passeio com os seguintes dados:");
+    console.log(payload);
+    // Enviando a requisição via axios
+    const response = await travelerApi.put(`/passeio/${payload.id}/update`, payload);
     // Se a resposta for 201 (Criado), retorna os dados do passeio
     if (response.status === 201) {
       return response.data;  // Dados do passeio criado

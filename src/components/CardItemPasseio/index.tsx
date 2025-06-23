@@ -8,9 +8,11 @@ import { styles } from "./styles"; // Você precisará criar este arquivo ou ada
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import GetPasseioResponseDto from "../../types/dto/GetPasseiosPorViagemDto"; // Ou o DTO específico se for diferente para o item do card
 import { formatarParaReal } from "../../utils/CurrencyFormat";
+import GetViagemResponseDto from "../../types/dto/GetViagemResponseDto";
 
 interface CardItemPasseioProps {
-  item: GetPasseioResponseDto; // Ajuste este tipo se necessário
+  passeio: GetPasseioResponseDto; // Ajuste este tipo se necessário
+  viagem: GetViagemResponseDto;
   // imagem?: any; // Removido se não estiver usando
 }
 
@@ -57,33 +59,33 @@ const getIconePorTipoPasseioCard = (tipoDescricao: string) => {
   }
 };
 
-function CardItemPasseio({ item }: CardItemPasseioProps) {
+function CardItemPasseio({ passeio, viagem }: CardItemPasseioProps) {
   const [nomeTruncado, setNomeTruncado] = useState<string>('');
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
-    if (item.nome && item.nome.length > 30) {
-      setNomeTruncado(item.nome.substring(0, 26) + '...');
+    if (passeio.nome && passeio.nome.length > 30) {
+      setNomeTruncado(passeio.nome.substring(0, 26) + '...');
     } else {
-      setNomeTruncado(item.nome || '');
+      setNomeTruncado(passeio.nome || '');
     }
-  }, [item.nome]);
+  }, [passeio.nome]);
 
   // Verificações para garantir que tipo_passeio e despesa existem antes de acessá-los
-  const tipoDescricao = item.tipo_passeio?.descricao || "Tipo não definido";
-  const valorDespesa = item.despesa?.valor !== undefined ? formatarParaReal(item.despesa.valor) : "Valor não definido";
+  const tipoDescricao = passeio.tipo_passeio?.descricao || "Tipo não definido";
+  const valorDespesa = passeio.despesa?.valor !== undefined ? formatarParaReal(passeio.despesa.valor) : "Valor não definido";
 
   const nomeIcone = getIconePorTipoPasseioCard(tipoDescricao);
 
   return (
-    <TouchableOpacity style={styles.wrapper} onPress={() => { navigation.navigate('DetalhesPasseio', { passeio: item }) }}>
+    <TouchableOpacity style={styles.wrapper} onPress={() => { navigation.navigate('DetalhesPasseio', { passeio: passeio, viagem: viagem }) }}>
       <View style={styles.containerItem}>
         <FontAwesome5Icon name={nomeIcone} size={40} color='#2b88d9' />
       </View>
       <View style={styles.container}>
         <View style={styles.linha}>
           <Text style={styles.titulo}>{nomeTruncado}</Text>
-          <Text style={styles.tituloData}>{formatDate(item.data)}</Text>
+          <Text style={styles.tituloData}>{formatDate(passeio.data)}</Text>
         </View>
         <View style={styles.linha}>
           {/* Pode adicionar outra informação aqui se desejar, como o tipo do passeio */}

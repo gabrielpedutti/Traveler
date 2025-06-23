@@ -24,7 +24,7 @@ import GetTransporteResponseDto from "../../types/dto/GetTransportePorViagemDto"
 
 function DetalhesTransporte({ route }: any) {
 
-  const { transporte } = route.params as { transporte: GetTransporteResponseDto };
+  const { transporte, viagem } = route.params as { transporte: GetTransporteResponseDto, viagem: GetViagensResponseDto };
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
 
@@ -137,6 +137,10 @@ function DetalhesTransporte({ route }: any) {
     setIsConfirmandoExcluir(false);
   }
 
+  function handleEditar() {
+    navigation.navigate('EditarTransporte', { transporte, viagem });
+  }
+
   return(
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -217,7 +221,7 @@ function DetalhesTransporte({ route }: any) {
               </View>
 
             <View style={styles.containerBotoes}>
-              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9'/>}  onPress={() => {}} />
+              <BotaoSecundario label={<MaterialIcons name={'edit'} size={22} color='#2b88d9'/>}  onPress={handleEditar} />
               <BotaoExcluir onPress={handleExcluirTransporte} />
             </View>
 

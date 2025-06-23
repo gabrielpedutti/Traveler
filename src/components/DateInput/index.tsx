@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { View, Text, Button, Modal, Pressable, Platform, TouchableOpacity } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import Input from '../InputCadastro';
@@ -10,6 +10,7 @@ interface DateInputProps {
   value: string;
   onChangeText: (text: string) => void;
   onBlur: () => void;
+  defaultValue?: string;
 }
 
 export function DateInput(props: DateInputProps): JSX.Element {
@@ -20,6 +21,15 @@ export function DateInput(props: DateInputProps): JSX.Element {
   function toggleDatePicker() {
     setShowPicker(!showPicker);
   }
+
+  useEffect(() => {
+    if (props.defaultValue) {
+      const [day, month, year] = props.defaultValue.split('/');
+      const formattedDate = new Date(Number(year), Number(month) - 1, Number(day));
+      setDate(formattedDate);
+      setDataNascimento(props.defaultValue);
+    }
+  }, [props.defaultValue]);
 
   function onChange(event: DateTimePickerEvent, selectedDate?: Date) {
     if(event.type == "set") {
