@@ -25,6 +25,7 @@ import CadastroDespesa from './src/pages/CadastroDespesa';
 import EditarTransporte from './src/pages/EditarTransporte';
 import EditarHospedagem from './src/pages/EditarHospedagem';
 import EditarPasseio from './src/pages/EditarPasseio';
+import EditarViagem from './src/pages/EditarViagem';
 
 
 
@@ -163,7 +164,14 @@ export default function App() {
           />
           <Stack.Screen
             name="DetalhesPasseio"
-            component={DetalhesPasseio} // Substituir pelo componente correto de detalhes de passeio
+            component={DetalhesPasseio}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="EditarViagem"
+            component={EditarViagem}
             options={{
               headerShown: false,
             }}

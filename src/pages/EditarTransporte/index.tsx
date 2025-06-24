@@ -31,7 +31,7 @@ import { InputValor } from "../../components/InputValor";
 import { LocationsIdResponseDto } from "../../types/dto/LocationsIdResponseDto";
 import EditarTransporteRequestDto from "../../types/dto/EditarTransporteRequestDto";
 
-const editarTransporteSchema = z.object({
+const editarViagemSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
   tipoTransporte:   z.union([z.string(), z.number()]) // Aceita tanto string quanto número
   .refine((val) => !isNaN(Number(val)), { message: "Tipo de transporte é obrigatório" }) // Verifica se é um número válido
@@ -65,7 +65,7 @@ const editarTransporteSchema = z.object({
   documentName: z.string().optional(), // Campo opcional para exibir o nome original
 })
 
-type EditarTransporteSchema = z.infer<typeof editarTransporteSchema>;
+type EditarTransporteSchema = z.infer<typeof editarViagemSchema>;
 
 function EditarTransporte() {
 
@@ -78,7 +78,7 @@ function EditarTransporte() {
   const [localTransporte, setlocalTransporte] = useState<LocationsIdResponseDto>();
 
   const { control, handleSubmit, formState: { errors }, watch, setValue, getValues, reset } = useForm<EditarTransporteSchema>({
-    resolver: zodResolver(editarTransporteSchema),
+    resolver: zodResolver(editarViagemSchema),
     defaultValues: {
       nome: transporte.nome || "",
       tipoTransporte: transporte.tipo_id || 0,

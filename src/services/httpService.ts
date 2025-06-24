@@ -9,6 +9,7 @@ import CadastroViagemResponseDto from "../types/dto/CadastroViagemResponseDto";
 import EditarHospedagemRequestDto from "../types/dto/EditarHospedagemRequestDto";
 import EditarPasseioRequestDto from "../types/dto/EditarPasseioRequestDto";
 import EditarTransporteRequestDto from "../types/dto/EditarTransporteRequestDto";
+import EditarViagemRequestDto from "../types/dto/EditarViagemRequestDto";
 import { ErroResponseDto } from "../types/dto/ErroResponseDto";
 import GetViagemResponseDto from "../types/dto/GetViagemResponseDto";
 import { GetViagensResponseDto } from "../types/dto/GetViagensResponseDto";
@@ -264,6 +265,33 @@ export async function atualizarPasseioBanco(payload: EditarPasseioRequestDto): P
   } catch (error: any) {
     // Captura de erro se ocorrer um erro na requisição
     const errorMessage = error.response?.data?.message || 'Erro inesperado ao cadastrar passeio';
+    return {
+      status: 'error',  // Definindo status como erro
+      statusCode: error.response?.status || 500,  // Retorna o status do erro ou 500 se não estiver presente
+      message: errorMessage,
+    } as ErroResponseDto;  // Retorna a estrutura de erro com a mensagem capturada
+  }
+}
+
+export async function atualizarViagemBanco(payload: EditarViagemRequestDto): Promise<EditarViagemRequestDto | ErroResponseDto> {
+  try {
+    console.log("Atualizando viagem com os seguintes dados:");
+    console.log(payload);
+    // Enviando a requisição via axios
+    const response = await travelerApi.put(`/viagem/${payload.id}/update`, payload);
+    // Se a resposta for 201 (Criado), retorna os dados da viagem
+    if (response.status === 201) {
+      return response.data;  // Dados da viagem criada
+    }
+    // Se o status não for 201, retorna um erro customizado com a estrutura de erro
+    return {
+      status: 'error',  // Ou qualquer valor apropriado
+      statusCode: response.status,
+      message: response.data?.message || 'Erro desconhecido ao cadastrar viagem',
+    } as ErroResponseDto;
+  } catch (error: any) {
+    // Captura de erro se ocorrer um erro na requisição
+    const errorMessage = error.response?.data?.message || 'Erro inesperado ao cadastrar viagem';
     return {
       status: 'error',  // Definindo status como erro
       statusCode: error.response?.status || 500,  // Retorna o status do erro ou 500 se não estiver presente

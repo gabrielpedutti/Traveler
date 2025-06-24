@@ -41,6 +41,7 @@ function ViagemSelecionada() {
   const [passeio, setPasseio] = useState<GetPasseiosPorViagemDto[]>();
   const [despesa, setDespesa] = useState<CadastroDespesaResponseDto[]>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
+  const [viagemAtualizada, setViagemAtualizada] = useState<GetViagensResponseDto>(viagem);
 
   function handleModal() {
     setIsModalVisible(!isModalVisible);
@@ -101,6 +102,15 @@ function ViagemSelecionada() {
     }
   }
 
+  const buscarViagemAtualizada = async () => {
+  try {
+    const response = await travelerApi.get(`/viagem/${viagem.id}`);
+    setViagemAtualizada(response.data);
+  } catch (error) {
+    console.error("Erro ao buscar dados atualizados da viagem:", error);
+  }
+};
+
   // useEffect(() => {
   //   buscarDespesas();
   //   buscarTransporte();
@@ -116,6 +126,7 @@ function ViagemSelecionada() {
       if(isModalVisible) {
         handleModal();
       }
+      buscarViagemAtualizada();
       buscarDespesas();
       buscarTransporte();
       buscarHospedagem();
@@ -159,6 +170,10 @@ function ViagemSelecionada() {
     )
   }
 
+  function handleEditarViagem() {
+    navigation.navigate('EditarViagem', { viagem });
+  }
+
   return(
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -167,14 +182,14 @@ function ViagemSelecionada() {
           <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
             <View style={styles.noImage}>
               <FontAwesome6Icon name={'image'} size={40} color='#000' style={styles.icon}/>
-              <TouchableOpacity style={styles.editButton}>
+              <TouchableOpacity style={styles.editButton} onPress={handleEditarViagem}>
                 <MaterialIcons name={'edit'} size={40} color='#000' style={styles.icon}/>
               </TouchableOpacity>
             </View>
             <View style={styles.headerContainer}>
               <View style={styles.titleWrapper}>
-                <Text style={styles.titulo}>{viagem.nome}</Text>
-                <Text style={styles.data}>{formatDate(viagem.data_inicio)}</Text>
+                <Text style={styles.titulo}>{viagemAtualizada.nome}</Text>
+                <Text style={styles.data}>{formatDate(viagemAtualizada.data_inicio)}</Text>
               </View>
             </View>
             {isLoading && 
