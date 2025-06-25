@@ -130,6 +130,49 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2F2F2',
     paddingTop: -100,
   },
+  chartContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 10,
+    elevation: 2, // Sombra para Android
+    shadowColor: '#000', // Sombra para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  resetFilterButton: {
+    marginTop: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 10,
+  },
+  resetFilterButtonText: {
+    color: '#333',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  pickerContainer: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    overflow: 'hidden', // Para garantir que o Picker respeite o borderRadius
+    marginBottom: 10,
+    backgroundColor: '#fff',
+  },
+  totalExpensesText: { // NOVO: Estilo para o texto do total de despesas
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    marginTop: 5,
+  }
 });
 
 export { styles };

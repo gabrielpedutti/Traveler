@@ -14,10 +14,11 @@ import { formatarParaReal } from "../../utils/CurrencyFormat";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import CadastroDespesaResponseDto from "../../types/dto/CadastroDespesaResponseDto";
 import GetViagemResponseDto from "../../types/dto/GetViagemResponseDto";
+import GetDespesaResponseDto from "../../types/dto/GetDepesaResponseDto";
 
 interface CardItemDespesaProps {
   imagem?: any;
-  despesa: CadastroDespesaResponseDto;
+  despesa: GetDespesaResponseDto;
   viagem: GetViagemResponseDto;
 }
 
@@ -35,7 +36,7 @@ function CardItemDespesa({despesa, viagem, imagem}: CardItemDespesaProps) {
   }, [despesa.descricao]);
 
   return(
-    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('Home')}}>
+    <TouchableOpacity style={styles.wrapper} onPress={() => {navigation.navigate('DetalhesDespesa', {despesa: despesa, viagem: viagem})}}>
       <View style={styles.containerItem}>
         <FontAwesome6Icon name={'coins'} size={40} color='#2b88d9'/>
       </View>

@@ -40,7 +40,7 @@ function ViagemSelecionada() {
   const [transporte, setTransporte] = useState<GetTransportesPorViagemDto[]>();
   const [hospedagem, setHospedagem] = useState<GetHospedagemResponseDto[]>();
   const [passeio, setPasseio] = useState<GetPasseiosPorViagemDto[]>();
-  const [despesa, setDespesa] = useState<CadastroDespesaResponseDto[]>();
+  const [despesa, setDespesa] = useState<GetDespesaResponseDto[]>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
   const [viagemAtualizada, setViagemAtualizada] = useState<GetViagensResponseDto>(viagem);
 
@@ -52,7 +52,7 @@ function ViagemSelecionada() {
     <CardItemTransporte transporte={item} viagem={viagem} />
   );
 
-  const renderCardItemDespesa = ({ item }: { item: CadastroDespesaResponseDto }) => (
+  const renderCardItemDespesa = ({ item }: { item: GetDespesaResponseDto }) => (
     <CardItemDespesa despesa={item} viagem={viagem} />
   );
 

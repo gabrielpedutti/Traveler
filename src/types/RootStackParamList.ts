@@ -4,6 +4,7 @@ import GetHospedagemResponseDto from "./dto/GetHospedagemPorViagemDto";
 import GetTransporteResponseDto from "./dto/GetTransportePorViagemDto";
 import GetPasseiosPorViagemDto from "./dto/GetPasseiosPorViagemDto";
 import GetViagemResponseDto from "./dto/GetViagemResponseDto";
+import GetDespesaResponseDto from "./dto/GetDepesaResponseDto";
 
 // export type CadastroViagemParamList = {
 //   CadastroHospedagem: undefined;
@@ -36,6 +37,7 @@ export type RootStackParamList = {
   DetalhesHospedagem: { hospedagem: GetHospedagemResponseDto, viagem: GetViagemResponseDto };
   DetalhesTransporte: { transporte: GetTransporteResponseDto, viagem: GetViagemResponseDto };
   DetalhesPasseio: { passeio: GetPasseiosPorViagemDto, viagem: GetViagemResponseDto };
+  DetalhesDespesa: { despesa: GetDespesaResponseDto, viagem: GetViagemResponseDto };
   FinanceiroViagens: undefined;
   FinanceiroViagemSelecionada: { viagem: GetViagensResponseDto };
 };
