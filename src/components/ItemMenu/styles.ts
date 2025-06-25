@@ -3,10 +3,9 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    margin: 10,
-    marginBottom: 20,
-    marginTop: 20,
-    padding: 5,
+    padding: 25,
+    backgroundColor: '#3d97e6a9',
+    width: '100%',
   },
   label: {
     color: "#fff",

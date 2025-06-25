@@ -8,11 +8,12 @@ import ItemMenu from "../../components/ItemMenu";
 import { styles } from "./styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-function MenuPerfil(){
+function MenuPerfil() {
 
   const { user } = useContext(CadastroContext);
-  
-  return(
+
+  return (
+  <>
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Header />
@@ -39,11 +40,15 @@ function MenuPerfil(){
             <Divisoria />
             <ItemMenu label="Contato" name='mail-outline' pagina = "" />
           </View>
-          <View style={styles.footer}>
-          <ItemMenu label="Sair" name='log-out-outline' pagina = "Login" />
-          </View>
+
       </View>
     </SafeAreaView>
+    <SafeAreaView>
+      <View style={styles.footer}>
+        <ItemMenu label="Sair" name='log-out-outline' pagina = "Login" />
+      </View>
+    </SafeAreaView>
+  </>
   )
 }
 

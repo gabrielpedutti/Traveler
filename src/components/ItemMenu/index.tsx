@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -18,12 +18,10 @@ function ItemMenu(props: ItemMenuProps) {
 
   return(
 
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={() => navigation.navigate(props.pagina)}>
       <Ionicons name={props.name} size={35} color='#fff'/>
-      <Pressable onPress={() => navigation.navigate(props.pagina)}>
-        <Text style={styles.label}>{props.label}</Text>
-      </Pressable>
-    </View>
+      <Text style={styles.label}>{props.label}</Text>
+    </TouchableOpacity>
   )
 }
 
