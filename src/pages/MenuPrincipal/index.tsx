@@ -20,7 +20,7 @@ function MenuPrincipal(){
           <Divisoria />
           <ItemMenu label="Passeios turísticos" name='ticket-outline' pagina = "" /> */}
           <Divisoria />
-          <ItemMenu label="Financeiro" name='wallet-outline' pagina = "" />
+          <ItemMenu label="Financeiro" name='wallet-outline' pagina = "FinanceiroViagens" />
         </View>
       </View>
     </SafeAreaView>

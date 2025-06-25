@@ -26,6 +26,8 @@ import EditarTransporte from './src/pages/EditarTransporte';
 import EditarHospedagem from './src/pages/EditarHospedagem';
 import EditarPasseio from './src/pages/EditarPasseio';
 import EditarViagem from './src/pages/EditarViagem';
+import FinanceiroViagens from './src/pages/FinanceiroViagens';
+import FinanceiroViagemSelecionada from './src/pages/FinanceiroViagemSelecionada';
 
 
 
@@ -193,6 +195,20 @@ export default function App() {
           <Stack.Screen
             name="EditarPasseio"
             component={EditarPasseio}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="FinanceiroViagens"
+            component={FinanceiroViagens}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="FinanceiroViagemSelecionada"
+            component={FinanceiroViagemSelecionada}
             options={{
               headerShown: false,
             }}

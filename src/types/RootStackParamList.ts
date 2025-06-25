@@ -36,6 +36,8 @@ export type RootStackParamList = {
   DetalhesHospedagem: { hospedagem: GetHospedagemResponseDto, viagem: GetViagemResponseDto };
   DetalhesTransporte: { transporte: GetTransporteResponseDto, viagem: GetViagemResponseDto };
   DetalhesPasseio: { passeio: GetPasseiosPorViagemDto, viagem: GetViagemResponseDto };
+  FinanceiroViagens: undefined;
+  FinanceiroViagemSelecionada: { viagem: GetViagensResponseDto };
 };
 
 export type CadastroTransporteRouteProp = RouteProp<RootStackParamList, 'CadastroTransporte'>;

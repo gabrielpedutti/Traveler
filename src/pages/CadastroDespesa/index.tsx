@@ -258,7 +258,7 @@ export default function CadastroDespesa() {
               name="data"
               render={({ field: { onChange, onBlur, value } }) => (
                 <DateInput
-                  label="Data do Passeio"
+                  label="Data da despesa"
                   placeholder="__/__/__"
                   value={value}
                   onChangeText={onChange}

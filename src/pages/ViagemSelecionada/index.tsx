@@ -28,6 +28,7 @@ import GetPasseiosPorViagemDto from "../../types/dto/GetPasseiosPorViagemDto";
 import CardItemPasseio from "../../components/CardItemPasseio";
 import GetTransporteResponseDto from "../../types/dto/GetTransportePorViagemDto";
 import ModalConfirmacaoExcluir from "../../components/ModalConfirmacaoExcluir";
+import GetDespesaResponseDto from "../../types/dto/GetDepesaResponseDto";
 
 function ViagemSelecionada() {
 
@@ -67,8 +68,12 @@ function ViagemSelecionada() {
     setIsLoading(true);
     try {
       const response = await travelerApi.get(`/despesa/viagem/${viagem.id}`);
-      
-      setDespesa(response.data);
+
+      const tiposExcluidos = [2, 3, 4]; // Excluir Tranporte, Hospedagem e Passeio
+      console.log(response.data);
+      const despesasFiltradas = response.data.filter((despesa: GetDespesaResponseDto) => !tiposExcluidos.includes(despesa.tipo_despesa_id));
+            
+      setDespesa(despesasFiltradas);
 
     } catch (error) {
       console.error("Erro ao buscar despesas:", error);
@@ -241,7 +246,7 @@ function ViagemSelecionada() {
             }
             {!isLoading && 
               <FlatList
-                ListHeaderComponent={<Titulo texto="Despesas" />}
+                ListHeaderComponent={<Titulo texto="Outras Despesas" />}
                 data={despesa}
                 renderItem={renderCardItemDespesa}
                 keyExtractor={(item, index) => index.toString()}
