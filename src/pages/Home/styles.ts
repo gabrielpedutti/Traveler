@@ -4,12 +4,20 @@ const styles = StyleSheet.create({
     container: {
       height: '100%'
     },
+    tituloWrapper: {
+      marginTop: 25,
+    },
     titulo: {
-      fontSize: 25,
-      lineHeight: 45,
+      fontSize: 30,
+      textAlign: 'center',
       color: '#2b88d9',
-      margin: 15,
       fontWeight: 'bold',
+    },
+    textoSubtitulo: {
+      fontSize: 16,
+      textAlign: 'center',
+      color: '#2b88d9',
+      marginTop: 20,
     },
     subtitulo: {
       fontSize: 25,
@@ -28,17 +36,23 @@ const styles = StyleSheet.create({
       flexWrap: 'wrap',
     },
     imagem: {
-      resizeMode: 'contain',
+      resizeMode: 'cover',
       width: '95%',
       height: 200,
       marginStart: 10,
-      marginTop: 40,
       marginBottom: 20,
     },
     local: {
       fontSize: 20,
       color: '#2b88d9',
       margin: 15,
+    },
+    semViagens: {
+      fontSize: 20,
+      color: '#2b88d9',
+      textAlign: 'center',
+      marginTop: 20,
+      marginBottom: 20,
     },
     textContainer: {
       flexDirection: 'row',
@@ -55,7 +69,16 @@ const styles = StyleSheet.create({
     scrollView: {
       paddingHorizontal: 16,
       paddingBottom: 20,
+      alignItems: 'center',
     },
+    containerViagem: {
+      flex: 1,
+      alignItems: 'flex-start',
+      width: '95%',
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      marginTop: 30,
+    }
 })
 
 export { styles };

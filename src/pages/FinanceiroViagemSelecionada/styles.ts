@@ -172,7 +172,25 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 10,
     marginTop: 5,
-  }
+  }, 
+  totalDespesasPorTipo: { // NOVO: Estilo para o texto do total de despesas por tipo
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2888d9',
+    marginBottom: 10,
+    marginTop: 5,
+  },
+  listHeaderWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
 });
 
 export { styles };

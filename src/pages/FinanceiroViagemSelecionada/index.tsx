@@ -32,10 +32,12 @@ function FinanceiroViagemSelecionada() {
   const [dataInicioFimFormatada, setDataInicioFimFormatada] = useState<string>();
   const [allGeneralExpenses, setAllGeneralExpenses] = useState<GetDespesaResponseDto[] | undefined>(undefined);
   const [displayedExpenses, setDisplayedExpenses] = useState<GetDespesaResponseDto[] | undefined>(undefined);
-  const [originalPieChartData, setOriginalPieChartData] = useState<any[]>([]); // Dados brutos para o gráfico
-  const [displayedPieChartData, setDisplayedPieChartData] = useState<any[]>([]); 
+  const [originalPieChartData, setOriginalPieChartData] = useState<any[]>([]);
+  const [displayedPieChartData, setDisplayedPieChartData] = useState<any[]>([]);
   const [selectedExpenseType, setSelectedExpenseType] = useState<number | null>(null);
   const [totalDespesas, setTotalDespesas] = useState<number>(0);
+  // NOVO ESTADO: Total das despesas atualmente exibidas (filtradas)
+  const [totalDisplayedExpenses, setTotalDisplayedExpenses] = useState<number>(0);
 
   const renderCardItemDespesa = ({ item }: { item: GetDespesaResponseDto }) => (
     <CardItemDespesa despesa={item} viagem={viagemAtualizada} />
@@ -46,14 +48,11 @@ function FinanceiroViagemSelecionada() {
     try {
       const response = await travelerApi.get(`/despesa/viagem/${viagem.id}`);
 
-      // const tiposExcluidos = [2, 3, 4]; // Excluir Tranporte, Hospedagem e Passeio
-      // console.log(response.data);
-      // const despesasFiltradas = response.data.filter((despesa: GetDespesaResponseDto) => !tiposExcluidos.includes(despesa.tipo_despesa_id));
-            
       const despesa = response.data;
       setDespesa(despesa);
       setAllGeneralExpenses(despesa);
-      setDisplayedExpenses(despesa); 
+      // Inicialmente, as despesas exibidas são todas as despesas
+      setDisplayedExpenses(despesa);
 
       const despesasAgrupadas: { [key: number]: { total: number, name: string, id: number, color?: string } } = {};
       const defaultColors = [
@@ -86,8 +85,8 @@ function FinanceiroViagemSelecionada() {
                 name: 'Outros',
                 id: outrosId,
                 color: defaultColors[colorIndex % defaultColors.length]
-             };
-             colorIndex++;
+               };
+               colorIndex++;
           }
           despesasAgrupadas[outrosId].total += despesaItem.valor;
         }
@@ -96,27 +95,27 @@ function FinanceiroViagemSelecionada() {
       const chartData = Object.keys(despesasAgrupadas).map(idStr => {
         const idNum = Number(idStr);
         const item = despesasAgrupadas[idNum];
-        const valorFormatado = item.total.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        });
+        const percentage = totalGeral > 0 ? (item.total / totalGeral * 100).toFixed(1) : '0.0';
+
         return {
-          name: item.name, // Ex: Alimentação (R$ 120,50)
+          name: `${item.name} (${percentage}%)`, // Inclui a porcentagem no nome
           population: item.total,
           color: item.color,
           legendFontColor: "#7F7F7F",
           legendFontSize: 15,
-          id: item.id, // Adiciona o ID ao objeto de dados do gráfico
+          id: item.id,
         };
       });
-      setOriginalPieChartData(chartData); // Armazena os dados originais do gráfico
+      setOriginalPieChartData(chartData);
       setTotalDespesas(totalGeral);
+      // NOVO: Define o total das despesas exibidas inicialmente como o total geral
+      setTotalDisplayedExpenses(totalGeral);
 
     } catch (error) {
       console.error("Erro ao buscar despesas:", error);
       Toast.show({ type: "error", text1: "Erro", text2: "Falha ao carregar despesas.", visibilityTime: 3000 });
     } finally {
-      setIsLoading(false); // Finaliza carregamento
+      setIsLoading(false);
     }
   }
 
@@ -140,9 +139,8 @@ function FinanceiroViagemSelecionada() {
         setIsLoading(true);
         await Promise.all([
           buscarViagemAtualizada(),
-          buscarDespesas(), // Esta função agora também popula o pieChartData
+          buscarDespesas(),
         ]);
-        // setIsLoading(false);
       };
       fetchData();
     }, [viagem.id])
@@ -152,57 +150,57 @@ function FinanceiroViagemSelecionada() {
     if(viagemAtualizada) {
       setDataInicioFimFormatada(formatarIntervaloDatas(viagemAtualizada.data_inicio, viagemAtualizada.data_fim));
     }
-  }, [viagemAtualizada]); 
+  }, [viagemAtualizada]);
 
   useEffect(() => {
     if (selectedExpenseType === null) {
-      // Se nenhum tipo estiver selecionado (null), exibe todas as despesas gerais
       setDisplayedExpenses(allGeneralExpenses);
-      // Gráfico: todas as fatias com opacidade total
+      // Se não há filtro, o total exibido é o total geral
+      setTotalDisplayedExpenses(totalDespesas);
+
       setDisplayedPieChartData(originalPieChartData.map(slice => ({
         ...slice,
-        color: slice.color.replace(/,(\d+(\.\d+)?)?\)/, ',1)') // Altera opacidade para 1
+        color: slice.color.replace(/,(\d+(\.\d+)?)?\)/, ',1)')
       })));
     } else if (allGeneralExpenses && originalPieChartData) {
-      // Filtra as despesas pelo ID do tipo selecionado
       const filtered = allGeneralExpenses.filter(
-        (despesaItem: GetDespesaResponseDto) => 
-          despesaItem.tipo_despesa_id === selectedExpenseType 
+        (despesaItem: GetDespesaResponseDto) =>
+          despesaItem.tipo_despesa_id === selectedExpenseType
       );
       setDisplayedExpenses(filtered);
 
-      // Gráfico: a fatia selecionada com opacidade total, outras com opacidade reduzida
+      // NOVO: Calcula o total das despesas filtradas
+      const sumFilteredExpenses = filtered.reduce((sum, item) => sum + item.valor, 0);
+      setTotalDisplayedExpenses(sumFilteredExpenses);
+
+
       setDisplayedPieChartData(originalPieChartData.map(slice => ({
         ...slice,
-        color: slice.id === selectedExpenseType 
-                 ? slice.color.replace(/,(\d+(\.\d+)?)?\)/, ',1)') // Opacidade total para a selecionada
-                 : slice.color.replace(/,(\d+(\.\d+)?)?\)/, ',0.4)') // Opacidade reduzida para as não selecionadas
+        color: slice.id === selectedExpenseType
+                       ? slice.color.replace(/,(\d+(\.\d+)?)?\)/, ',1)')
+                       : slice.color.replace(/,(\d+(\.\d+)?)?\)/, ',0.4)')
       })));
     }
-  }, [selectedExpenseType, allGeneralExpenses, originalPieChartData]);
+  }, [selectedExpenseType, allGeneralExpenses, originalPieChartData, totalDespesas]); // Adicione totalDespesas como dependência
 
 
-  // Configurações para o gráfico de pizza
   const chartConfig = {
     backgroundGradientFrom: "#FFFFFF",
     backgroundGradientFromOpacity: 0,
     backgroundGradientTo: "#FFFFFF",
     backgroundGradientToOpacity: 0,
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Cor genérica para texto/eixo
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.5,
     useShadowColorFromDataset: false,
-    decimalPlaces: 0, // Não mostrar casas decimais nos rótulos de porcentagem
+    decimalPlaces: 0,
   };
 
-  // Funções de Modal (mantidas se forem usadas fora deste snippet)
-  // function handleModal() { /* ... */ }
-
-  // Função para obter o nome do tipo de despesa selecionado para o título do FlatList/Botão
   const getSelectedExpenseTypeName = (id: number | null) => {
     if (id === null) return null;
     const selectedItem = originalPieChartData.find(item => item.id === id);
-    return selectedItem?.name || 'Tipo Desconhecido';
+    // Retorna apenas o nome do tipo, sem a porcentagem, para o Picker e o título
+    return selectedItem?.name?.split(' (')[0] || 'Tipo Desconhecido';
   };
 
   return(
@@ -218,14 +216,14 @@ function FinanceiroViagemSelecionada() {
               </View>
               <Text style={styles.titulo}>{viagemAtualizada.nome}</Text>
             </View>
-            {isLoading && 
+            {isLoading &&
               <View style={styles.wrapper}>
                 <Loading />
               </View>
             }
             {!isLoading && (
               <>
-                {originalPieChartData.length > 0 && ( // Usa originalPieChartData para verificar se há dados para o gráfico
+                {originalPieChartData.length > 0 && (
                   <View style={styles.chartContainer}>
                     <Titulo texto="Análise de Despesas" />
                     <Text style={styles.totalExpensesText}>
@@ -238,13 +236,13 @@ function FinanceiroViagemSelecionada() {
                       >
                         <Picker.Item label="Todas as Despesas" value={null} />
                         {originalPieChartData.map((dataItem: any) => (
-                          <Picker.Item key={dataItem.id} label={dataItem.name} value={dataItem.id} />
+                          <Picker.Item key={dataItem.id} label={dataItem.name.split(' (')[0]} value={dataItem.id} />
                         ))}
                       </Picker>
                     </View>
 
                     <PieChart
-                      data={displayedPieChartData} // Usa os dados com opacidade ajustada
+                      data={displayedPieChartData}
                       width={screenWidth - 32}
                       height={220}
                       chartConfig={chartConfig}
@@ -253,12 +251,7 @@ function FinanceiroViagemSelecionada() {
                       paddingLeft={"15"}
                       center={[10, 10]}
                       absolute
-                      
-                      // Sem onPress aqui no PieChart principal
                     />
-                    {/* O botão "Limpar Filtro" pode ser removido se o "Todas as Despesas" no Picker for suficiente.
-                        Mas se quiser manter um botão visual, aqui está.
-                    */}
                     {selectedExpenseType !== null && (
                       <TouchableOpacity onPress={() => setSelectedExpenseType(null)} style={styles.resetFilterButton}>
                         <Text style={styles.resetFilterButtonText}>
@@ -270,14 +263,27 @@ function FinanceiroViagemSelecionada() {
                 )}
 
                 <FlatList
-                  ListHeaderComponent={<Titulo texto={selectedExpenseType !== null ? `Despesas de ${getSelectedExpenseTypeName(selectedExpenseType)}` : "Despesas"} />}
+                  // Adicione o total do tipo de despesa aqui
+                  ListHeaderComponent={
+                    <View>
+                      <Titulo texto={selectedExpenseType !== null ? `Despesas de ${getSelectedExpenseTypeName(selectedExpenseType)}` : "Despesas"} />
+                      {selectedExpenseType !== null && (
+                        <View style={styles.listHeaderWrapper}>
+                          <Text style={styles.totalDespesasPorTipo}> {/* Reutiliza o estilo ou crie um novo */}
+                            Total de despesas de {getSelectedExpenseTypeName(selectedExpenseType)}:</Text>
+                          <Text style={styles.totalDespesasPorTipo}>{totalDisplayedExpenses.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text>
+                        </View>
+                        
+                      )}
+                    </View>
+                  }
                   data={displayedExpenses}
                   renderItem={renderCardItemDespesa}
                   keyExtractor={(item, index) => item?.id?.toString() || index.toString()}
                   ListEmptyComponent={
                     <View style={styles.wrapper}>
                       <Text style={styles.text}>
-                        {selectedExpenseType !== null ? 
+                        {selectedExpenseType !== null ?
                           `Não há despesas de ${getSelectedExpenseTypeName(selectedExpenseType)} cadastradas para esta viagem.` :
                           "Você ainda não possui despesas cadastradas para esta viagem."}
                       </Text>
