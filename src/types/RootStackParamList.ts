@@ -27,6 +27,7 @@ export type RootStackParamList = {
   EditarTransporte: { transporte: GetTransporteResponseDto, viagem: GetViagensResponseDto };
   EditarHospedagem: { hospedagem: GetHospedagemResponseDto, viagem: GetViagensResponseDto };
   EditarPasseio: { passeio: GetPasseiosPorViagemDto, viagem: GetViagensResponseDto };
+  EditarDespesa: { despesa: GetDespesaResponseDto, viagem: GetViagensResponseDto };
   CadastroDespesa: { viagem: GetViagensResponseDto };
   CadastroViagem: undefined;
   BaseCadastroViagem: undefined;
@@ -50,3 +51,4 @@ export type EditarViagemRouteProp = RouteProp<RootStackParamList, 'EditarViagem'
 export type EditarTransporteRouteProp = RouteProp<RootStackParamList, 'EditarTransporte'>;
 export type EditarHospedagemRouteProp = RouteProp<RootStackParamList, 'EditarHospedagem'>;
 export type EditarPasseioRouteProp = RouteProp<RootStackParamList, 'EditarPasseio'>;
+export type EditarDespesaRouteProp = RouteProp<RootStackParamList, 'EditarDespesa'>;

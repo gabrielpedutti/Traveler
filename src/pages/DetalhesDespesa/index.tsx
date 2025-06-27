@@ -16,16 +16,19 @@ import travelerApi from "../../services/api/travelerApi";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/RootStackParamList";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { GetViagensResponseDto } from "../../types/dto/GetViagensResponseDto";
 import ModalConfirmacaoExcluir from "../../components/ModalConfirmacaoExcluir";
 import GetPasseioResponseDto from "../../types/dto/GetPasseiosPorViagemDto"; // Certifique-se que este DTO corresponde aos dados do schema
 import GetDespesaResponseDto from "../../types/dto/GetDepesaResponseDto";
+import ModalErro from "../../components/ModalErro";
 
 function DetalhesDespesa({ route }: any) {
   const { despesa, viagem } = route.params as { despesa: GetDespesaResponseDto, viagem: GetViagensResponseDto };
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isConfirmandoExcluir, setIsConfirmandoExcluir] = useState(false);
+  const [isErroEditarVisivel, setIsErroEditarVisivel] = useState(false);
+  const isPossivelEditar = despesa.tipo_despesa_id !== 2 && despesa.tipo_despesa_id !== 3 && despesa.tipo_despesa_id !== 4;
 
   async function excluirDespesa() {
 
@@ -39,13 +42,10 @@ function DetalhesDespesa({ route }: any) {
     }
 
     try {
-      await travelerApi.delete(`/passeio/${despesa.id}/delete`);
+      await travelerApi.delete(`/despesa/${despesa.id}/delete`);
 
-      if (viagemParaNavegar) {
-        navigation.navigate('ViagemSelecionada', { viagem: viagemParaNavegar });
-      } else {
-        navigation.navigate('Viagens');
-      }
+      navigation.goBack();
+
       Toast.show({
         type: 'success',
         text1: 'Sucesso',
@@ -78,7 +78,33 @@ function DetalhesDespesa({ route }: any) {
   }
 
   function handleEditar() {
-    // navigation.navigate('EditarDepesa', { despesa, viagem });
+    handleErroEditar();
+    if(!isPossivelEditar) {
+      return;
+    }
+    navigation.navigate('EditarDespesa', { despesa, viagem });
+  }
+
+  useEffect(() => {
+    if(despesa.tipo_despesa_id === 2 || despesa.tipo_despesa_id === 3 || despesa.tipo_despesa_id === 4) {
+      if(isConfirmandoExcluir) {
+        setTimeout(() => {
+          setIsConfirmandoExcluir(false);
+        }, 3000);
+      }
+    }
+  },[isConfirmandoExcluir])
+
+
+  function handleErroEditar() {
+    if(despesa.tipo_despesa_id === 2 || despesa.tipo_despesa_id === 3 || despesa.tipo_despesa_id === 4) {
+      setIsErroEditarVisivel(true);
+      setTimeout(() => {
+        setIsErroEditarVisivel(false);
+      }, 3000);
+    } else {
+      setIsErroEditarVisivel(false);
+    }
   }
 
   return (
@@ -134,8 +160,20 @@ function DetalhesDespesa({ route }: any) {
           </ScrollView>
           <Toast />
           {isConfirmandoExcluir && (
-            <ModalConfirmacaoExcluir onPressExcluir={handleConfirmarExcluir} onPressCancelar={handleCancelarExcluir} />
+            <>
+              {
+                despesa.tipo_despesa_id === 2 || despesa.tipo_despesa_id === 3  || despesa.tipo_despesa_id === 4 ? 
+                (
+                  <ModalErro titulo="Erro ao Excluir" erro="Para excluir esse tipo de despesa, exclua o respectivo item da viagem." />
+                ) : (
+                  <ModalConfirmacaoExcluir onPressExcluir={handleConfirmarExcluir} onPressCancelar={handleCancelarExcluir} />
+                )
+              }
+            </>
           )}
+          {
+            isErroEditarVisivel && <ModalErro titulo="Erro ao Editar" erro="Para editar esse tipo de despesa, acesse o respectivo item da viagem." />
+          }
         </KeyboardAvoidingView>
       </View>
     </SafeAreaView>

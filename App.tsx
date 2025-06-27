@@ -29,6 +29,7 @@ import EditarViagem from './src/pages/EditarViagem';
 import FinanceiroViagens from './src/pages/FinanceiroViagens';
 import FinanceiroViagemSelecionada from './src/pages/FinanceiroViagemSelecionada';
 import DetalhesDespesa from './src/pages/DetalhesDespesa';
+import EditarDespesa from './src/pages/EditarDespesa';
 
 
 
@@ -203,6 +204,13 @@ export default function App() {
           <Stack.Screen
             name="EditarPasseio"
             component={EditarPasseio}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="EditarDespesa"
+            component={EditarDespesa}
             options={{
               headerShown: false,
             }}
